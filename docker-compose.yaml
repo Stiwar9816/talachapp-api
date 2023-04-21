@@ -1,9 +1,9 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
-    image: postgres:14.3
-    restart: always
+    image: postgres:15.2
+    restart: always # reiniciar el contenedor si se detiene
     ports:
       - '5432:5432'
     environment:
