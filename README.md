@@ -4,31 +4,36 @@
 
 # TalachAPP API
 
-1. Clonar el repositorio
+1. Instalar **[NestJS CLI](https://docs.nestjs.com/#installation)** globalmente
 
-2. Instalar las depencias con el comando:
+2. Clonar el repositorio
+
+3. Instalar las depencias con el comando:
 
 ```
 yarn install o npm install
 ```
 
-3. Clonar el archivo `.env.template` y renombrarlo a `.env`
+3. Clonar el archivo **`.env.template`** y renombrarlo a **`.env`**
 
 4. Cambiar las variables de entorno
 
-5. Levantar la base de datos postgres
+5. Instalar **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** según la versión de tu sistema operativo
+
+6. Levantar la base de datos postgres
 
 ```
-docker-compose up -d o docker-compose up (Para revisar los logs)
+docker-compose up -d  
+docker-compose up (Para revisar los logs)
 ```
 
-6. Levantar el proyecto en modo de desarrollo con el comando:
+7. Levantar el proyecto en modo de desarrollo con el comando:
 
 ```
 yarn start:dev
 ```
 
-7. Documentación API en Swagger UI
+8. Documentación API en Swagger UI
 
 ```
 http://localhost:3000/api
@@ -39,3 +44,4 @@ http://localhost:3000/api
 - NestJS
 - Docker
 - Postgres
+- Swagger

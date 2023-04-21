@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+// TypeORM
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+// Modules
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -23,9 +24,10 @@ import { AppService } from './app.service';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true
-    })
+    }),
+    ProductsModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule { }
