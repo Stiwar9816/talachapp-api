@@ -7,14 +7,13 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap')
   const app = await NestFactory.create(AppModule);
   // app.enableCors(); // Configuración opcional
-  app.setGlobalPrefix('api')
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true
     })
   )
-
+  
   // Config Swagger
   const config = new DocumentBuilder()
     .setTitle('TalachAPP API')

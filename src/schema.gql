@@ -1,0 +1,162 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Price {
+  id: Int!
+  name: String!
+  price: Float!
+  stock: Int!
+  type: [String!]!
+  description: String
+}
+
+type Company {
+  id: Int!
+  name_company: String!
+  phone: Int!
+  rfc: String
+  cfdi: String
+  bussiness_name: String!
+  address: String
+  department: String!
+  city: String!
+  postal_code: Int
+}
+
+type Score {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Payment {
+  id: Int!
+  toll: String!
+  transfer: String!
+  banner: String!
+  card_type: String!
+  bank_name: String!
+  total: Float!
+  state: String!
+}
+
+type User {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  prices: [Price!]!
+  price(id: Int!): Price!
+  companies: [Company!]!
+  company(id: Int!): Company!
+  scores: [Score!]!
+  score(id: Int!): Score!
+  payments: [Payment!]!
+  payment(id: Int!): Payment!
+  users: [User!]!
+  user(id: Int!): User!
+}
+
+type Mutation {
+  createPrice(createPriceInput: CreatePriceInput!): Price!
+  updatePrice(updatePriceInput: UpdatePriceInput!): Price!
+  removePrice(id: Int!): Price!
+  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
+  removeCompany(id: Int!): Company!
+  createScore(createScoreInput: CreateScoreInput!): Score!
+  updateScore(updateScoreInput: UpdateScoreInput!): Score!
+  removeScore(id: Int!): Score!
+  createPayment(createPaymentInput: CreatePaymentInput!): Payment!
+  updatePayment(updatePaymentInput: UpdatePaymentInput!): Payment!
+  removePaymnet(id: Int!): Payment!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
+}
+
+input CreatePriceInput {
+  name: String!
+  price: Float!
+  stock: Int!
+  type: [String!]!
+  description: String
+}
+
+input UpdatePriceInput {
+  name: String
+  price: Float
+  stock: Int
+  type: [String!]
+  description: String
+  id: Int!
+}
+
+input CreateCompanyInput {
+  name_company: String!
+  phone: Int!
+  rfc: String
+  cfdi: String
+  bussiness_name: String!
+  address: String
+  department: String!
+  city: String!
+  postal_code: Int
+}
+
+input UpdateCompanyInput {
+  name_company: String
+  phone: Int
+  rfc: String
+  cfdi: String
+  bussiness_name: String
+  address: String
+  department: String
+  city: String
+  postal_code: Int
+  id: Int!
+}
+
+input CreateScoreInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateScoreInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreatePaymentInput {
+  toll: String!
+  transfer: String!
+  banner: String!
+  card_type: String!
+  bank_name: String!
+  total: Float!
+  state: [String!]!
+}
+
+input UpdatePaymentInput {
+  toll: String
+  transfer: String
+  banner: String
+  card_type: String
+  bank_name: String
+  total: Float
+  state: [String!]
+  id: Int!
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}

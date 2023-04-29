@@ -1,9 +1,19 @@
+import { join } from 'path';
+// NestJS
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 // TypeORM
 import { TypeOrmModule } from '@nestjs/typeorm';
+// GraphQL
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 // Modules
-import { ProductsModule } from './products/products.module';
+import { PricesModule } from './prices/prices.module';
+import { CompaniesModule } from './companies/companies.module';
+import { ScoresModule } from './scores/scores.module';
+import { PaymentsModule } from './payments/payments.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -25,7 +35,20 @@ import { ProductsModule } from './products/products.module';
       autoLoadEntities: true,
       synchronize: true
     }),
-    ProductsModule
+    // GraphQL
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: false,
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault()
+      ]
+    }),
+    PricesModule,
+    CompaniesModule,
+    ScoresModule,
+    PaymentsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

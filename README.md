@@ -23,7 +23,7 @@ yarn install o npm install
 6. Levantar la base de datos postgres
 
 ```
-docker-compose up -d  
+docker-compose up -d
 docker-compose up (Para revisar los logs)
 ```
 
@@ -39,9 +39,16 @@ yarn start:dev
 http://localhost:3000/api
 ```
 
+9. Playground GraphQL
+
+```
+http://localhost:3000/graphql
+```
+
 ## Stack Usado
 
 - NestJS
 - Docker
 - Postgres
 - Swagger
+- GraphQL
