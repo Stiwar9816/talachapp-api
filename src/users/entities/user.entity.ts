@@ -1,19 +1,9 @@
-<<<<<<< HEAD
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { Order } from 'src/orders/entities/order.entity';
 @Entity({ name: 'users' })
 @ObjectType()
 export class User {
-=======
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-
-
-@ObjectType()
-export class User {
-
->>>>>>> 74fa3baa0d3cbf2043bdff7fe4980dcf7b7ff01b
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
   id: number
