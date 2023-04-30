@@ -2,6 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int!
+  fullName: String!
+  phone: Float
+  email: String!
+  roles: [String!]!
+  password: String!
+  isActive: Boolean!
+  lastUpdateBy: User
+}
+
+type AuthResponde {
+  token: String!
+  user: User!
+}
+
 type Price {
   id: Int!
   name: String!
@@ -25,8 +41,9 @@ type Company {
 }
 
 type Score {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  rank: Int!
+  quality: String
 }
 
 type Payment {
@@ -40,12 +57,10 @@ type Payment {
   state: String!
 }
 
-type User {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 type Query {
+  revalidate: AuthResponde!
+  users(roles: [UserRoles!] = []): [User!]!
+  user(id: Int!): User!
   prices: [Price!]!
   price(id: Int!): Price!
   companies: [Company!]!
@@ -54,11 +69,20 @@ type Query {
   score(id: Int!): Score!
   payments: [Payment!]!
   payment(id: Int!): Payment!
-  users: [User!]!
-  user(id: Int!): User!
+}
+
+enum UserRoles {
+  ADMIN
+  TALACHERO
+  USUARIO
+  SUPERADMIN
 }
 
 type Mutation {
+  signup(signupInput: SignupInput!): AuthResponde!
+  signin(signinInput: SigninInput!): AuthResponde!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  blockUser(id: Int!): User!
   createPrice(createPriceInput: CreatePriceInput!): Price!
   updatePrice(updatePriceInput: UpdatePriceInput!): Price!
   removePrice(id: Int!): Price!
@@ -71,9 +95,28 @@ type Mutation {
   createPayment(createPaymentInput: CreatePaymentInput!): Payment!
   updatePayment(updatePaymentInput: UpdatePaymentInput!): Payment!
   removePaymnet(id: Int!): Payment!
-  createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User!
+}
+
+input SignupInput {
+  email: String!
+  fullName: String!
+  phone: Float!
+  password: String!
+}
+
+input SigninInput {
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  email: String
+  fullName: String
+  phone: Float
+  password: String
+  id: Int!
+  roles: [UserRoles!]
+  isActive: Boolean
 }
 
 input CreatePriceInput {
@@ -119,13 +162,13 @@ input UpdateCompanyInput {
 }
 
 input CreateScoreInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  rank: Int!
+  quality: String
 }
 
 input UpdateScoreInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  rank: Int
+  quality: String
   id: Int!
 }
 
@@ -147,16 +190,5 @@ input UpdatePaymentInput {
   bank_name: String
   total: Float
   state: [String!]
-  id: Int!
-}
-
-input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
 }

@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
-import { CreatePaymentInput } from './dto/inputs/create-payment.input';
-import { UpdatePaymentInput } from './dto/inputs/update-payment.input';
-import { Price } from 'src/prices/entities/price.entity';
+import { CreatePaymentInput } from './dto';
 import { Payment } from './entities/payment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -39,21 +37,6 @@ export class PaymentsService {
       })
     }
 
-  }
-
-  async update(id: number, updatePaymentInput: UpdatePaymentInput): Promise<Payment> {
-    const payment = await this.findOne(id)
-    this.handleDBNotFound(payment, id)
-    try {
-      return await this.paymentRepository.save(payment)
-    } catch (error) {
-      this.handleDBException(error)
-    }
-  }
-
-  async remove(id: number): Promise<Payment> {
-    const payment = await this.findOne(id)
-    return await this.paymentRepository.remove(payment)
   }
 
   // Manejo de excepciones
