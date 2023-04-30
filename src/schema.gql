@@ -25,8 +25,9 @@ type Company {
 }
 
 type Score {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  rank: Int!
+  quality: String!
 }
 
 type Payment {
@@ -41,8 +42,13 @@ type Payment {
 }
 
 type User {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  name: String!
+  phone: Int!
+  email: String!
+  role: String!
+  isActive: Boolean!
+  password: String!
 }
 
 type Query {
@@ -119,13 +125,13 @@ input UpdateCompanyInput {
 }
 
 input CreateScoreInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  rank: Int!
+  quality: String!
 }
 
 input UpdateScoreInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  rank: Int
+  quality: String
   id: Int!
 }
 
@@ -151,12 +157,20 @@ input UpdatePaymentInput {
 }
 
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  phone: Int!
+  email: String!
+  isActive: Boolean!
+  password: String!
+  state: [String!]!
 }
 
 input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  name: String
+  phone: Int
+  email: String
+  isActive: Boolean
+  password: String
+  state: [String!]
   id: Int!
 }
