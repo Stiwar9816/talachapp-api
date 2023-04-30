@@ -1,7 +1,17 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional, IsNumber } from 'class-validator';
 
 @InputType()
 export class CreateScoreInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+
+  @IsNumber()
+  @IsPositive()
+  @Field(() => Int)
+  rank: number
+
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String)
+  quality: string
+
 }
