@@ -1,5 +1,8 @@
+import { CreateDateColumn, Entity, UpdateDateColumn, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+// GraphQL
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
-import { CreateDateColumn, Entity, UpdateDateColumn, PrimaryGeneratedColumn, Column } from 'typeorm';
+// Entity
+import { User } from 'src/users/entities/user.entity';
 
 @Entity({ name: 'payments' })
 @ObjectType()
@@ -46,4 +49,8 @@ export class Payment {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  // Relations
+  @ManyToOne(() => User, (user) => user.payments)
+  @JoinColumn({ name: 'userID' })
+  user: User
 }

@@ -1,5 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+// GraphQL
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
+// Entity
+import { Company } from 'src/companies/entities/company.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
+import { Score } from 'src/scores/entities/score.entity';
+import { Price } from 'src/prices/entities/price.entity';
 import { Order } from 'src/orders/entities/order.entity';
 @Entity({ name: 'users' })
 @ObjectType()
@@ -43,12 +49,35 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relaciones
+  // Relations
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, { nullable: true })
   lastUpdateBy?: User
 
-  // @OneToMany(() => Order, (order) => order.user)
-  // order: Order
+  @OneToMany(() => Company, company => company.user)
+  companies: Company
+
+  @OneToMany(() => Payment, payment => payment.user)
+  payments: Payment
+
+  @OneToMany(() => Price, price => price.user)
+  prices: Price
+
+  @OneToMany(() => Score, score => score.user)
+  scores: Score
+
+  @OneToMany(() => Order, order => order.user)
+  orders: Order
+
+  // Convertimos los datos del email a minúsculas
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.email = this.email.toLowerCase().trim()
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.checkFieldsBeforeInsert()
+  }
 }

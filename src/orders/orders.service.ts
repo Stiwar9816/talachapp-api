@@ -1,26 +1,79 @@
-import { Injectable } from '@nestjs/common';
-import { CreateOrderInput } from './dto/inputs/create-order.input';
-import { UpdateOrderInput } from './dto/inputs/update-order.input';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+// TypeORM
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+// Dto's/Inputs
+import { CreateOrderInput, UpdateOrderInput } from './dto';
+// Entity
+import { Order } from './entities/order.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class OrdersService {
-  create(createOrderInput: CreateOrderInput) {
-    return 'This action adds a new order';
+
+  private readonly logger = new Logger('OrdersServices')
+
+  constructor(
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>
+  ) { }
+
+  async create(createOrderInput: CreateOrderInput, createBy: User): Promise<Order> {
+    try {
+      const newOrder = await this.orderRepository.create(createOrderInput)
+      newOrder.user = createBy
+      return await this.orderRepository.save(newOrder)
+    } catch (error) {
+      this.handleDBException(error)
+    }
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAll(): Promise<Order[]> {
+    return await this.orderRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number): Promise<Order> {
+    try {
+      return await this.orderRepository.findOneByOrFail({ id })
+    } catch (error) {
+      this.handleDBException({
+        code: 'error-001',
+        detail: `${id} not found`
+      })
+    }
   }
 
-  update(id: number, updateOrderInput: UpdateOrderInput) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrderInput: UpdateOrderInput, updateBy: User): Promise<Order> {
+    try {
+      const order = await this.orderRepository.preload({ id, ...updateOrderInput })
+      order.lastUpdateBy = updateBy
+      return await this.orderRepository.save(order)
+    } catch (error) {
+      this.handleDBException({
+        code: 'error-001',
+        detail: `${id} not found`
+      })
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: number): Promise<Order> {
+    const order = await this.findOne(id)
+    return await this.orderRepository.remove(order)
+  }
+
+  // Manejo de excepciones
+  private handleDBException(error: any): never {
+    if (error.code === '23505')
+      throw new BadRequestException(error.detail.replace('Key ', ''))
+
+    if (error.code === 'error-001')
+      throw new BadRequestException(error.detail.replace('Key ', ''))
+
+    this.logger.error(error)
+    throw new InternalServerErrorException('Unexpected error, check server logs')
+  }
+
+  private handleDBNotFound(order: Order, id: number) {
+    if (!order) throw new NotFoundException(`Order with id ${id} not found`)
   }
 }

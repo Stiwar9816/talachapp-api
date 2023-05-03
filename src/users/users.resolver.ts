@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) { }
 
-  @Query(() => [User], { name: 'users' })
+  @Query(() => [User], { name: 'users', description: 'Find all users' })
   findAll(
     @Args() userRoles: UserRolesArgs,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
@@ -24,7 +24,7 @@ export class UsersResolver {
     return this.usersService.findAll(userRoles.roles);
   }
 
-  @Query(() => User, { name: 'user' })
+  @Query(() => User, { name: 'user', description: 'Search for a user by a unique ID' })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
@@ -32,7 +32,7 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
-  @Mutation(() => User, { name: 'updateUser' })
+  @Mutation(() => User, { name: 'updateUser', description: 'Updates the data of a user by a unique ID' })
   updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
@@ -40,7 +40,7 @@ export class UsersResolver {
     return this.usersService.update(updateUserInput.id, updateUserInput, user)
   }
 
-  @Mutation(() => User, { name: 'blockUser' })
+  @Mutation(() => User, { name: 'blockUser', description: 'Inactivate a user' })
   blockUser(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User

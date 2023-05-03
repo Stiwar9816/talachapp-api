@@ -1,5 +1,9 @@
+import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+// GraphQL
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+// Entity
+import { Order } from 'src/orders/entities/order.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType()
@@ -45,9 +49,29 @@ export class Company {
   @Field(() => Int, { nullable: true })
   postal_code?: number
 
+  @Column('bool', {
+    default: true
+  })
+  @Field(() => Boolean)
+  isActive: boolean
+  
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Relations
+  @ManyToOne(() => User, (user) => user.companies)
+  @JoinColumn({ name: 'userID' })
+  user: User
+
+  @OneToMany(() => Order, (order) => order.companies, { eager: true })
+  order: Order[]
+
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
+  @JoinColumn({ name: 'lastUpdateBy' })
+  @Field(() => User, { nullable: true })
+  lastUpdateBy?: User
+
 }

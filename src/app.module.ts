@@ -70,13 +70,13 @@ import { OrdersModule } from './orders/orders.module';
         }
       })
     }),
-    PricesModule,
-    CompaniesModule,
-    ScoresModule,
-    PaymentsModule,
-    UsersModule,
     AuthModule,
+    CompaniesModule,
     OrdersModule,
+    PaymentsModule,
+    PricesModule,
+    ScoresModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

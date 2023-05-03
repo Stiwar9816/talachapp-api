@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 // Entity/Input
 import { CreateScoreInput, UpdateScoreInput } from './dto';
 import { Score } from './entities/score.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ScoresService {
@@ -40,10 +41,10 @@ export class ScoresService {
     }
   }
 
-  async update(id: number, updateScoreInput: UpdateScoreInput): Promise<Score> {
-    const score = await this.findOne(id)
-    this.handleDBNotFound(score, id)
+  async update(id: number, updateScoreInput: UpdateScoreInput, updateBy: User): Promise<Score> {
     try {
+      const score = await this.scoreRepository.preload({ id, ...updateScoreInput })
+      score.lastUpdateBy = updateBy
       return await this.scoreRepository.save(score)
     } catch (error) {
       this.handleDBException(error)

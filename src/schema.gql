@@ -2,29 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
+type Payment {
   id: Int!
-  fullName: String!
-  phone: Float
-  email: String!
-  roles: [String!]!
-  password: String!
-  isActive: Boolean!
+  toll: String!
+  transfer: String!
+  banner: String!
+  card_type: String!
+  bank_name: String!
+  total: Float!
+  state: String!
+}
+
+type Order {
+  id: Int!
+  status: String!
   lastUpdateBy: User
-}
-
-type AuthResponde {
-  token: String!
-  user: User!
-}
-
-type Price {
-  id: Int!
-  name: String!
-  price: Float!
-  stock: Int!
-  type: [String!]!
-  description: String
 }
 
 type Company {
@@ -38,39 +30,86 @@ type Company {
   department: String!
   city: String!
   postal_code: Int
+  isActive: Boolean!
+  lastUpdateBy: User
 }
 
 type Score {
   id: Int!
   rank: Int!
   quality: String
+  lastUpdateBy: User
 }
 
-type Payment {
+type Price {
   id: Int!
-  toll: String!
-  transfer: String!
-  banner: String!
-  card_type: String!
-  bank_name: String!
-  total: Float!
-  state: String!
+  name: String!
+  price: Float!
+  stock: Int!
+  type: String!
+  description: String
+  lastUpdateBy: User
+}
+
+type User {
+  id: Int!
+  fullName: String!
+  phone: Float
+  email: String!
+  roles: [String!]!
+  password: String!
+  isActive: Boolean!
+  lastUpdateBy: User
+}
+
+"\n    Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n    mutations and [ revalidateToken ] queries \n    { \n        token, \n        User[] \n    }\n    "
+type AuthResponde {
+  token: String!
+  user: User!
 }
 
 type Query {
+  """Validates the token of the logged in user"""
   revalidate: AuthResponde!
+
+  """Find all users"""
   users(roles: [UserRoles!] = []): [User!]!
+
+  """Search for a user by a unique ID"""
   user(id: Int!): User!
-  prices: [Price!]!
-  price(id: Int!): Price!
+
+  """Returns all of the registered companies or talacheros"""
   companies: [Company!]!
+
+  """Returns a single specific record queried by ID"""
   company(id: Int!): Company!
-  scores: [Score!]!
-  score(id: Int!): Score!
+
+  """Search all service orders"""
+  orders: [Order!]!
+
+  """Search for a service order by order ID"""
+  order(id: Int!): Order!
+
+  """Find all payments"""
   payments: [Payment!]!
+
+  """Search for a single payment by payment ID"""
   payment(id: Int!): Payment!
+
+  """Search all prices"""
+  prices: [Price!]!
+
+  """Search for a single price by price ID"""
+  price(id: Int!): Price!
+
+  """Find all ratings"""
+  scores: [Score!]!
+
+  """Search for a rating by a unique ID"""
+  score(id: Int!): Score!
 }
 
+"""Roles allowed in the system [superAdmin, admin, talachero, user]"""
 enum UserRoles {
   ADMIN
   TALACHERO
@@ -79,22 +118,54 @@ enum UserRoles {
 }
 
 type Mutation {
+  """Create a new user"""
   signup(signupInput: SignupInput!): AuthResponde!
+
+  """User login"""
   signin(signinInput: SigninInput!): AuthResponde!
+
+  """Updates the data of a user by a unique ID"""
   updateUser(updateUserInput: UpdateUserInput!): User!
+
+  """Inactivate a user"""
   blockUser(id: Int!): User!
-  createPrice(createPriceInput: CreatePriceInput!): Price!
-  updatePrice(updatePriceInput: UpdatePriceInput!): Price!
-  removePrice(id: Int!): Price!
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
+
+  """Update the data of a specific company"""
   updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
-  removeCompany(id: Int!): Company!
-  createScore(createScoreInput: CreateScoreInput!): Score!
-  updateScore(updateScoreInput: UpdateScoreInput!): Score!
-  removeScore(id: Int!): Score!
+
+  """Inactivates a company by passing the company ID as a parameter"""
+  blockCompany(id: Int!): Company!
+
+  """Create a new service order"""
+  createOrder(createOrderInput: CreateOrderInput!): Order!
+
+  """Update order status"""
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+
+  """Delete the order"""
+  removeOrder(id: Int!): Order!
+
+  """Create a new payment"""
   createPayment(createPaymentInput: CreatePaymentInput!): Payment!
-  updatePayment(updatePaymentInput: UpdatePaymentInput!): Payment!
-  removePaymnet(id: Int!): Payment!
+
+  """Create a new price for either a [product, service, or cost]"""
+  createPrice(createPriceInput: CreatePriceInput!): Price!
+
+  """Update the price data"""
+  updatePrice(updatePriceInput: UpdatePriceInput!): Price!
+
+  """Delete a price with a unique ID"""
+  removePrice(id: Int!): Price!
+
+  """Create a new rating"""
+  createScore(createScoreInput: CreateScoreInput!): Score!
+
+  """Update a rating with a unique ID"""
+  updateScore(updateScoreInput: UpdateScoreInput!): Score!
+
+  """Remove a rating with a unique ID"""
+  removeScore(id: Int!): Score!
 }
 
 input SignupInput {
@@ -117,23 +188,6 @@ input UpdateUserInput {
   id: Int!
   roles: [UserRoles!]
   isActive: Boolean
-}
-
-input CreatePriceInput {
-  name: String!
-  price: Float!
-  stock: Int!
-  type: [String!]!
-  description: String
-}
-
-input UpdatePriceInput {
-  name: String
-  price: Float
-  stock: Int
-  type: [String!]
-  description: String
-  id: Int!
 }
 
 input CreateCompanyInput {
@@ -159,16 +213,15 @@ input UpdateCompanyInput {
   city: String
   postal_code: Int
   id: Int!
+  isActive: Boolean
 }
 
-input CreateScoreInput {
-  rank: Int!
-  quality: String
+input CreateOrderInput {
+  status: String!
 }
 
-input UpdateScoreInput {
-  rank: Int
-  quality: String
+input UpdateOrderInput {
+  status: String
   id: Int!
 }
 
@@ -182,13 +235,30 @@ input CreatePaymentInput {
   state: [String!]!
 }
 
-input UpdatePaymentInput {
-  toll: String
-  transfer: String
-  banner: String
-  card_type: String
-  bank_name: String
-  total: Float
-  state: [String!]
+input CreatePriceInput {
+  name: String!
+  price: Float!
+  stock: Int!
+  type: String!
+  description: String
+}
+
+input UpdatePriceInput {
+  name: String
+  price: Float
+  stock: Int
+  type: String
+  description: String
+  id: Int!
+}
+
+input CreateScoreInput {
+  rank: Int!
+  quality: String
+}
+
+input UpdateScoreInput {
+  rank: Int
+  quality: String
   id: Int!
 }

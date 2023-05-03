@@ -1,7 +1,10 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
+import { IsIn, IsString } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
 @InputType()
 export class CreateOrderInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @IsIn(['espera', 'completado'])
+  @Field(() => String)
+  status: string
 }

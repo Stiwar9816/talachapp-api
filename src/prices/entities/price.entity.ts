@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'prices' })
 @ObjectType()
@@ -21,9 +22,9 @@ export class Price {
   @Field(() => Int)
   stock: number
 
-  @Column('text', { array: true })
-  @Field(() => [String])
-  type: string[]
+  @Column('text')
+  @Field(() => String)
+  type: string
 
   @Column('text', { nullable: true })
   @Field(() => String, { nullable: true })
@@ -34,4 +35,14 @@ export class Price {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Relations
+  @ManyToOne(() => User, (user) => user.prices)
+  @JoinColumn({ name: 'createBy' })
+  user: User
+
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
+  @JoinColumn({ name: 'lastUpdateBy' })
+  @Field(() => User, { nullable: true })
+  lastUpdateBy?: User
 }

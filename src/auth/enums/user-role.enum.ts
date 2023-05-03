@@ -7,4 +7,7 @@ export enum UserRoles {
     SUPERADMIN = 'superAdmin'
 }
 
-registerEnumType(UserRoles, { name: 'UserRoles' })
+registerEnumType(UserRoles, {
+    name: 'UserRoles',
+    description: 'Roles allowed in the system [superAdmin, admin, talachero, user]'
+})

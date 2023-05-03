@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 // Entity/Inputs
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CompaniesService {
@@ -16,9 +17,10 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>
   ) { }
 
-  async create(createCompanyInput: CreateCompanyInput): Promise<Company> {
+  async create(createCompanyInput: CreateCompanyInput, createBy: User): Promise<Company> {
     try {
       const newCompany = await this.companyRepository.create(createCompanyInput)
+      newCompany.user = createBy
       return await this.companyRepository.save(newCompany)
     } catch (error) {
       this.handleDBException(error)
@@ -40,10 +42,10 @@ export class CompaniesService {
     }
   }
 
-  async update(id: number, updateCompanyInput: UpdateCompanyInput): Promise<Company> {
-    const company = await this.findOne(id)
-    this.handleDBNotFound(company, id)
+  async update(id: number, updateCompanyInput: UpdateCompanyInput, updateBy: User): Promise<Company> {
     try {
+      const company = await this.companyRepository.preload({ id, ...updateCompanyInput })
+      company.lastUpdateBy = updateBy
       return await this.companyRepository.save(company)
     } catch (error) {
       this.handleDBException({
@@ -53,9 +55,11 @@ export class CompaniesService {
     }
   }
 
-  async remove(id: number): Promise<Company> {
-    const company = await this.findOne(id)
-    return await this.companyRepository.remove(company)
+  async block(id: number, user: User): Promise<Company> {
+    const companyToBlock = await this.findOne(id)
+    companyToBlock.isActive = false
+    companyToBlock.lastUpdateBy = user
+    return await this.companyRepository.remove(companyToBlock)
   }
 
   // Manejo de excepciones
