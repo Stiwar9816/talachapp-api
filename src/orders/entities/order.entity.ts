@@ -1,10 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 // GraphQL
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 // Entity
 import { Company } from 'src/companies/entities/company.entity';
 import { Payment } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Price } from 'src/prices/entities/price.entity';
 @Entity({ name: 'orders' })
 @ObjectType()
 export class Order {
@@ -23,8 +24,9 @@ export class Order {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.orders)
-  @JoinColumn({ name: 'user' })
+  @ManyToOne(() => User, (user) => user.orders, { nullable: false, lazy: true })
+  @Index('userId-index')
+  @Field(() => User)
   user: User
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
@@ -33,10 +35,15 @@ export class Order {
   lastUpdateBy?: User
 
   @ManyToOne(() => Company, comapny => comapny.order)
-  @JoinColumn({ name: 'companiesID' })
+  @Index('companyID-index')
+  @Field(() => Company)
   companies: Company
 
   @OneToOne(() => Payment)
-  @JoinColumn({ name: 'paymentsID' })
+  @Field(() => Payment)
   payments: Payment
+
+  @OneToMany(() => Price, price => price.order, { nullable: true, lazy: true })
+  @Field(() => [Price], { nullable: true })
+  prices: Price[]
 }

@@ -17,7 +17,10 @@ import { User } from 'src/users/entities/user.entity';
 export class CompaniesResolver {
   constructor(private readonly companiesService: CompaniesService) { }
 
-  @Mutation(() => Company)
+  @Mutation(() => Company, {
+    name: 'createCompany',
+    description: 'Create a new companies/talacheros'
+  })
   createCompany(
     @Args('createCompanyInput') createCompanyInput: CreateCompanyInput,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
@@ -25,14 +28,20 @@ export class CompaniesResolver {
     return this.companiesService.create(createCompanyInput, user);
   }
 
-  @Query(() => [Company], { name: 'companies', description: 'Returns all of the registered companies or talacheros' })
+  @Query(() => [Company], {
+    name: 'companies',
+    description: 'Returns all of the registered companies or talacheros'
+  })
   findAll(
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
   ) {
     return this.companiesService.findAll();
   }
 
-  @Query(() => Company, { name: 'company', description: 'Returns a single specific record queried by ID' })
+  @Query(() => Company, {
+    name: 'company',
+    description: 'Returns a single specific record queried by ID'
+  })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
@@ -40,7 +49,10 @@ export class CompaniesResolver {
     return this.companiesService.findOne(id);
   }
 
-  @Mutation(() => Company, { name: 'updateCompany', description: 'Update the data of a specific company' })
+  @Mutation(() => Company, {
+    name: 'updateCompany',
+    description: 'Update the data of a specific company'
+  })
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
@@ -48,7 +60,10 @@ export class CompaniesResolver {
     return this.companiesService.update(updateCompanyInput.id, updateCompanyInput, user);
   }
 
-  @Mutation(() => Company, { name: 'blockCompany', description: 'Inactivates a company by passing the company ID as a parameter' })
+  @Mutation(() => Company, {
+    name: 'blockCompany',
+    description: 'Inactivates a company by passing the company ID as a parameter'
+  })
   blockCompany(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User

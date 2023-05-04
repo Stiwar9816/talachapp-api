@@ -17,7 +17,10 @@ import { User } from 'src/users/entities/user.entity';
 export class PricesResolver {
   constructor(private readonly pricesService: PricesService) { }
 
-  @Mutation(() => Price, { name: 'createPrice', description: 'Create a new price for either a [product, service, or cost]' })
+  @Mutation(() => Price, {
+    name: 'createPrice',
+    description: 'Create a new price for either a [product, service, or cost]'
+  })
   createPrice(
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
@@ -25,14 +28,20 @@ export class PricesResolver {
     return this.pricesService.create(createPriceInput, user);
   }
 
-  @Query(() => [Price], { name: 'prices', description: 'Search all prices' })
+  @Query(() => [Price], {
+    name: 'prices',
+    description: 'Search all prices'
+  })
   findAll(
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
   ): Promise<Price[]> {
     return this.pricesService.findAll();
   }
 
-  @Query(() => Price, { name: 'price', description: 'Search for a single price by price ID' })
+  @Query(() => Price, {
+    name: 'price',
+    description: 'Search for a single price by price ID'
+  })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
@@ -40,7 +49,21 @@ export class PricesResolver {
     return this.pricesService.findOne(id);
   }
 
-  @Mutation(() => Price, { name: 'updatePrice', description: 'Update the price data' })
+  @Query(() => [Price], {
+    name: 'priceByType',
+    description: 'Filters all prices depending on the type passed as a parameter'
+  })
+  findAllByType(
+    @Args('priceType', { type: () => String }) price: Price,
+    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User,
+  ): Promise<Price[]> {
+    return this.pricesService.findAllByType(price);
+  }
+
+  @Mutation(() => Price, {
+    name: 'updatePrice',
+    description: 'Update the price data'
+  })
   updatePrice(
     @Args('updatePriceInput') updatePriceInput: UpdatePriceInput,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
@@ -48,7 +71,10 @@ export class PricesResolver {
     return this.pricesService.update(updatePriceInput.id, updatePriceInput, user);
   }
 
-  @Mutation(() => Price, { name: 'removePrice', description: 'Delete a price with a unique ID' })
+  @Mutation(() => Price, {
+    name: 'removePrice',
+    description: 'Delete a price with a unique ID'
+  })
   removePrice(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User

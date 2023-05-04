@@ -13,10 +13,25 @@ type Payment {
   state: String!
 }
 
+type Price {
+  id: Int!
+  name: String!
+  price: Float!
+  stock: Int!
+  type: String!
+  description: String
+  lastUpdateBy: User
+  order: Order!
+}
+
 type Order {
   id: Int!
   status: String!
+  user: User!
   lastUpdateBy: User
+  companies: Company!
+  payments: Payment!
+  prices: [Price!]
 }
 
 type Company {
@@ -41,16 +56,6 @@ type Score {
   lastUpdateBy: User
 }
 
-type Price {
-  id: Int!
-  name: String!
-  price: Float!
-  stock: Int!
-  type: String!
-  description: String
-  lastUpdateBy: User
-}
-
 type User {
   id: Int!
   fullName: String!
@@ -60,6 +65,11 @@ type User {
   password: String!
   isActive: Boolean!
   lastUpdateBy: User
+  companies: Company!
+  payments: Payment!
+  prices: Price!
+  scores: Score!
+  orders: Order!
 }
 
 "\n    Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n    mutations and [ revalidateToken ] queries \n    { \n        token, \n        User[] \n    }\n    "
@@ -102,6 +112,9 @@ type Query {
   """Search for a single price by price ID"""
   price(id: Int!): Price!
 
+  """Filters all prices depending on the type passed as a parameter"""
+  priceByType(priceType: String!): [Price!]!
+
   """Find all ratings"""
   scores: [Score!]!
 
@@ -129,6 +142,8 @@ type Mutation {
 
   """Inactivate a user"""
   blockUser(id: Int!): User!
+
+  """Create a new companies/talacheros"""
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
 
   """Update the data of a specific company"""

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, createQueryBuilder } from 'typeorm';
 // Entity/Input
 import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
@@ -17,10 +17,9 @@ export class PricesService {
     private readonly priceRepository: Repository<Price>
   ) { }
 
-  async create(createPriceInput: CreatePriceInput, createBy: User): Promise<Price> {
+  async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
     try {
-      const newPrice = await this.priceRepository.create(createPriceInput)
-      newPrice.user = createBy
+      const newPrice = await this.priceRepository.create({ ...createPriceInput, user })
       return await this.priceRepository.save(newPrice)
     } catch (error) {
       this.handleDBException(error)
@@ -29,6 +28,13 @@ export class PricesService {
 
   async findAll(): Promise<Price[]> {
     return await this.priceRepository.find()
+  }
+
+  async findAllByType(price: Price): Promise<Price[]> {
+    return this.priceRepository.createQueryBuilder("price")
+      .where("price.type = :price")
+      .setParameter('price', price)
+      .getMany()
   }
 
   async findOne(id: number): Promise<Price> {

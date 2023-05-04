@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsIn, IsString } from 'class-validator';
-import { User } from 'src/users/entities/user.entity';
+import { IsArray, IsIn, IsString } from 'class-validator';
+import { Price } from 'src/prices/entities/price.entity';
 
 @InputType()
 export class CreateOrderInput {

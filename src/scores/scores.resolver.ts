@@ -16,7 +16,10 @@ import { User } from 'src/users/entities/user.entity';
 export class ScoresResolver {
   constructor(private readonly scoresService: ScoresService) { }
 
-  @Mutation(() => Score, { name: 'createScore', description: 'Create a new rating' })
+  @Mutation(() => Score, {
+    name: 'createScore',
+    description: 'Create a new rating'
+  })
   createScore(
     @Args('createScoreInput') createScoreInput: CreateScoreInput,
     @CurrentUser() user: User
@@ -24,12 +27,18 @@ export class ScoresResolver {
     return this.scoresService.create(createScoreInput);
   }
 
-  @Query(() => [Score], { name: 'scores', description: 'Find all ratings' })
+  @Query(() => [Score], {
+    name: 'scores',
+    description: 'Find all ratings'
+  })
   findAll(@CurrentUser() user: User): Promise<Score[]> {
     return this.scoresService.findAll();
   }
 
-  @Query(() => Score, { name: 'score', description: 'Search for a rating by a unique ID' })
+  @Query(() => Score, {
+    name: 'score',
+    description: 'Search for a rating by a unique ID'
+  })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser() user: User
@@ -37,7 +46,10 @@ export class ScoresResolver {
     return this.scoresService.findOne(id);
   }
 
-  @Mutation(() => Score, { name: 'updateScore', description: 'Update a rating with a unique ID' })
+  @Mutation(() => Score, {
+    name: 'updateScore',
+    description: 'Update a rating with a unique ID'
+  })
   updateScore(
     @Args('updateScoreInput') updateScoreInput: UpdateScoreInput,
     @CurrentUser() user: User
@@ -45,7 +57,10 @@ export class ScoresResolver {
     return this.scoresService.update(updateScoreInput.id, updateScoreInput, user);
   }
 
-  @Mutation(() => Score, { name: 'removeScore', description: 'Remove a rating with a unique ID' })
+  @Mutation(() => Score, {
+    name: 'removeScore',
+    description: 'Remove a rating with a unique ID'
+  })
   removeScore(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser() user: User

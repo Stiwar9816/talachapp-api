@@ -56,18 +56,23 @@ export class User {
   lastUpdateBy?: User
 
   @OneToMany(() => Company, company => company.user)
+  @Field(() => Company)
   companies: Company
 
   @OneToMany(() => Payment, payment => payment.user)
+  @Field(() => Payment)
   payments: Payment
 
   @OneToMany(() => Price, price => price.user)
+  @Field(() => Price)
   prices: Price
 
   @OneToMany(() => Score, score => score.user)
+  @Field(() => Score)
   scores: Score
 
   @OneToMany(() => Order, order => order.user)
+  @Field(() => Order)
   orders: Order
 
   // Convertimos los datos del email a minúsculas

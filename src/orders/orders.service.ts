@@ -7,6 +7,7 @@ import { CreateOrderInput, UpdateOrderInput } from './dto';
 // Entity
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Price } from 'src/prices/entities/price.entity';
 
 @Injectable()
 export class OrdersService {
@@ -18,10 +19,10 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>
   ) { }
 
-  async create(createOrderInput: CreateOrderInput, createBy: User): Promise<Order> {
+  async create(createOrderInput: CreateOrderInput, user: User, price: Price): Promise<Order> {
     try {
-      const newOrder = await this.orderRepository.create(createOrderInput)
-      newOrder.user = createBy
+      const newOrder = await this.orderRepository.create({ ...createOrderInput, user })
+      newOrder.prices = [price]
       return await this.orderRepository.save(newOrder)
     } catch (error) {
       this.handleDBException(error)

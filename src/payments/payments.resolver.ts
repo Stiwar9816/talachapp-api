@@ -16,7 +16,10 @@ import { User } from 'src/users/entities/user.entity';
 export class PaymentsResolver {
   constructor(private readonly paymentsService: PaymentsService) { }
 
-  @Mutation(() => Payment, { name: 'createPayment', description: 'Create a new payment' })
+  @Mutation(() => Payment, {
+    name: 'createPayment',
+    description: 'Create a new payment'
+  })
   createPayment(
     @Args('createPaymentInput') createPaymentInput: CreatePaymentInput,
     @CurrentUser() user: User
@@ -24,12 +27,18 @@ export class PaymentsResolver {
     return this.paymentsService.create(createPaymentInput);
   }
 
-  @Query(() => [Payment], { name: 'payments', description: 'Find all payments' })
+  @Query(() => [Payment], {
+    name: 'payments',
+    description: 'Find all payments'
+  })
   findAll(@CurrentUser() user: User) {
     return this.paymentsService.findAll();
   }
 
-  @Query(() => Payment, { name: 'payment', description: 'Search for a single payment by payment ID' })
+  @Query(() => Payment, {
+    name: 'payment',
+    description: 'Search for a single payment by payment ID'
+  })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser() user: User
