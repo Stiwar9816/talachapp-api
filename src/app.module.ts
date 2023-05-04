@@ -41,35 +41,35 @@ import { OrdersModule } from './orders/orders.module';
     }),
     // GraphQL
     // TODO: Configuración básica
-    // GraphQLModule.forRoot<ApolloDriverConfig>({
-    //   driver: ApolloDriver,
-    //   autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-    //   playground: false,
-    //   plugins: [
-    //     ApolloServerPluginLandingPageLocalDefault()
-    //   ]
-    // }),
-    // TODO: Bloqueo de Schemas para usuarios no autenticados
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AuthModule],
-      inject: [JwtService],
-      useFactory: async (jwtService: JwtService) => ({
-        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: false,
-        plugins: [
-          ApolloServerPluginLandingPageLocalDefault()
-        ],
-        context({ req }) {
-          // const token = req.headers.authorization?.replace('Bearer ', '')
-          // if (!token) throw Error('Token needed')
-
-          // const payload = jwtService.decode(token)
-          // if (!payload) throw Error('Token not valid')
-
-        }
-      })
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: false,
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault()
+      ]
     }),
+    // TODO: Bloqueo de Schemas para usuarios no autenticados
+    // GraphQLModule.forRootAsync({
+    //   driver: ApolloDriver,
+    //   imports: [AuthModule],
+    //   inject: [JwtService],
+    //   useFactory: async (jwtService: JwtService) => ({
+    //     autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    //     playground: false,
+    //     plugins: [
+    //       ApolloServerPluginLandingPageLocalDefault()
+    //     ],
+    //     context({ req }) {
+    //       const token = req.headers.authorization?.replace('Bearer ', '')
+    //       if (!token) throw Error('Token needed')
+
+    //       const payload = jwtService.decode(token)
+    //       if (!payload) throw Error('Token not valid')
+
+    //     }
+    //   })
+    // }),
     AuthModule,
     CompaniesModule,
     OrdersModule,
