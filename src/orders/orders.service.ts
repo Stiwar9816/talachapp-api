@@ -7,7 +7,8 @@ import { CreateOrderInput, UpdateOrderInput } from './dto';
 // Entity
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Price } from 'src/prices/entities/price.entity';
+import { PricesService } from 'src/prices/prices.service';
+import { PriceIdsArgs } from './dto/args/priceIds.args';
 
 @Injectable()
 export class OrdersService {
@@ -16,14 +17,31 @@ export class OrdersService {
 
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
+    private readonly orderRepository: Repository<Order>,
+    private readonly pricesService: PricesService
   ) { }
 
-  async create(createOrderInput: CreateOrderInput, user: User, price: Price): Promise<Order> {
+  async create(createOrderInput: CreateOrderInput, user: User, priceIds: PriceIdsArgs): Promise<Order> {
+    const { ...createOrder } = createOrderInput
+    const { ids } = priceIds
     try {
-      const newOrder = await this.orderRepository.create({ ...createOrderInput, user })
-      newOrder.prices = [price]
-      return await this.orderRepository.save(newOrder)
+      const prices = await this.pricesService.findAllId(ids)
+      const priceCount = {} // Initialize an object to count occurrences of each price ID
+      ids.forEach(id => {
+        priceCount[id] = (priceCount[id] || 0) + 1 // Increment counter for current ID
+      })
+      // Subtract quantities from prices
+      for (const price of prices) {
+        const id = price.id
+        const count = priceCount[id] || 0
+        price.stock -= count
+        await this.pricesService.update(price.id, price, user) // Update the price in the database
+      }
+      const newOrder = this.orderRepository.create({
+        ...createOrder, prices, user
+      })
+      await this.orderRepository.save(newOrder)
+      return this.findOne(newOrder.id)
     } catch (error) {
       this.handleDBException(error)
     }
@@ -43,6 +61,7 @@ export class OrdersService {
       })
     }
   }
+
 
   async update(id: number, updateOrderInput: UpdateOrderInput, updateBy: User): Promise<Order> {
     try {

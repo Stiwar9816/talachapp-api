@@ -11,7 +11,8 @@ import { UserRoles } from 'src/auth/enums/user-role.enum';
 import { CreateOrderInput, UpdateOrderInput } from './dto';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Price } from 'src/prices/entities/price.entity';
+// Args
+import { PriceIdsArgs } from './dto/args/priceIds.args';
 
 @Resolver(() => Order)
 @UseGuards(JwtAuthGuard)
@@ -24,9 +25,10 @@ export class OrdersResolver {
   })
   createOrder(
     @Args('createOrderInput') createOrderInput: CreateOrderInput,
-    @CurrentUser() user: User, price: Price
+    @CurrentUser() user: User,
+    @Args() ids: PriceIdsArgs
   ): Promise<Order> {
-    return this.ordersService.create(createOrderInput, user, price);
+    return this.ordersService.create(createOrderInput, user, ids);
   }
 
   @Query(() => [Order], {

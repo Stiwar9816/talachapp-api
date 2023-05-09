@@ -14,7 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { SignupInput } from '../auth/dto/inputs/signup.input';
 // Bcrypt
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs'
 // Auth (Enum)
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 

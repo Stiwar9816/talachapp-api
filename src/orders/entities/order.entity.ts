@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 // GraphQL
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 // Entity
@@ -43,7 +43,7 @@ export class Order {
   @Field(() => Payment)
   payments: Payment
 
-  @OneToMany(() => Price, price => price.order, { nullable: true, lazy: true })
-  @Field(() => [Price], { nullable: true })
-  prices: Price[]
+  @ManyToMany(() => Price)
+  @JoinTable()
+  prices: Price[];
 }

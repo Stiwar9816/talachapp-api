@@ -60,6 +60,11 @@ export class PricesResolver {
     return this.pricesService.findAllByType(price);
   }
 
+  @Query(() => [Price])
+  pricesByIds(@Args({ name: 'ids', type: () => [Int] }) ids: number[]): Promise<Price[]> {
+    return this.pricesService.findAllId(ids)
+  }
+
   @Mutation(() => Price, {
     name: 'updatePrice',
     description: 'Update the price data'

@@ -48,6 +48,12 @@ export class PricesService {
     }
   }
 
+  async findAllId(ids: number[]): Promise<Price[]> {
+    return await this.priceRepository.createQueryBuilder('price')
+      .where('price.id IN (:...ids)', { ids })
+      .getMany();
+  }
+
   async update(id: number, updatePriceInput: UpdatePriceInput, updateBy: User): Promise<Price> {
     try {
       const price = await this.priceRepository.preload({ id, ...updatePriceInput })

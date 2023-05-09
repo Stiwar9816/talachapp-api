@@ -21,7 +21,7 @@ export class Price {
 
   @Column('int')
   @Field(() => Int)
-  stock: number
+  stock?: number
 
   @Column('text')
   @Field(() => String)
@@ -46,8 +46,4 @@ export class Price {
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, { nullable: true })
   lastUpdateBy?: User
-
-  @ManyToOne(() => Order, order => order.prices, { lazy: true })
-  @Field(() => Order)
-  order: Order
 }

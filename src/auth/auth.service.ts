@@ -2,7 +2,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 // Nest Jwt
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs'
 // Services
 import { UsersService } from 'src/users/users.service';
 // Types

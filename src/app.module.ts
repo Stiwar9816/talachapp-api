@@ -75,7 +75,7 @@ import { OrdersModule } from './orders/orders.module';
     PaymentsModule,
     PricesModule,
     ScoresModule,
-    UsersModule,
+    UsersModule
   ],
   controllers: [],
   providers: [],
