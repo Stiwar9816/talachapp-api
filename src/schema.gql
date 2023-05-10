@@ -2,75 +2,201 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Scheme where all the information about user payments will be displayed"""
 type Payment {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """Value of the payment of the service provided"""
   toll: String!
+
+  """"""
   transfer: String!
+
+  """"""
   banner: String!
+
+  """User card type"""
   card_type: String!
+
+  """Name of the bank that the user uses"""
   bank_name: String!
+
+  """Total bill of requested services"""
   total: Float!
-  state: String!
+
+  """payment status [waiting, processing or completed]"""
+  state: [String!]!
 }
 
+"\n  Scheme where the information about the company's inventory is saved,\n  it can be saved regarding products, \n  services or fixed costs that are handled internally\n  "
 type Price {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """Name of the product, service or fixed cost"""
   name: String!
+
+  """Assigned value for a product, service or a fixed cost"""
   price: Float!
+
+  """Quantity of the price or product in inventory"""
   stock: Int!
+
+  """Type of price which can be [ product, service or fixed cost ]"""
   type: String!
+
+  """
+  Description of the added elements [ products, services or fixed costs ]
+  """
   description: String
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
   lastUpdateBy: User
 }
 
+"\n  Scheme where all the information on customer orders is stored, \n  as well as the company that will provide the service, the products or services, \n  the method of payment and the user's data.\n  "
 type Order {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """order status [waiting or completed]"""
   status: String!
+
+  """Relationship with the many-to-one users table"""
   user: User!
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
   lastUpdateBy: User
+
+  """Relationship with the many-to-one companies table"""
   companies: Company!
+
+  """Relationship with the many-to-one payments table"""
   payments: Payment!
 }
 
+"""
+scheme of what the companies table looks like where the information of each company or talachero will be stored
+"""
 type Company {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """company name or talachero"""
   name_company: String!
+
+  """company phone or talachero"""
   phone: Int!
+
+  """
+  The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
+  """
   rfc: String
+
+  """
+  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
+  """
   cfdi: String
+
+  """business name of the company"""
   bussiness_name: String!
+
+  """Company address"""
   address: String
+
+  """State where the company is located"""
   department: String!
+
+  """City where the company is located"""
   city: String!
+
+  """Company Postal Code"""
   postal_code: Int
+
+  """
+  Company status within the system "active (true) || inactive (false)"
+  """
   isActive: Boolean!
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
   lastUpdateBy: User
 }
 
+"""
+Scheme where user rating information is stored for the services provided
+"""
 type Score {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
   rank: Int!
+
+  """Quality of service provided"""
   quality: String
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
   lastUpdateBy: User
 }
 
+"""Schema where the information of the system users is stored"""
 type User {
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """Full name of the user"""
   fullName: String!
+
+  """User phone"""
   phone: Float
+
+  """User email"""
   email: String!
+
+  """
+  User roles which can be [ admin, user or talachero ] by default takes the user role
+  """
   roles: [String!]!
+
+  "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
   password: String!
+
+  """User status in the system [ active (true) or inactive (false) ]"""
   isActive: Boolean!
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
   lastUpdateBy: User
+
+  """One-to-many relationship with company table"""
   companies: Company!
+
+  """One-to-many relationship with payment table"""
   payments: Payment!
+
+  """One-to-many relationship with price table"""
   prices: Price!
+
+  """One-to-many relationship with score table"""
   scores: Score!
+
+  """One-to-many relationship with order table"""
   orders: Order!
 }
 
-"\n    Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n    mutations and [ revalidateToken ] queries \n    { \n        token, \n        User[] \n    }\n    "
+"\n        Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n        mutations and [ revalidateToken ] queries \n        { \n            token, \n            User[] \n        }\n    "
 type AuthResponde {
   token: String!
   user: User!
@@ -182,97 +308,241 @@ type Mutation {
   removeScore(id: Int!): Score!
 }
 
+"""Diagram of the fields requested for the registration of a user"""
 input SignupInput {
+  """User email"""
   email: String!
+
+  """Full name of the user"""
   fullName: String!
-  phone: Float!
-  password: String!
-}
 
-input SigninInput {
-  email: String!
-  password: String!
-}
-
-input UpdateUserInput {
-  email: String
-  fullName: String
+  """User phone"""
   phone: Float
+
+  "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
+  password: String!
+}
+
+"""Diagram of the fields requested for system login"""
+input SigninInput {
+  """User email"""
+  email: String!
+
+  "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
+  password: String!
+}
+
+"""
+Diagram of the fields enabled to be able to be modified by the system admin for a specific user
+"""
+input UpdateUserInput {
+  """User email"""
+  email: String
+
+  """Full name of the user"""
+  fullName: String
+
+  """User phone"""
+  phone: Float
+
+  "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
   password: String
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
+
+  """
+  User roles which can be [ admin, user or talachero ] by default takes the user role
+  """
   roles: [UserRoles!]
-  isActive: Boolean
+
+  """User status in the system [ active (true) or inactive (false) ]"""
+  isActive: Boolean!
 }
 
+"""Diagram of the information expected to create a new company/talacheros"""
 input CreateCompanyInput {
+  """company name or talachero"""
   name_company: String!
+
+  """company phone or talachero"""
   phone: Int!
+
+  """
+  The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
+  """
   rfc: String
+
+  """
+  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
+  """
   cfdi: String
+
+  """business name of the company"""
   bussiness_name: String!
+
+  """Company address"""
   address: String
+
+  """State where the company is located"""
   department: String!
+
+  """City where the company is located"""
   city: String!
+
+  """Company Postal Code"""
   postal_code: Int
 }
 
+"""
+Diagram of the fields enabled to be able to be modified by the admin for a specific company
+"""
 input UpdateCompanyInput {
+  """company name or talachero"""
   name_company: String
+
+  """company phone or talachero"""
   phone: Int
+
+  """
+  The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
+  """
   rfc: String
+
+  """
+  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
+  """
   cfdi: String
+
+  """business name of the company"""
   bussiness_name: String
+
+  """Company address"""
   address: String
+
+  """State where the company is located"""
   department: String
+
+  """City where the company is located"""
   city: String
+
+  """Company Postal Code"""
   postal_code: Int
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
-  isActive: Boolean
+
+  """
+  Company status within the system "active (true) || inactive (false)"
+  """
+  isActive: Boolean!
 }
 
+"""Schema of the information expected to create a new service order"""
 input CreateOrderInput {
+  """order status [waiting or completed]"""
   status: String! = "espera"
 }
 
+"\n  Diagram of the fields enabled to be able to be modified by the admin, \n  talachero or user by default for a specific service order  \n  "
 input UpdateOrderInput {
+  """order status [waiting or completed]"""
   status: String = "espera"
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
 }
 
+"""
+Outline of information that is expected to create a new price for a [product, service, or cost]
+"""
 input CreatePriceInput {
+  """Name of the product, service or fixed cost"""
   name: String!
+
+  """Assigned value for a product, service or a fixed cost"""
   price: Float!
+
+  """Quantity of the price or product in inventory"""
   stock: Int!
+
+  """Type of price which can be [ product, service or fixed cost ]"""
   type: String!
+
+  """
+  Description of the added elements [ products, services or fixed costs ]
+  """
   description: String
 }
 
+"\n  Diagram of the fields enabled to be able to be modified \n  by the admin or talachero for a specific price\n  "
 input UpdatePriceInput {
+  """Name of the product, service or fixed cost"""
   name: String
+
+  """Assigned value for a product, service or a fixed cost"""
   price: Float
+
+  """Quantity of the price or product in inventory"""
   stock: Int
+
+  """Type of price which can be [ product, service or fixed cost ]"""
   type: String
+
+  """
+  Description of the added elements [ products, services or fixed costs ]
+  """
   description: String
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
 }
 
+"""Schema of the information expected to create a new payment"""
 input CreatePaymentInput {
+  """Value of the payment of the service provided"""
   toll: String!
+
+  """"""
   transfer: String!
+
+  """"""
   banner: String!
+
+  """User card type"""
   card_type: String!
+
+  """Name of the bank that the user uses"""
   bank_name: String!
+
+  """Total bill of requested services"""
   total: Float!
+
+  """payment status [waiting, processing or completed]"""
   state: [String!]!
 }
 
+"""Summary of information that is expected to create a new rating"""
 input CreateScoreInput {
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
   rank: Int!
+
+  """Quality of service provided"""
   quality: String
 }
 
+"\n  Diagram of the fields enabled to be able to be modified by the admin,\n  talachero or user by default for a specific qualification\n  "
 input UpdateScoreInput {
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
   rank: Int
+
+  """Quality of service provided"""
   quality: String
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
 }

@@ -6,55 +6,83 @@ import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity({ name: 'companies' })
-@ObjectType()
+@ObjectType({
+  description: `scheme of what the companies table looks like where the information of each company or talachero will be stored`
+})
 export class Company {
 
   @PrimaryGeneratedColumn('increment')
-  @Field(() => Int)
+  @Field(() => Int, {
+    description: 'Id automatically generated in integer format eg: 1,2,3..'
+  })
   id: number
 
   @Column('text', { unique: true })
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'company name or talachero'
+  })
   name_company: string
 
   @Column('int')
-  @Field(() => Int)
+  @Field(() => Int, {
+    description: 'company phone or talachero'
+  })
   phone: number
 
   @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"'
+  })
   rfc?: string
 
   @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.'
+  })
   cfdi?: string
 
   @Column('text')
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'business name of the company'
+  })
   bussiness_name: string
 
   @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'Company address'
+  })
   address?: string
 
   @Column('text')
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'State where the company is located'
+  })
   department: string
 
   @Column('text')
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'City where the company is located'
+  })
   city: string
 
   @Column('int', { nullable: true })
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {
+    nullable: true,
+    description: 'Company Postal Code'
+  })
   postal_code?: number
 
   @Column('bool', {
     default: true
   })
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    description: 'Company status within the system "active (true) || inactive (false)"'
+  })
   isActive: boolean
-  
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -66,12 +94,15 @@ export class Company {
   @JoinColumn({ name: 'userID' })
   user: User
 
-  @OneToMany(() => Order, (order) => order.companies, { eager: true })
+  @OneToMany(() => Order, (order) => order.companies, { lazy: true })
   order: Order[]
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
   @JoinColumn({ name: 'lastUpdateBy' })
-  @Field(() => User, { nullable: true })
+  @Field(() => User, {
+    nullable: true,
+    description: 'Returns the information of the user who made the last update of the company data'
+  })
   lastUpdateBy?: User
 
 }

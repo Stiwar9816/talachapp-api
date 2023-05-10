@@ -1,34 +1,53 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
-import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'prices' })
-@ObjectType()
+@ObjectType({
+  description:
+    `
+  Scheme where the information about the company's inventory is saved,
+  it can be saved regarding products, 
+  services or fixed costs that are handled internally
+  `
+})
 export class Price {
 
   @PrimaryGeneratedColumn('increment')
-  @Field(() => Int)
+  @Field(() => Int, {
+    description: 'Id automatically generated in integer format eg: 1,2,3..'
+  })
   id: number
 
   @Column('text', { unique: true })
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'Name of the product, service or fixed cost'
+  })
   name: string
 
   @Column('float')
-  @Field(() => Float)
+  @Field(() => Float, {
+    description: 'Assigned value for a product, service or a fixed cost'
+  })
   price: number
 
   @Column('int')
-  @Field(() => Int)
+  @Field(() => Int, {
+    description: 'Quantity of the price or product in inventory'
+  })
   stock?: number
 
   @Column('text')
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'Type of price which can be [ product, service or fixed cost ]'
+  })
   type: string
 
   @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'Description of the added elements [ products, services or fixed costs ]'
+  })
   description?: string
 
   @CreateDateColumn()
@@ -44,6 +63,9 @@ export class Price {
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
   @JoinColumn({ name: 'lastUpdateBy' })
-  @Field(() => User, { nullable: true })
+  @Field(() => User, {
+    nullable: true,
+    description: 'Returns the information of the user who made the last update of the company data'
+  })
   lastUpdateBy?: User
 }
