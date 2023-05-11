@@ -8,24 +8,27 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+// Auth
+import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 // Modules
 import { PricesModule } from './prices/prices.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ScoresModule } from './scores/scores.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     // Configuración de credenciales de la DB
     TypeOrmModule.forRoot({
-      ssl: process.env.STAGE === 'prod',
-      extra: {
-        ssl: process.env.STAGE === 'prod'
-          ? { rejectUnauthorized: false }
-          : null
-      },
+      ssl: (process.env.STATE === 'prod')
+        ? {
+          rejectUnauthorized: false,
+          sslmode: 'require'
+        } : false as any,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
@@ -36,6 +39,7 @@ import { UsersModule } from './users/users.module';
       synchronize: true
     }),
     // GraphQL
+    // TODO: Configuración básica
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -44,11 +48,34 @@ import { UsersModule } from './users/users.module';
         ApolloServerPluginLandingPageLocalDefault()
       ]
     }),
-    PricesModule,
+    // TODO: Bloqueo de Schemas para usuarios no autenticados
+    // GraphQLModule.forRootAsync({
+    //   driver: ApolloDriver,
+    //   imports: [AuthModule],
+    //   inject: [JwtService],
+    //   useFactory: async (jwtService: JwtService) => ({
+    //     autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    //     playground: false,
+    //     plugins: [
+    //       ApolloServerPluginLandingPageLocalDefault()
+    //     ],
+    //     context({ req }) {
+    //       const token = req.headers.authorization?.replace('Bearer ', '')
+    //       if (!token) throw Error('Token needed')
+
+    //       const payload = jwtService.decode(token)
+    //       if (!payload) throw Error('Token not valid')
+
+    //     }
+    //   })
+    // }),
+    AuthModule,
     CompaniesModule,
-    ScoresModule,
+    OrdersModule,
     PaymentsModule,
-    UsersModule,
+    PricesModule,
+    ScoresModule,
+    UsersModule
   ],
   controllers: [],
   providers: [],

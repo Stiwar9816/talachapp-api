@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, createQueryBuilder } from 'typeorm';
 // Entity/Input
 import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PricesService {
@@ -16,9 +17,9 @@ export class PricesService {
     private readonly priceRepository: Repository<Price>
   ) { }
 
-  async create(createPriceInput: CreatePriceInput): Promise<Price> {
+  async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
     try {
-      const newPrice = await this.priceRepository.create(createPriceInput)
+      const newPrice = await this.priceRepository.create({ ...createPriceInput, user })
       return await this.priceRepository.save(newPrice)
     } catch (error) {
       this.handleDBException(error)
@@ -27,6 +28,13 @@ export class PricesService {
 
   async findAll(): Promise<Price[]> {
     return await this.priceRepository.find()
+  }
+
+  async findAllByType(price: Price): Promise<Price[]> {
+    return this.priceRepository.createQueryBuilder("price")
+      .where("price.type = :price")
+      .setParameter('price', price)
+      .getMany()
   }
 
   async findOne(id: number): Promise<Price> {
@@ -40,10 +48,16 @@ export class PricesService {
     }
   }
 
-  async update(id: number, updatePriceInput: UpdatePriceInput): Promise<Price> {
-    const price = await this.findOne(id)
-    this.handleDBNotFound(price, id)
+  async findAllId(ids: number[]): Promise<Price[]> {
+    return await this.priceRepository.createQueryBuilder('price')
+      .where('price.id IN (:...ids)', { ids })
+      .getMany();
+  }
+
+  async update(id: number, updatePriceInput: UpdatePriceInput, updateBy: User): Promise<Price> {
     try {
+      const price = await this.priceRepository.preload({ id, ...updatePriceInput })
+      price.lastUpdateBy = updateBy
       return await this.priceRepository.save(price)
     } catch (error) {
       this.handleDBException(error)

@@ -1,36 +1,48 @@
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
+// GraphQL
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+// Service
 import { PaymentsService } from './payments.service';
+// Auth (Enums/Decorators/Guards)
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+// Entity/Dto's(Inputs)
+import { CreatePaymentInput } from './dto';
 import { Payment } from './entities/payment.entity';
-import { CreatePaymentInput } from './dto/inputs/create-payment.input';
-import { UpdatePaymentInput } from './dto/inputs/update-payment.input';
-import { ParseIntPipe } from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Payment)
+@UseGuards(JwtAuthGuard)
 export class PaymentsResolver {
   constructor(private readonly paymentsService: PaymentsService) { }
 
-  @Mutation(() => Payment, { name: 'createPayment' })
-  createPayment(@Args('createPaymentInput') createPaymentInput: CreatePaymentInput) {
+  @Mutation(() => Payment, {
+    name: 'createPayment',
+    description: 'Create a new payment'
+  })
+  createPayment(
+    @Args('createPaymentInput') createPaymentInput: CreatePaymentInput,
+    @CurrentUser() user: User
+  ) {
     return this.paymentsService.create(createPaymentInput);
   }
 
-  @Query(() => [Payment], { name: 'payments' })
-  findAll() {
+  @Query(() => [Payment], {
+    name: 'payments',
+    description: 'Find all payments'
+  })
+  findAll(@CurrentUser() user: User) {
     return this.paymentsService.findAll();
   }
 
-  @Query(() => Payment, { name: 'payment' })
-  findOne(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
+  @Query(() => Payment, {
+    name: 'payment',
+    description: 'Search for a single payment by payment ID'
+  })
+  findOne(
+    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @CurrentUser() user: User
+  ) {
     return this.paymentsService.findOne(id);
-  }
-
-  @Mutation(() => Payment, { name: 'updatePayment' })
-  updatePayment(@Args('updatePaymentInput') updatePaymentInput: UpdatePaymentInput) {
-    return this.paymentsService.update(updatePaymentInput.id, updatePaymentInput);
-  }
-
-  @Mutation(() => Payment, { name: 'removePaymnet' })
-  removePayment(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
-    return this.paymentsService.remove(id);
   }
 }
