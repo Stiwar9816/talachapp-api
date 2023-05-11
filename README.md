@@ -33,13 +33,7 @@ docker-compose up (Para revisar los logs)
 yarn start:dev
 ```
 
-8. Documentación API en Swagger UI
-
-```
-http://localhost:3000/api
-```
-
-9. Playground GraphQL
+8. Playground GraphQL
 
 ```
 http://localhost:3000/graphql
@@ -50,5 +44,4 @@ http://localhost:3000/graphql
 - NestJS
 - Docker
 - Postgres
-- Swagger
 - GraphQL
