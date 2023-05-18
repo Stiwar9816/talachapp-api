@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  talachapp_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stiwar1098/talachapp_api
+    container_name: Talachapp_API
+    restart: always
+    ports:
+      - '${PORT}:${PORT}'
+
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT}
+      STATE: ${STATE}

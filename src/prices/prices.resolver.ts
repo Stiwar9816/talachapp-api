@@ -57,7 +57,7 @@ export class PricesResolver {
     @Args('priceType', { type: () => String }) price: Price,
     @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User,
   ): Promise<Price[]> {
-    return this.pricesService.findAllByType(price);
+    return this.pricesService.findAllByType(price, user);
   }
 
   @Query(() => [Price])

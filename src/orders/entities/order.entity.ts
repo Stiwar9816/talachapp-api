@@ -29,6 +29,7 @@ export class Order {
   status: string
 
   @CreateDateColumn()
+  @Field(() => Date)
   createdAt: Date;
 
   @UpdateDateColumn()
@@ -50,14 +51,14 @@ export class Order {
   })
   lastUpdateBy?: User
 
-  @ManyToOne(() => Company, comapny => comapny.order)
+  @ManyToOne(() => Company, comapny => comapny.order, { eager: true })
   @Index('companyID-index')
   @Field(() => Company, {
     description: 'Relationship with the many-to-one companies table'
   })
   companies: Company
 
-  @OneToOne(() => Payment)
+  @OneToOne(() => Payment, { eager: true })
   @Field(() => Payment, {
     description: 'Relationship with the many-to-one payments table'
   })

@@ -30,11 +30,11 @@ export class PricesService {
     return await this.priceRepository.find()
   }
 
-  async findAllByType(price: Price): Promise<Price[]> {
-    return this.priceRepository.createQueryBuilder("price")
-      .where("price.type = :price")
-      .setParameter('price', price)
-      .getMany()
+  async findAllByType(price: Price, createBy: User): Promise<Price[]> {
+    return this.priceRepository.createQueryBuilder('price')
+      .leftJoinAndSelect('price.user', 'createBy')
+      .where('price.type = :price AND price.createBy = :user', { price: price, user: createBy.id })
+      .getMany();
   }
 
   async findOne(id: number): Promise<Price> {

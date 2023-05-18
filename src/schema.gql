@@ -27,7 +27,16 @@ type Payment {
 
   """payment status [waiting, processing or completed]"""
   state: [String!]!
+  createdAt: DateTime!
+
+  """Relationship with the many-to-one orders table"""
+  order: Order!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 "\n  Scheme where the information about the company's inventory is saved,\n  it can be saved regarding products, \n  services or fixed costs that are handled internally\n  "
 type Price {
@@ -50,6 +59,7 @@ type Price {
   Description of the added elements [ products, services or fixed costs ]
   """
   description: String
+  user: User!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -64,6 +74,7 @@ type Order {
 
   """order status [waiting or completed]"""
   status: String!
+  createdAt: DateTime!
 
   """Relationship with the many-to-one users table"""
   user: User!
@@ -315,9 +326,6 @@ input SignupInput {
 
   """Full name of the user"""
   fullName: String!
-
-  """User phone"""
-  phone: Float
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
   password: String!

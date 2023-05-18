@@ -57,8 +57,9 @@ export class Price {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.prices)
+  @ManyToOne(() => User, (user) => user.prices, { eager: true })
   @JoinColumn({ name: 'createBy' })
+  @Field(() => User)
   user: User
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })

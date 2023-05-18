@@ -57,7 +57,7 @@ export class User {
   password: string
 
   @Column('bool', {
-    default: true
+    default: false
   })
   @Field(() => Boolean, {
     description: 'User status in the system [ active (true) or inactive (false) ]'

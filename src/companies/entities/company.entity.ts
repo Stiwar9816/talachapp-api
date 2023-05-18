@@ -91,7 +91,7 @@ export class Company {
 
   // Relations
   @ManyToOne(() => User, (user) => user.companies)
-  @JoinColumn({ name: 'userID' })
+  @JoinColumn({ name: 'userId' })
   user: User
 
   @OneToMany(() => Order, (order) => order.companies, { lazy: true })

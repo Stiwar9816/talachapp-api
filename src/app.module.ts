@@ -24,12 +24,12 @@ import { OrdersModule } from './orders/orders.module';
     ConfigModule.forRoot(),
     // Configuración de credenciales de la DB
     TypeOrmModule.forRoot({
+      type: 'postgres',
       ssl: (process.env.STATE === 'prod')
         ? {
           rejectUnauthorized: false,
           sslmode: 'require'
         } : false as any,
-      type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       database: process.env.DB_NAME,
