@@ -57,7 +57,7 @@ export class CompaniesService {
 
   async block(id: number, user: User): Promise<Company> {
     const companyToBlock = await this.findOne(id)
-    companyToBlock.isActive = false
+    companyToBlock.isActive = 'Inactivo'
     companyToBlock.lastUpdateBy = user
     return await this.companyRepository.remove(companyToBlock)
   }

@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: stiwar1098/talachapp_api
-    container_name: Talachapp_API
+    image: stiwar1098/talachapp-api
+    container_name: talachapp-api
     restart: always
     ports:
       - '${PORT}:${PORT}'

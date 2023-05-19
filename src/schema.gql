@@ -102,7 +102,7 @@ type Company {
   name_company: String!
 
   """company phone or talachero"""
-  phone: Int!
+  phone: Float!
 
   """
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
@@ -130,9 +130,9 @@ type Company {
   postal_code: Int
 
   """
-  Company status within the system "active (true) || inactive (false)"
+  Company status within the system "active || inactive "
   """
-  isActive: Boolean!
+  isActive: String!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -374,7 +374,7 @@ input CreateCompanyInput {
   name_company: String!
 
   """company phone or talachero"""
-  phone: Int!
+  phone: Float!
 
   """
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
@@ -400,6 +400,7 @@ input CreateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
+  isActive: String! = "Inactivo"
 }
 
 """
@@ -410,7 +411,7 @@ input UpdateCompanyInput {
   name_company: String
 
   """company phone or talachero"""
-  phone: Int
+  phone: Float
 
   """
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
@@ -437,13 +438,13 @@ input UpdateCompanyInput {
   """Company Postal Code"""
   postal_code: Int
 
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
-
   """
   Company status within the system "active (true) || inactive (false)"
   """
-  isActive: Boolean!
+  isActive: String! = "Inactivo"
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: Int!
 }
 
 """Schema of the information expected to create a new service order"""

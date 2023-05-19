@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
 import { CreateCompanyInput } from './create-company.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
@@ -13,10 +13,10 @@ export class UpdateCompanyInput extends PartialType(CreateCompanyInput) {
   })
   id: number
 
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  @Field(() => Boolean, {
+  @Field(() => String, {
     description: 'Company status within the system "active (true) || inactive (false)"'
   })
-  isActive?: boolean
+  isActive?: string
 }

@@ -1,5 +1,5 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional } from 'class-validator';
+import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional, IsIn, IsNumber } from 'class-validator';
 
 @InputType({
   description: 'Diagram of the information expected to create a new company/talacheros'
@@ -13,9 +13,9 @@ export class CreateCompanyInput {
   })
   name_company: string
 
-  @IsInt()
+  @IsNumber()
   @IsPositive()
-  @Field(() => Int, {
+  @Field(() => Float, {
     description: 'company phone or talachero'
   })
   phone: number
@@ -73,4 +73,8 @@ export class CreateCompanyInput {
     description: 'Company Postal Code'
   })
   postal_code?: number
+
+  @IsIn(['Activo', 'Inactivo'])
+  @Field(() => String)
+  isActive: string = 'Inactivo'
 }

@@ -1,6 +1,6 @@
 import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 // GraphQL
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -23,8 +23,8 @@ export class Company {
   })
   name_company: string
 
-  @Column('int')
-  @Field(() => Int, {
+  @Column('bigint')
+  @Field(() => Float, {
     description: 'company phone or talachero'
   })
   phone: number
@@ -75,13 +75,13 @@ export class Company {
   })
   postal_code?: number
 
-  @Column('bool', {
-    default: true
+  @Column('text', {
+    default: 'Inactivo'
   })
-  @Field(() => Boolean, {
-    description: 'Company status within the system "active (true) || inactive (false)"'
+  @Field(() => String, {
+    description: 'Company status within the system "active || inactive "'
   })
-  isActive: boolean
+  isActive: string
 
   @CreateDateColumn()
   createdAt: Date;
