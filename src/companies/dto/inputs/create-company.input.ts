@@ -77,7 +77,7 @@ export class CreateCompanyInput {
 
   @IsIn(['Activo', 'Inactivo'])
   @Field(() => String)
-  isActive: string = 'Activo'
+  isActive: string = 'Inactivo'
 
   @IsArray()
   @IsOptional()

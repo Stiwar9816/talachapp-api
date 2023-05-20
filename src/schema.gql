@@ -407,7 +407,7 @@ input CreateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
-  isActive: String! = "Activo"
+  isActive: String! = "Inactivo"
   geofence: [Float!]
 }
 
@@ -449,7 +449,7 @@ input UpdateCompanyInput {
   """
   Company status within the system "active (true) || inactive (false)"
   """
-  isActive: String! = "Activo"
+  isActive: String! = "Inactivo"
   geofence: [Float!]
 
   """Id automatically generated in integer format eg: 1,2,3.."""

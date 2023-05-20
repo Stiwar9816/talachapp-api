@@ -76,7 +76,9 @@ export class Company {
   })
   postal_code?: number
 
-  @Column('text')
+  @Column('text', {
+    default: 'Inactivo'
+  })
   @Field(() => String, {
     description: 'Company status within the system "active || inactive "'
   })
