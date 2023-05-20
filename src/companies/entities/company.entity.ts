@@ -4,6 +4,7 @@ import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Geofence } from '../interface/geofence.interface';
 
 @Entity({ name: 'companies' })
 @ObjectType({
@@ -82,6 +83,13 @@ export class Company {
     description: 'Company status within the system "active || inactive "'
   })
   isActive: string
+
+  @Column('float', {
+    array: true,
+    nullable: true
+  })
+  @Field(() => [Float], { nullable: true })
+  geofence?: Geofence[]
 
   @CreateDateColumn()
   createdAt: Date;

@@ -133,6 +133,7 @@ type Company {
   Company status within the system "active || inactive "
   """
   isActive: String!
+  geofence: [Float!]
 
   """
   Returns the information of the user who made the last update of the company data
@@ -183,8 +184,8 @@ type User {
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
   password: String!
 
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: Boolean!
+  """User status in the system [ active or inactive ]"""
+  isActive: String!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -365,7 +366,7 @@ input UpdateUserInput {
   roles: [UserRoles!]
 
   """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: Boolean!
+  isActive: String!
 }
 
 """Diagram of the information expected to create a new company/talacheros"""
@@ -400,7 +401,7 @@ input CreateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
-  isActive: String! = "Inactivo"
+  geofence: [Float!]
 }
 
 """
@@ -437,14 +438,15 @@ input UpdateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
+  geofence: [Float!]
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: Int!
 
   """
   Company status within the system "active (true) || inactive (false)"
   """
   isActive: String! = "Inactivo"
-
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
 }
 
 """Schema of the information expected to create a new service order"""

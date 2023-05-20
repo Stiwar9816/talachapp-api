@@ -85,7 +85,7 @@ export class UsersService {
 
   async block(id: number, user: User): Promise<User> {
     const userToBlock = await this.findOneById(id)
-    userToBlock.isActive = false
+    userToBlock.isActive = 'Inactivo'
     userToBlock.lastUpdateBy = user
     return await this.userRepository.save(userToBlock)
   }

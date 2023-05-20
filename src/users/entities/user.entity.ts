@@ -24,12 +24,11 @@ export class User {
   })
   fullName: string
 
-  @Column('float', { nullable: true })
+  @Column('float')
   @Field(() => Float, {
-    nullable: true,
     description: 'User phone'
   })
-  phone?: number
+  phone: number
 
   @Column('text', { unique: true })
   @Field(() => String, {
@@ -39,7 +38,7 @@ export class User {
 
   @Column('text', {
     array: true,
-    default: ['usuario']
+    default: ['Usuario']
   })
   @Field(() => [String], {
     description: 'User roles which can be [ admin, user or talachero ] by default takes the user role'
@@ -56,13 +55,13 @@ export class User {
   })
   password: string
 
-  @Column('bool', {
-    default: false
+  @Column('text', {
+    default: 'Activo'
   })
-  @Field(() => Boolean, {
-    description: 'User status in the system [ active (true) or inactive (false) ]'
+  @Field(() => String, {
+    description: 'User status in the system [ active or inactive ]'
   })
-  isActive: boolean
+  isActive: string
 
   @CreateDateColumn()
   createdAt: Date;

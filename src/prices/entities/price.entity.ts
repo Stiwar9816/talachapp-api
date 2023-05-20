@@ -35,7 +35,7 @@ export class Price {
   @Field(() => Int, {
     description: 'Quantity of the price or product in inventory'
   })
-  stock?: number
+  stock: number
 
   @Column('text')
   @Field(() => String, {

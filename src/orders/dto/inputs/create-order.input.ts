@@ -5,9 +5,9 @@ import { IsIn } from 'class-validator';
   description: 'Schema of the information expected to create a new service order'
 })
 export class CreateOrderInput {
-  @IsIn(['espera', 'completado'])
+  @IsIn(['Espera', 'Completado'])
   @Field(() => String, {
     description: 'order status [waiting or completed]'
   })
-  status: string = 'espera'
+  status: string = 'Espera'
 }

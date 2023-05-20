@@ -59,7 +59,7 @@ export class CompaniesService {
     const companyToBlock = await this.findOne(id)
     companyToBlock.isActive = 'Inactivo'
     companyToBlock.lastUpdateBy = user
-    return await this.companyRepository.remove(companyToBlock)
+    return await this.companyRepository.save(companyToBlock)
   }
 
   // Manejo de excepciones

@@ -17,12 +17,11 @@ export class CreateUserInput {
 
   @IsNumber()
   @IsPositive()
-  @IsOptional()
   @Field(() => Float, {
     nullable: true,
     description: 'User phone'
   })
-  phone?: number
+  phone: number
 
   @IsString()
   @MinLength(6)

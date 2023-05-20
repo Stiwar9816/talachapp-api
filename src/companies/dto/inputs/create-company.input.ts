@@ -1,5 +1,6 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
-import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional, IsIn, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional, IsIn, IsNumber, IsArray } from 'class-validator';
+import { Geofence } from 'src/companies/interface/geofence.interface';
 
 @InputType({
   description: 'Diagram of the information expected to create a new company/talacheros'
@@ -75,6 +76,10 @@ export class CreateCompanyInput {
   postal_code?: number
 
   @IsIn(['Activo', 'Inactivo'])
-  @Field(() => String)
   isActive: string = 'Inactivo'
+
+  @IsArray()
+  @IsOptional()
+  @Field(() => [Float], { nullable: true })
+  geofence?: Geofence[]
 }

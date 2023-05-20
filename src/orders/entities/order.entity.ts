@@ -22,7 +22,7 @@ export class Order {
   })
   id: number
 
-  @Column('text', { default: ['espera'] })
+  @Column('text', { default: ['Espera'] })
   @Field(() => String, {
     description: 'order status [waiting or completed]'
   })
