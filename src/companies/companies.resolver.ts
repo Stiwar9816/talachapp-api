@@ -23,7 +23,7 @@ export class CompaniesResolver {
   })
   createCompany(
     @Args('createCompanyInput') createCompanyInput: CreateCompanyInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ) {
     return this.companiesService.create(createCompanyInput, user);
   }
@@ -33,7 +33,7 @@ export class CompaniesResolver {
     description: 'Returns all of the registered companies or talacheros'
   })
   findAll(
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.findAll();
   }
@@ -44,7 +44,7 @@ export class CompaniesResolver {
   })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.findOne(id);
   }
@@ -55,7 +55,7 @@ export class CompaniesResolver {
   })
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.update(updateCompanyInput.id, updateCompanyInput, user);
   }
@@ -66,7 +66,7 @@ export class CompaniesResolver {
   })
   blockCompany(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.block(id, user);
   }

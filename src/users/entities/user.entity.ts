@@ -24,7 +24,7 @@ export class User {
   })
   fullName: string
 
-  @Column('float')
+  @Column('bigint')
   @Field(() => Float, {
     description: 'User phone'
   })

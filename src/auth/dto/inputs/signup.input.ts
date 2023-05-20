@@ -1,5 +1,5 @@
 import { Field, Float, InputType } from "@nestjs/graphql"
-import { IsEmail, IsNotEmpty, IsNumber, IsPositive, IsString, Matches, MinLength } from "class-validator"
+import { IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from "class-validator"
 
 @InputType({
     description: 'Diagram of the fields requested for the registration of a user'
@@ -21,7 +21,6 @@ export class SignupInput {
     @IsNumber()
     @IsPositive()
     @Field(() => Float, {
-        nullable: true,
         description: 'User phone'
     })
     phone: number
@@ -40,4 +39,10 @@ export class SignupInput {
         `
     })
     password: string
+
+    @IsIn(['Activo', 'Inactivo'])
+    @Field(() => String, {
+        description: 'User status in the system [ active (true) or inactive (false) ]'
+    })
+    isActive: string = 'Activo'
 }

@@ -76,7 +76,8 @@ export class CreateCompanyInput {
   postal_code?: number
 
   @IsIn(['Activo', 'Inactivo'])
-  isActive: string = 'Inactivo'
+  @Field(() => String)
+  isActive: string = 'Activo'
 
   @IsArray()
   @IsOptional()

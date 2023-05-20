@@ -22,7 +22,7 @@ export class UsersResolver {
   })
   findAll(
     @Args() userRoles: UserRolesArgs,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User[]> {
     return this.usersService.findAll(userRoles.roles);
   }
@@ -33,7 +33,7 @@ export class UsersResolver {
   })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User> {
     return this.usersService.findOneById(id);
   }
@@ -44,7 +44,7 @@ export class UsersResolver {
   })
   updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User> {
     return this.usersService.update(updateUserInput.id, updateUserInput, user)
   }
@@ -55,7 +55,7 @@ export class UsersResolver {
   })
   blockUser(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User> {
     return this.usersService.block(id, user);
   }

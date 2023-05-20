@@ -1,5 +1,5 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from 'class-validator';
 @InputType()
 export class CreateUserInput {
   @IsEmail()
@@ -18,7 +18,6 @@ export class CreateUserInput {
   @IsNumber()
   @IsPositive()
   @Field(() => Float, {
-    nullable: true,
     description: 'User phone'
   })
   phone: number
@@ -37,4 +36,10 @@ export class CreateUserInput {
     `
   })
   password: string
+
+  @IsIn(['Activo', 'Inactivo'])
+  @Field(() => String, {
+      description: 'User status in the system [ active (true) or inactive (false) ]'
+  })
+  isActive: string = 'Activo'
 }

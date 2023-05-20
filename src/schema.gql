@@ -261,10 +261,10 @@ type Query {
 
 """Roles allowed in the system [superAdmin, admin, talachero, user]"""
 enum UserRoles {
-  ADMIN
-  TALACHERO
-  USUARIO
-  SUPERADMIN
+  Administrador
+  Talachero
+  Usuario
+  superAdmin
 }
 
 type Mutation {
@@ -329,10 +329,13 @@ input SignupInput {
   fullName: String!
 
   """User phone"""
-  phone: Float
+  phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
   password: String!
+
+  """User status in the system [ active (true) or inactive (false) ]"""
+  isActive: String! = "Activo"
 }
 
 """Diagram of the fields requested for system login"""
@@ -360,6 +363,9 @@ input UpdateUserInput {
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
   password: String
 
+  """User status in the system [ active (true) or inactive (false) ]"""
+  isActive: String! = "Activo"
+
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
 
@@ -367,9 +373,6 @@ input UpdateUserInput {
   User roles which can be [ admin, user or talachero ] by default takes the user role
   """
   roles: [UserRoles!]
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String!
 }
 
 """Diagram of the information expected to create a new company/talacheros"""
@@ -404,6 +407,7 @@ input CreateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
+  isActive: String! = "Activo"
   geofence: [Float!]
 }
 
@@ -441,15 +445,15 @@ input UpdateCompanyInput {
 
   """Company Postal Code"""
   postal_code: Int
-  geofence: [Float!]
-
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
 
   """
   Company status within the system "active (true) || inactive (false)"
   """
-  isActive: String! = "Inactivo"
+  isActive: String! = "Activo"
+  geofence: [Float!]
+
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: Int!
 }
 
 """Schema of the information expected to create a new service order"""

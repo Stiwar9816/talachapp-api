@@ -58,7 +58,7 @@ export class OrdersResolver {
   })
   updateOrder(
     @Args('updateOrderInput') updateOrderInput: UpdateOrderInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Order> {
     return this.ordersService.update(updateOrderInput.id, updateOrderInput, user);
   }
@@ -69,7 +69,7 @@ export class OrdersResolver {
   })
   removeOrder(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Order> {
     return this.ordersService.remove(id);
   }

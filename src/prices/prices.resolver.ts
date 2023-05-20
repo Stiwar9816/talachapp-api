@@ -23,7 +23,7 @@ export class PricesResolver {
   })
   createPrice(
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.create(createPriceInput, user);
   }
@@ -33,7 +33,7 @@ export class PricesResolver {
     description: 'Search all prices'
   })
   findAll(
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price[]> {
     return this.pricesService.findAll();
   }
@@ -44,7 +44,7 @@ export class PricesResolver {
   })
   findOne(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.findOne(id);
   }
@@ -55,7 +55,7 @@ export class PricesResolver {
   })
   findAllByType(
     @Args('priceType', { type: () => String }) price: Price,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User,
   ): Promise<Price[]> {
     return this.pricesService.findAllByType(price, user);
   }
@@ -71,7 +71,7 @@ export class PricesResolver {
   })
   updatePrice(
     @Args('updatePriceInput') updatePriceInput: UpdatePriceInput,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.update(updatePriceInput.id, updatePriceInput, user);
   }
@@ -82,7 +82,7 @@ export class PricesResolver {
   })
   removePrice(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.TALACHERO]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.remove(id);
   }
