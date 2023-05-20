@@ -171,7 +171,7 @@ type User {
   fullName: String!
 
   """User phone"""
-  phone: Float
+  phone: Float!
 
   """User email"""
   email: String!
@@ -328,6 +328,9 @@ input SignupInput {
   """Full name of the user"""
   fullName: String!
 
+  """User phone"""
+  phone: Float
+
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
   password: String!
 }
@@ -452,13 +455,13 @@ input UpdateCompanyInput {
 """Schema of the information expected to create a new service order"""
 input CreateOrderInput {
   """order status [waiting or completed]"""
-  status: String! = "espera"
+  status: String! = "Espera"
 }
 
 "\n  Diagram of the fields enabled to be able to be modified by the admin, \n  talachero or user by default for a specific service order  \n  "
 input UpdateOrderInput {
   """order status [waiting or completed]"""
-  status: String = "espera"
+  status: String = "Espera"
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
