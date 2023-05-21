@@ -50,7 +50,7 @@ type Price {
   price: Float!
 
   """Quantity of the price or product in inventory"""
-  stock: Int!
+  stock: Int
 
   """Type of price which can be [ product, service or fixed cost ]"""
   type: String!
@@ -482,7 +482,7 @@ input CreatePriceInput {
   price: Float!
 
   """Quantity of the price or product in inventory"""
-  stock: Int!
+  stock: Int
 
   """Type of price which can be [ product, service or fixed cost ]"""
   type: String!

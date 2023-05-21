@@ -21,12 +21,14 @@ export class CreatePriceInput {
   price: number
 
   @IsInt()
+  @IsOptional()
   @IsPositive()
   @Min(1)
   @Field(() => Int, {
+    nullable: true,
     description: 'Quantity of the price or product in inventory'
   })
-  stock: number
+  stock?: number
 
   @IsIn(["Producto", "Servicio", "Costo"])
   @Field(() => String, {

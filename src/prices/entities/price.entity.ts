@@ -31,11 +31,12 @@ export class Price {
   })
   price: number
 
-  @Column('int')
+  @Column('int', { nullable: true })
   @Field(() => Int, {
+    nullable: true,
     description: 'Quantity of the price or product in inventory'
   })
-  stock: number
+  stock?: number
 
   @Column('text')
   @Field(() => String, {
