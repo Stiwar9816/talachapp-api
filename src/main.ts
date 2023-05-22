@@ -19,11 +19,7 @@ async function bootstrap() {
   //   credentials: true,
   //   allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
   // });
-  app.enableCors({
-    origin: '*', // Cambia esto a tu dominio permitido
-    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], // Métodos HTTP permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
-  });
+  app.enableCors();
   await app.listen(process.env.PORT);
   logger.log(`App runnig on port ${process.env.PORT}`);
 }
