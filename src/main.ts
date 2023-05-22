@@ -11,13 +11,18 @@ async function bootstrap() {
       // forbidNonWhitelisted: true
     }),
   );
+  // app.enableCors({
+  //   origin: 'https://talachappweb.netlify.app/',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   preflightContinue: false,
+  //   optionsSuccessStatus: 204,
+  //   credentials: true,
+  //   allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+  // });
   app.enableCors({
-    origin: 'https://talachappweb.netlify.app/',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    credentials: true,
-    allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+    origin: '*', // Cambia esto a tu dominio permitido
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], // Métodos HTTP permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
   });
   await app.listen(process.env.PORT);
   logger.log(`App runnig on port ${process.env.PORT}`);
