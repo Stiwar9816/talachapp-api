@@ -12,7 +12,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.HOST_CLIENT,
+    origin: 'https://talachappweb.netlify.app/',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
