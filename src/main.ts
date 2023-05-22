@@ -11,15 +11,14 @@ async function bootstrap() {
       // forbidNonWhitelisted: true
     }),
   );
-  // app.enableCors({
-  //   origin: 'https://talachappweb.netlify.app/',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   preflightContinue: false,
-  //   optionsSuccessStatus: 204,
-  //   credentials: true,
-  //   allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
-  // });
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://talachappweb.netlify.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+  });
   await app.listen(process.env.PORT);
   logger.log(`App runnig on port ${process.env.PORT}`);
 }
