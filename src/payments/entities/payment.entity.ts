@@ -54,13 +54,12 @@ export class Payment {
   total: number
 
   @Column('text', {
-    array: true,
-    default: ['Espera']
+    default: 'Espera'
   })
-  @Field(() => [String], {
+  @Field(() => String, {
     description: 'payment status [waiting, processing or completed]'
   })
-  state: string[]
+  state: string
 
   @CreateDateColumn()
   @Field(() => Date)

@@ -46,8 +46,8 @@ export class CreatePaymentInput {
 
   @IsString()
   @IsIn(['Espera', 'Procesando', 'Pagado'])
-  @Field(() => [String], {
+  @Field(() => String, {
     description: 'payment status [waiting, processing or completed]'
   })
-  state: string[]
+  state: string
 }
