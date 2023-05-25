@@ -2,7 +2,8 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 // Nest Jwt
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs'
+// Crypto
+import { compareEncryptedPasswords } from './utils/crypto';
 // Services
 import { UsersService } from 'src/users/users.service';
 // Types
@@ -10,13 +11,16 @@ import { AuthResponde } from './types/auth-response.type';
 // Entity/Dto's
 import { User } from 'src/users/entities/user.entity';
 import { SignupInput, SigninInput } from './dto';
+// MailService
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly mailService: MailService
     ) { }
 
     private getjwtToken(id: number) {
@@ -26,6 +30,7 @@ export class AuthService {
     async signup(signupInput: SignupInput): Promise<AuthResponde> {
         const user = await this.usersService.create(signupInput)
         const token = this.getjwtToken(user.id)
+        await this.mailService.sendUserConfirmation(user)
         return { token, user }
     }
 
@@ -33,7 +38,7 @@ export class AuthService {
         const { email, password } = signinInput
         const user = await this.usersService.findOneByEmail(email)
         // Compare password
-        if (!bcrypt.compareSync(password, user.password)) {
+        if (!compareEncryptedPasswords(password, user.password)) {
             throw new BadRequestException('Email or password do not match')
         }
         const token = this.getjwtToken(user.id)

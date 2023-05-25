@@ -83,4 +83,9 @@ export class CreateCompanyInput {
   @IsOptional()
   @Field(() => [Float], { nullable: true })
   geofence?: Geofence[]
+
+  @IsArray()
+  @IsOptional()
+  @Field(() => [Float], { nullable: true })
+  location?: Geofence[]
 }

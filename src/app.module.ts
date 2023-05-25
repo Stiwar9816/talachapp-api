@@ -18,6 +18,7 @@ import { ScoresModule } from './scores/scores.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -75,7 +76,8 @@ import { OrdersModule } from './orders/orders.module';
     PaymentsModule,
     PricesModule,
     ScoresModule,
-    UsersModule
+    UsersModule,
+    MailModule
   ],
   controllers: [],
   providers: [],

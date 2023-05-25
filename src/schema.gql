@@ -134,6 +134,7 @@ type Company {
   """
   isActive: String!
   geofence: [Float!]
+  location: [Float!]
 
   """
   Returns the information of the user who made the last update of the company data
@@ -332,7 +333,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String!
+  password: String! = "p*yhnñV3kCKZl4Cq7ijh"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -361,7 +362,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String
+  password: String = "8HiCNpw-5HBlg¡TCwCb7"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -409,6 +410,7 @@ input CreateCompanyInput {
   postal_code: Int
   isActive: String! = "Inactivo"
   geofence: [Float!]
+  location: [Float!]
 }
 
 """
@@ -451,6 +453,7 @@ input UpdateCompanyInput {
   """
   isActive: String! = "Inactivo"
   geofence: [Float!]
+  location: [Float!]
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!

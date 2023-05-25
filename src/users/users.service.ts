@@ -13,8 +13,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 // Entity/Input
 import { User } from './entities/user.entity';
 import { SignupInput } from '../auth/dto/inputs/signup.input';
-// Bcrypt
-import * as bcrypt from 'bcryptjs'
+// Crypto
+import { encrypt } from 'src/auth/utils/crypto';
 // Auth (Enum)
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 
@@ -33,7 +33,8 @@ export class UsersService {
       const newUser = await this.userRepository.create({
         ...signupInput,
         // Encrypt password
-        password: bcrypt.hashSync(signupInput.password, 10)
+        password: encrypt(signupInput.password)
+        // password: bcrypt.hashSync(signupInput.password, 10)
       })
 
       return await this.userRepository.save(newUser)

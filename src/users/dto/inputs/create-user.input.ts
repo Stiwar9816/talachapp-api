@@ -1,5 +1,6 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
 import { IsEmail, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from 'class-validator';
+import { randomPassword } from 'src/auth/utils/randomPassword';
 @InputType()
 export class CreateUserInput {
   @IsEmail()
@@ -24,6 +25,7 @@ export class CreateUserInput {
 
   @IsString()
   @MinLength(6)
+  @IsOptional()
   @Matches(
     /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'The password must have a Uppercase, lowercase letter and a number'
@@ -35,11 +37,11 @@ export class CreateUserInput {
     and the password must have an Uppercase, lowercase letter and a number
     `
   })
-  password: string
+  password?: string = randomPassword()
 
   @IsIn(['Activo', 'Inactivo'])
   @Field(() => String, {
-      description: 'User status in the system [ active (true) or inactive (false) ]'
+    description: 'User status in the system [ active (true) or inactive (false) ]'
   })
   isActive: string = 'Activo'
 }

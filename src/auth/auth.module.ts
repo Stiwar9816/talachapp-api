@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 // Module
 import { UsersModule } from 'src/users/users.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   providers: [AuthResolver, AuthService, JwtStrategy],
@@ -28,6 +29,7 @@ import { UsersModule } from 'src/users/users.module';
       }
     }),
     UsersModule,
+    MailModule
   ]
 })
 export class AuthModule { }

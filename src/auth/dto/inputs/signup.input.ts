@@ -1,5 +1,6 @@
 import { Field, Float, InputType } from "@nestjs/graphql"
 import { IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from "class-validator"
+import { randomPassword } from "src/auth/utils/randomPassword"
 
 @InputType({
     description: 'Diagram of the fields requested for the registration of a user'
@@ -27,6 +28,7 @@ export class SignupInput {
 
     @IsString()
     @MinLength(6)
+    @IsOptional()
     @Matches(
         /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
         message: 'The password must have a Uppercase, lowercase letter and a number'
@@ -38,7 +40,7 @@ export class SignupInput {
         and the password must have an Uppercase, lowercase letter and a number
         `
     })
-    password: string
+    password?: string = randomPassword()
 
     @IsIn(['Activo', 'Inactivo'])
     @Field(() => String, {

@@ -1,4 +1,13 @@
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToMany,
+  ManyToOne,
+  JoinColumn
+} from 'typeorm';
 // GraphQL
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
@@ -90,6 +99,13 @@ export class Company {
   })
   @Field(() => [Float], { nullable: true })
   geofence?: Geofence[]
+
+  @Column('float', {
+    array: true,
+    nullable: true
+  })
+  @Field(() => [Float], { nullable: true })
+  location?: Geofence[]
 
   @CreateDateColumn()
   createdAt: Date;
