@@ -20,3 +20,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT}
       STATE: ${STATE}
+      HOST_CLIENT: ${HOST_CLIENT}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM: ${MAIL_FROM}
