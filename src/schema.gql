@@ -26,7 +26,7 @@ type Payment {
   total: Float!
 
   """payment status [waiting, processing or completed]"""
-  state: [String!]!
+  state: String!
   createdAt: DateTime!
 
   """Relationship with the many-to-one orders table"""
@@ -333,7 +333,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "p*yhnñV3kCKZl4Cq7ijh"
+  password: String! = "JfQp8Jiay7kJ#o2GQ0Vf"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -362,7 +362,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "8HiCNpw-5HBlg¡TCwCb7"
+  password: String = "VKI8C9_wOGjuT7cBifñf"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -540,7 +540,7 @@ input CreatePaymentInput {
   total: Float!
 
   """payment status [waiting, processing or completed]"""
-  state: [String!]!
+  state: String!
 }
 
 """Summary of information that is expected to create a new rating"""
