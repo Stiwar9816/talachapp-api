@@ -93,19 +93,20 @@ export class Company {
   })
   isActive: string
 
-  @Column('float', {
+  @Column('text', {
     array: true,
     nullable: true
   })
-  @Field(() => [Float], { nullable: true })
+  @Field(() => [String], { nullable: true })
   geofence?: Geofence[]
 
-  @Column('float', {
-    array: true,
-    nullable: true
-  })
-  @Field(() => [Float], { nullable: true })
-  location?: Geofence[]
+  @Column('float')
+  @Field(() => Float)
+  lat: number
+
+  @Column('float')
+  @Field(() => Float)
+  lng: number
 
   @CreateDateColumn()
   createdAt: Date;

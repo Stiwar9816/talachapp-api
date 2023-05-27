@@ -80,12 +80,16 @@ export class CreateCompanyInput {
   isActive: string = 'Inactivo'
 
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  @Field(() => [Float], { nullable: true })
+  @Field(() => [String], { nullable: true })
   geofence?: Geofence[]
 
-  @IsArray()
-  @IsOptional()
-  @Field(() => [Float], { nullable: true })
-  location?: Geofence[]
+  @IsNumber()
+  @Field(() => Float)
+  lat: number
+
+  @IsNumber()
+  @Field(() => Float)
+  lng: number
 }
