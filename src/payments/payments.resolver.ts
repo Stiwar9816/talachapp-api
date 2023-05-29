@@ -10,7 +10,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreatePaymentInput } from './dto';
 import { Payment } from './entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
-import { UserRoles } from 'src/auth/enums/user-role.enum';
 
 @Resolver(() => Payment)
 @UseGuards(JwtAuthGuard)
@@ -23,9 +22,9 @@ export class PaymentsResolver {
   })
   createPayment(
     @Args('createPaymentInput') createPaymentInput: CreatePaymentInput,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
+    @CurrentUser() user: User
   ) {
-    return this.paymentsService.create(createPaymentInput, user);
+    return this.paymentsService.create(createPaymentInput);
   }
 
   @Query(() => [Payment], {
