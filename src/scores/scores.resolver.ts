@@ -24,7 +24,7 @@ export class ScoresResolver {
     @Args('createScoreInput') createScoreInput: CreateScoreInput,
     @CurrentUser() user: User
   ): Promise<Score> {
-    return this.scoresService.create(createScoreInput);
+    return this.scoresService.create(createScoreInput, user);
   }
 
   @Query(() => [Score], {

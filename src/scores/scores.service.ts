@@ -17,9 +17,10 @@ export class ScoresService {
     private readonly scoreRepository: Repository<Score>
   ) { }
 
-  async create(createScoreInput: CreateScoreInput): Promise<Score> {
+  async create(createScoreInput: CreateScoreInput, userID: User): Promise<Score> {
     try {
       const newScore = await this.scoreRepository.create(createScoreInput)
+      newScore.user = userID
       return await this.scoreRepository.save(newScore)
     } catch (error) {
       this.handleDBException(error)
@@ -27,7 +28,8 @@ export class ScoresService {
   }
 
   async findAll(): Promise<Score[]> {
-    return await this.scoreRepository.find()
+    const allScore = await this.scoreRepository.find({ relations:['user']})
+    return allScore;
   }
 
   async findOne(id: number): Promise<Score> {

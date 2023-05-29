@@ -157,6 +157,10 @@ type Score {
 
   """Quality of service provided"""
   quality: String
+  createdAt: DateTime!
+
+  """User information"""
+  user: User!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -334,7 +338,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "RjQ*BMp%G!RGTx4u*#Sa"
+  password: String! = "9BfÑy%8_VBm5zÑ%wSpNX"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -363,7 +367,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "aVtqBaFI9zRA/mcBzOQ9"
+  password: String = "cXuTt15¡IjJñ0UyyE6*F"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
