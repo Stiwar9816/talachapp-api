@@ -89,6 +89,7 @@ type Order {
 
   """Relationship with the many-to-one payments table"""
   payments: Payment!
+  prices: Price!
 }
 
 """
@@ -338,7 +339,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "9BfÑy%8_VBm5zÑ%wSpNX"
+  password: String! = "0$hZRI3Q4yz-Voc&3yAg"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -367,7 +368,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "cXuTt15¡IjJñ0UyyE6*F"
+  password: String = "U6bfzho8_#t04oQfEI6H"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"

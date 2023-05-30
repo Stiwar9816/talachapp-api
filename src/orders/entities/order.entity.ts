@@ -64,7 +64,8 @@ export class Order {
   })
   payments: Payment
 
-  @ManyToMany(() => Price)
+  @ManyToMany(() => Price, { eager: true })
   @JoinTable()
+  @Field(()=> Price)
   prices: Price[];
 }
