@@ -339,7 +339,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "AJ+2d¡ihmOBG9lAry8rN"
+  password: String! = "8ÑDx+zLQ*GIuT&ftVEUJ"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -368,7 +368,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "j$*-YA2_069!9BgVA0G8"
+  password: String = "tpUxaXmP5wK_7bnZlewF"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"

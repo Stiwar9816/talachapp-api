@@ -17,6 +17,7 @@ import { PricesService } from 'src/prices/prices.service';
 import { PriceIdsArgs } from './dto/args/priceIds.args';
 import { Price } from 'src/prices/entities/price.entity';
 import * as Conekta from 'conekta';
+import axios from 'axios';
 
 @Injectable()
 export class OrdersService {
@@ -68,6 +69,11 @@ export class OrdersService {
         };
       });
 
+      //Create expiresAt 24hr 
+      const now = new Date();
+      const expiresAt = Math.round(new Date(now.getTime() + 24 * 60 * 60 * 1000).getTime() / 1000);
+
+
       const paymentLink = await Conekta.Checkout.create({
         name: 'Link de pago 1594138857',
         allowed_payment_methods: ['card', 'bank_transfer'],
@@ -82,22 +88,39 @@ export class OrdersService {
           corporate: true,
           line_items: lineItems,
         },
-        expires_at: 1685507019,
+        expires_at: expiresAt,
         needs_shipping_contact: false,
         recurrent: false,
       });
-      
-      await paymentLink.sendEmail().then((result: any) => {
-        console.log(result); // Resultado del envío del correo electrónico
-      }).catch((error: any) => {
-        console.error(error); // Error en el envío del correo electrónico
-      });
+
+      await this.sendPaymentEmail(user.email, paymentLink._json.id);
 
       return await this.orderRepository.save(newOrder);
     } catch (error) {
       this.handleDBException(error);
     }
   }
+
+  async sendPaymentEmail(email: string, id: string) {
+    const options = {
+      method: 'POST',
+      url: `https://api.conekta.io/checkouts/${id}/email`,
+      headers: {
+        accept: 'application/vnd.conekta-v2.1.0+json',
+        'Accept-Language': 'es',
+        'content-type': 'application/json',
+        authorization: `Bearer ${process.env.PRIVARTE_KEY}`,
+      },
+      data: { email },
+    };
+
+    try {
+      await axios.request(options);
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+    }
+  }
+
   async findAll(): Promise<Order[]> {
     return await this.orderRepository.find();
   }
