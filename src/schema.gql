@@ -73,8 +73,8 @@ type Order {
   id: Int!
 
   """order status [waiting or completed]"""
-  status: String!
-  amount: Int!
+  status: String
+  total: Float
   createdAt: DateTime!
 
   """Relationship with the many-to-one users table"""
@@ -138,6 +138,7 @@ type Company {
   geofence: [String!]
   lat: Float!
   lng: Float!
+  order: Order!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -298,7 +299,7 @@ type Mutation {
   blockCompany(id: Int!): Company!
 
   """Create a new service order"""
-  createOrder(createOrderInput: CreateOrderInput!, ids: [Int!]!): Order!
+  createOrder(createOrderInput: CreateOrderInput!, ids: [Int!]!, idCompany: Int!): Order!
 
   """Update order status"""
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
@@ -340,7 +341,12 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "UUOglj$ZEEh$EpmlNV_8"
+  password: String! = "_S/IQf5JtoxS0phYeSG/"
+
+  """
+  User roles which can be [ admin, user or talachero ] by default takes the user role
+  """
+  roles: [String!]!
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -369,18 +375,16 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "#yB7HY+QIÑk+6fAc4%lz"
+  password: String = "qÑx!g33i$*c¡otR2xkQd"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
 
+  """User role in the system [ Administrador, Talachero or Usuario ]"""
+  roles: [UserRoles!]
+
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
-
-  """
-  User roles which can be [ admin, user or talachero ] by default takes the user role
-  """
-  roles: [UserRoles!]
 }
 
 """Diagram of the information expected to create a new company/talacheros"""
@@ -471,15 +475,15 @@ input UpdateCompanyInput {
 """Schema of the information expected to create a new service order"""
 input CreateOrderInput {
   """order status [waiting or completed]"""
-  status: String! = "Espera"
-  amount: Float! = 0
+  status: String
+  total: Float
 }
 
 "\n  Diagram of the fields enabled to be able to be modified by the admin, \n  talachero or user by default for a specific service order  \n  "
 input UpdateOrderInput {
   """order status [waiting or completed]"""
-  status: String = "Espera"
-  amount: Float = 0
+  status: String
+  total: Float
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!

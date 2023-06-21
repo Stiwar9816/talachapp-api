@@ -13,6 +13,7 @@ import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 // Args
 import { PriceIdsArgs } from './dto/args/priceIds.args';
+import { CompaniesIdArgs } from './dto/args/companies.args';
 
 @Resolver(() => Order)
 @UseGuards(JwtAuthGuard)
@@ -26,9 +27,10 @@ export class OrdersResolver {
   createOrder(
     @Args('createOrderInput') createOrderInput: CreateOrderInput,
     @CurrentUser() user: User,
-    @Args() ids: PriceIdsArgs
+    @Args() ids: PriceIdsArgs,
+    @Args() company: CompaniesIdArgs
   ): Promise<Order> {
-    return this.ordersService.create(createOrderInput, user, ids);
+    return this.ordersService.create(createOrderInput, user, ids, company);
   }
 
   @Query(() => [Order], {

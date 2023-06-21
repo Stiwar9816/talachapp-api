@@ -1,5 +1,6 @@
 import { Field, Float, InputType } from "@nestjs/graphql"
-import { IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from "class-validator"
+import { IsArray, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from "class-validator"
+import { UserRoles } from "src/auth/enums/user-role.enum"
 import { randomPassword } from "src/auth/utils/randomPassword"
 
 @InputType({
@@ -41,6 +42,13 @@ export class SignupInput {
         `
     })
     password?: string = randomPassword()
+
+    @IsArray()
+    @IsString({ each: true })
+    @Field(() => [String], {
+        description: 'User roles which can be [ admin, user or talachero ] by default takes the user role'
+    })
+    roles: string[]
 
     @IsIn(['Activo', 'Inactivo'])
     @Field(() => String, {

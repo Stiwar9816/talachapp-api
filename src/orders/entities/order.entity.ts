@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 // GraphQL
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Company } from 'src/companies/entities/company.entity';
 import { Payment } from 'src/payments/entities/payment.entity';
@@ -22,11 +22,16 @@ export class Order {
   })
   id: number
 
-  @Column('text', { default: ['Espera'] })
+  @Column('text', { nullable: true })
   @Field(() => String, {
+    nullable: true,
     description: 'order status [waiting or completed]'
   })
-  status: string
+  status?: string
+
+  @Column('float', { nullable: true })
+  @Field(() => Float, { nullable: true })
+  total?: number
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -51,21 +56,21 @@ export class Order {
   })
   lastUpdateBy?: User
 
-  @ManyToOne(() => Company, comapny => comapny.order, { eager: true })
+  @ManyToOne(() => Company, comapny => comapny.order, { lazy: true, eager: true })
   @Index('companyID-index')
   @Field(() => Company, {
     description: 'Relationship with the many-to-one companies table'
   })
   companies: Company
 
-  @OneToOne(() => Payment, { eager: true })
+  @OneToOne(() => Payment, { lazy: true })
   @Field(() => Payment, {
     description: 'Relationship with the many-to-one payments table'
   })
   payments: Payment
 
-  @ManyToMany(() => Price, { eager: true })
+  @ManyToMany(() => Price, { lazy: true })
   @JoinTable()
-  @Field(()=> Price)
+  @Field(() => Price)
   prices: Price[];
 }

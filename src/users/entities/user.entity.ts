@@ -36,10 +36,7 @@ export class User {
   })
   email: string
 
-  @Column('text', {
-    array: true,
-    default: ['Usuario']
-  })
+  @Column('text', { array: true })
   @Field(() => [String], {
     description: 'User roles which can be [ admin, user or talachero ] by default takes the user role'
   })

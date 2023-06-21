@@ -13,9 +13,14 @@ import { CreateOrderInput, UpdateOrderInput } from './dto';
 // Entity
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-import { PricesService } from 'src/prices/prices.service';
-import { PriceIdsArgs } from './dto/args/priceIds.args';
 import { Price } from 'src/prices/entities/price.entity';
+// Service
+import { PricesService } from 'src/prices/prices.service';
+import { CompaniesService } from 'src/companies/companies.service';
+// Args
+import { PriceIdsArgs } from './dto/args/priceIds.args';
+import { CompaniesIdArgs } from './dto/args/companies.args';
+// Conekta / Axios
 import * as Conekta from 'conekta';
 import axios from 'axios';
 
@@ -27,56 +32,78 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     private readonly pricesService: PricesService,
+    private readonly companiesService: CompaniesService
   ) {
-    Conekta.api_key = process.env.PRIVARTE_KEY;
-    Conekta.apiVersion = '2.1.0';
+    Conekta.api_key = process.env.PRIVARTE_KEY
+    Conekta.apiVersion = '2.1.0'
   }
 
   async create(
     createOrderInput: CreateOrderInput,
     user: User,
     priceIds: PriceIdsArgs,
+    companyId: CompaniesIdArgs
   ): Promise<Order> {
-    const { ...createOrder } = createOrderInput;
+    let { status, total } = createOrderInput;
     const { ids } = priceIds;
+    const { idCompany } = companyId
     try {
       const prices = await this.pricesService.findAllId(ids);
-      const priceCount = {}; // Initialize an object to count occurrences of each price ID
-      ids.forEach((id) => {
-        priceCount[id] = (priceCount[id] || 0) + 1; // Increment counter for current ID
-      });
+      const priceCount = ids.reduce((count, id) => {
+        count[id] = (count[id] || 0) + 1; // Increment counter for current ID
+        return count;
+      }, {});
+
       // Subtract quantities from prices
       for (const price of prices) {
-        const id = price.id;
-        const count = priceCount[id] || 0;
+        const count = priceCount[price.id] || 0;
         price.stock -= count;
+        this.handleNotQuantity(price)
         await this.pricesService.update(price.id, price, user); // Update the price in the database
       }
+
+      const comision = 3.40 / 100
+      const comisionConekta = 3
+      const iva = 16 / 100
+      let vTotal = 0;
+      let subTotal = 0
+      let descuentos = 0
+
+      for (const price of prices) {
+        const count = priceCount[price.id] || 0;
+        subTotal += price.price * count;
+        console.log(+(subTotal / 100).toFixed(2))
+        descuentos = subTotal * comision + comisionConekta + iva
+      }
+      vTotal = subTotal - descuentos
+      console.log(vTotal)
+
+      const companies = await this.companiesService.findOne(idCompany)
+
       const newOrder = this.orderRepository.create({
-        ...createOrder,
+        status,
+        total: vTotal,
         prices,
         user,
+        companies
       });
 
       // List of products for create order
       const lineItems = prices.map((price) => {
-        const id = price.id;
-        const quantity = priceCount[id];
         return {
           name: price.name,
           unit_price: +price.price,
-          quantity: quantity, // Cantidad deseada para cada producto
+          quantity: priceCount[price.id], // Cantidad deseada para cada producto
         };
       });
 
       //Create expiresAt 24hr 
       const now = new Date();
-      const expiresAt = Math.round(new Date(now.getTime() + 24 * 60 * 60 * 1000).getTime() / 1000);
-
+      const expiresAt = Math.round((now.getTime() + 24 * 60 * 60 * 1000) / 1000);
 
       const paymentLink = await Conekta.Checkout.create({
-        name: 'Link de pago 1594138857',
-        allowed_payment_methods: ['card', 'bank_transfer'],
+        name: 'Link de pago',
+        allowed_payment_methods: ['card'],
         type: 'PaymentLink',
         order_template: {
           currency: 'MXN',
@@ -90,11 +117,9 @@ export class OrdersService {
         },
         expires_at: expiresAt,
         needs_shipping_contact: false,
-        recurrent: false,
+        recurrent: false
       });
-
       await this.sendPaymentEmail(user.email, paymentLink._json.id);
-
       return await this.orderRepository.save(newOrder);
     } catch (error) {
       this.handleDBException(error);
@@ -102,26 +127,43 @@ export class OrdersService {
   }
 
   async sendPaymentEmail(email: string, id: string) {
-    const options = {
-      method: 'POST',
-      url: `https://api.conekta.io/checkouts/${id}/email`,
-      headers: {
-        accept: 'application/vnd.conekta-v2.1.0+json',
-        'Accept-Language': 'es',
-        'content-type': 'application/json',
-        authorization: `Bearer ${process.env.PRIVARTE_KEY}`,
-      },
-      data: { email },
+    const headers = {
+      accept: 'application/vnd.conekta-v2.1.0+json',
+      'Accept-Language': 'es',
+      'content-type': 'application/json',
+      authorization: `Bearer ${process.env.PRIVARTE_KEY}`,
     };
-
+    const url = `https://api.conekta.io/checkouts/${id}/email`;
+    const data = { email };
     try {
-      await axios.request(options);
+      return await axios.post(url, data, { headers });
     } catch (error) {
-      console.error('Error al enviar el correo electrónico:', error);
+      this.handleDBException({
+        code: 'ERR_BAD_REQUEST',
+        detail: `Error al enviar el correo electrónico:' ${error}`,
+      });
+    }
+  }
+
+  async getOrders() {
+    const headers = {
+      accept: 'application/vnd.conekta-v2.1.0+json',
+      authorization: `Bearer ${process.env.PRIVARTE_KEY}`,
+    };
+    const url = 'https://api.conekta.io/orders';
+    try {
+      const res = await axios.get(url, { headers })
+      return res.data.data
+    } catch (error) {
+      this.handleDBException({
+        code: 'ERR_BAD_REQUEST',
+        detail: `Error al obtener la información:' ${error}`,
+      });
     }
   }
 
   async findAll(): Promise<Order[]> {
+    await this.getOrders()
     return await this.orderRepository.find();
   }
 

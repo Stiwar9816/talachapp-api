@@ -119,8 +119,9 @@ export class Company {
   @JoinColumn({ name: 'userId' })
   user: User
 
-  @OneToMany(() => Order, (order) => order.companies, { lazy: true })
-  order: Order[]
+  @OneToMany(() => Order, (order) => order.companies)
+  @Field(() => Order)
+  order: Order
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
   @JoinColumn({ name: 'lastUpdateBy' })
