@@ -1,7 +1,7 @@
-import { UserRoles } from 'src/auth/enums/user-role.enum';
 import { CreateUserInput } from './create-user.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-import { IsInt, IsPositive, IsArray, IsOptional, IsBoolean, IsIn } from 'class-validator';
+import { IsInt, IsPositive, IsOptional, IsIn, IsArray } from 'class-validator';
+import { UserRoles } from 'src/auth/enums/user-role.enum';
 
 @InputType({
   description: 'Diagram of the fields enabled to be able to be modified by the system admin for a specific user'
@@ -18,7 +18,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
   @IsOptional()
   @Field(() => [UserRoles], {
     nullable: true,
-    description: 'User roles which can be [ admin, user or talachero ] by default takes the user role'
+    description: 'User role in the system [ Administrador, Talachero or Usuario ]'
   })
   roles?: UserRoles[]
 

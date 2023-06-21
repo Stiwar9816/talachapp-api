@@ -53,9 +53,7 @@ export class Payment {
   })
   total: number
 
-  @Column('text', {
-    default: 'Espera'
-  })
+  @Column('text')
   @Field(() => String, {
     description: 'payment status [waiting, processing or completed]'
   })
