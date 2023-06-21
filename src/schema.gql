@@ -74,6 +74,7 @@ type Order {
 
   """order status [waiting or completed]"""
   status: String!
+  amount: Int!
   createdAt: DateTime!
 
   """Relationship with the many-to-one users table"""
@@ -339,7 +340,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "8ÑDx+zLQ*GIuT&ftVEUJ"
+  password: String! = "UUOglj$ZEEh$EpmlNV_8"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -368,7 +369,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "tpUxaXmP5wK_7bnZlewF"
+  password: String = "#yB7HY+QIÑk+6fAc4%lz"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -471,12 +472,14 @@ input UpdateCompanyInput {
 input CreateOrderInput {
   """order status [waiting or completed]"""
   status: String! = "Espera"
+  amount: Float! = 0
 }
 
 "\n  Diagram of the fields enabled to be able to be modified by the admin, \n  talachero or user by default for a specific service order  \n  "
 input UpdateOrderInput {
   """order status [waiting or completed]"""
   status: String = "Espera"
+  amount: Float = 0
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
