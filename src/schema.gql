@@ -372,7 +372,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "kS9tAd5CyFSQkuB+/#ff"
+  password: String! = "o&5D5g5XRIFbU_8h8MiA"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -406,7 +406,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "LÑñwZ_dVwgt7lvO0/hnH"
+  password: String = "J9h1f-4G+-ZIoQLh!XIT"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"

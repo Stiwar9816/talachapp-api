@@ -13,34 +13,44 @@ export class LocationService {
 
   constructor(
     @InjectRepository(Location)
-    private readonly locationRepository: Repository<Location>
-  ) { }
+    private readonly locationRepository: Repository<Location>,
+  ) {}
 
-  async create(createLocationInput: CreateLocationInput, user: User): Promise<Location> {
+  async create(
+    createLocationInput: CreateLocationInput,
+    user: User,
+  ): Promise<Location> {
     try {
-      const newLocation = this.locationRepository.create({ ...createLocationInput, user })
-      return await this.locationRepository.save(newLocation)
+      const newLocation = this.locationRepository.create({
+        ...createLocationInput,
+        user,
+      });
+      return await this.locationRepository.save(newLocation);
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
 
   findAll(): Promise<Location[]> {
-    return this.locationRepository.find()
+    return this.locationRepository.find();
   }
 
   async findOne(id: number): Promise<Location> {
     try {
-      const query = await this.locationRepository.createQueryBuilder('locations')
+      const query = await this.locationRepository
+        .createQueryBuilder('locations')
         .leftJoinAndSelect('locations.user', 'idUser')
         .where('locations.idUser =:idUser', { idUser: id })
         .getOne();
-      return query
+
+      this.handleDBNotFound(query, id);
+
+      return query;
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `${id} not found`,
+      });
     }
   }
 
@@ -49,32 +59,37 @@ export class LocationService {
   // }
 
   async remove(id: number): Promise<Location> {
-    const location = await this.findOne(id)
+    const location = await this.findOne(id);
+    this.handleDBNotFound(location, id);
     try {
-      await this.locationRepository.createQueryBuilder('locations')
+      await this.locationRepository
+        .createQueryBuilder('locations')
         .delete()
         .from(Location)
-        .where("idUser=:id", { id: id })
-        .execute()
-      return
+        .where('idUser=:id', { id: location.user.id })
+        .execute();
+      return location;
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
 
   // Manejo de excepciones
   private handleDBException(error: any): never {
     if (error.code === '23505')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 
   private handleDBNotFound(location: Location, id: number) {
-    if (!location) throw new NotFoundException(`Price with id ${id} not found`)
+    if (!location)
+      throw new NotFoundException(`Location with id ${id} not found`);
   }
 }
