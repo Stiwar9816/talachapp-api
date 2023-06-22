@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, createQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 // Entity/Input
 import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';

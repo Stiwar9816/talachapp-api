@@ -33,11 +33,11 @@ export class Order {
   @Field(() => Float, { nullable: true })
   total?: number
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   @Field(() => Date)
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
 
   // Relations

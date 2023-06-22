@@ -285,6 +285,11 @@ type Query {
 
   """Search for a rating by a unique ID"""
   score(id: Int!): Score!
+
+  """"""
+  locations: [Location!]!
+
+  """"""
   location(id: Int!): Location!
 }
 
@@ -347,8 +352,9 @@ type Mutation {
 
   """Remove a rating with a unique ID"""
   removeScore(id: Int!): Score!
+
+  """"""
   createLocation(createLocationInput: CreateLocationInput!): Location!
-  updateLocation(updateLocationInput: UpdateLocationInput!): Location!
 
   """remove location for userId"""
   removeLocation(id: Int!): Location!
@@ -366,7 +372,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "NNNb+/yL5BñA#XtxNNlp"
+  password: String! = "kS9tAd5CyFSQkuB+/#ff"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -400,7 +406,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "*a*LO&onU3p1$nT1hÑi%"
+  password: String = "LÑñwZ_dVwgt7lvO0/hnH"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -613,11 +619,4 @@ input CreateLocationInput {
   geohash: String!
   geopoint: String!
   status: String!
-}
-
-input UpdateLocationInput {
-  geohash: String
-  geopoint: String
-  status: String
-  id: Int!
 }

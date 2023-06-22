@@ -1,38 +1,40 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+// TypeORM
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+// Entity/Input
 import { CreateLocationInput, UpdateLocationInput } from './dto';
 import { User } from 'src/users/entities/user.entity';
 import { Location } from './entities/location.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class LocationService {
-  private readonly logger= new Logger('LocationServices');
+  private readonly logger = new Logger('LocationServices');
 
   constructor(
     @InjectRepository(Location)
     private readonly locationRepository: Repository<Location>
-  ){}
+  ) { }
 
- async create(createLocationInput: CreateLocationInput, user:User) {
-   try {
-    const newLocation = this.locationRepository.create({...createLocationInput, user})
-    return await this.locationRepository.save(newLocation)
-   } catch (error) {
-    this.handleDBException(error)
-   }
+  async create(createLocationInput: CreateLocationInput, user: User): Promise<Location> {
+    try {
+      const newLocation = this.locationRepository.create({ ...createLocationInput, user })
+      return await this.locationRepository.save(newLocation)
+    } catch (error) {
+      this.handleDBException(error)
+    }
   }
 
-  findAll() {
-    return `This action returns all location`;
+  findAll(): Promise<Location[]> {
+    return this.locationRepository.find()
   }
 
-  async findOne(id: number ) {
+  async findOne(id: number): Promise<Location> {
     try {
       const query = await this.locationRepository.createQueryBuilder('locations')
-      .leftJoinAndSelect('locations.user', 'idUser')
-      .where('locations.idUser =:idUser', { idUser: id})
-      .getOne();
+        .leftJoinAndSelect('locations.user', 'idUser')
+        .where('locations.idUser =:idUser', { idUser: id })
+        .getOne();
       return query
     } catch (error) {
       this.handleDBException({
@@ -42,19 +44,19 @@ export class LocationService {
     }
   }
 
-  update(id: number, updateLocationInput: UpdateLocationInput) {
-    return `This action updates a #${id} location`;
-  }
+  // update(id: number, updateLocationInput: UpdateLocationInput) {
+  //   return `This action updates a #${id} location`;
+  // }
 
- async remove(id: number) {
+  async remove(id: number): Promise<Location> {
     const location = await this.findOne(id)
     try {
       await this.locationRepository.createQueryBuilder('locations')
         .delete()
         .from(Location)
-        .where("idUser=:id", {id: id})
+        .where("idUser=:id", { id: id })
         .execute()
-      return 'Location deleted'
+      return
     } catch (error) {
       this.handleDBException(error)
     }

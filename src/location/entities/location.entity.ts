@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity({name: 'locations'})
+@Entity({ name: 'locations' })
 @ObjectType({
   description: 'Schema where the information of the system locations is stored'
 })
@@ -13,35 +13,35 @@ export class Location {
 
 
   @Column('text')
-  @Field(()=> String, {
+  @Field(() => String, {
     description: 'Geohash Firebase'
   })
   geohash: string
 
 
   @Column('text')
-  @Field(()=> String, {
+  @Field(() => String, {
     description: 'GeoPoint Firebase'
   })
   geopoint: string
 
 
   @Column('text')
-  @Field(()=> String, {
+  @Field(() => String, {
     description: 'Status Firebase'
   })
   status: string
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'time with time zone' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'time with time zone' })
   updatedAt: Date;
 
   //Relations
-  @ManyToOne(()=> User, (user)=> user.location, {eager:true})
-  @JoinColumn({name: 'idUser'})
-  @Field(()=> User)
-  user:User
+  @ManyToOne(() => User, (user) => user.location, { eager: true })
+  @JoinColumn({ name: 'idUser' })
+  @Field(() => User)
+  user: User
 
 }
