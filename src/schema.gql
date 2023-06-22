@@ -171,6 +171,22 @@ type Score {
   lastUpdateBy: User
 }
 
+"""Schema where the information of the system locations is stored"""
+type Location {
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: Int!
+
+  """Geohash Firebase"""
+  geohash: String!
+
+  """GeoPoint Firebase"""
+  geopoint: String!
+
+  """Status Firebase"""
+  status: String!
+  user: User!
+}
+
 """Schema where the information of the system users is stored"""
 type User {
   """Id automatically generated in integer format eg: 1,2,3.."""
@@ -213,8 +229,11 @@ type User {
   """One-to-many relationship with score table"""
   scores: Score!
 
-  """One-to-many relationship with order table"""
+  """One-to-many relationshi p with order table"""
   orders: Order!
+
+  """One-to-many relationship with order table"""
+  location: Location
 }
 
 "\n        Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n        mutations and [ revalidateToken ] queries \n        { \n            token, \n            User[] \n        }\n    "
@@ -266,6 +285,7 @@ type Query {
 
   """Search for a rating by a unique ID"""
   score(id: Int!): Score!
+  location(id: Int!): Location!
 }
 
 """Roles allowed in the system [superAdmin, admin, talachero, user]"""
@@ -327,6 +347,11 @@ type Mutation {
 
   """Remove a rating with a unique ID"""
   removeScore(id: Int!): Score!
+  createLocation(createLocationInput: CreateLocationInput!): Location!
+  updateLocation(updateLocationInput: UpdateLocationInput!): Location!
+
+  """remove location for userId"""
+  removeLocation(id: Int!): Location!
 }
 
 """Diagram of the fields requested for the registration of a user"""
@@ -341,7 +366,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "_S/IQf5JtoxS0phYeSG/"
+  password: String! = "NNNb+/yL5BñA#XtxNNlp"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -375,7 +400,7 @@ input UpdateUserInput {
   phone: Float
 
   "\n    User password that must have a minimum length of 6 digits\n    and the password must have an Uppercase, lowercase letter and a number\n    "
-  password: String = "qÑx!g33i$*c¡otR2xkQd"
+  password: String = "*a*LO&onU3p1$nT1hÑi%"
 
   """User status in the system [ active (true) or inactive (false) ]"""
   isActive: String! = "Activo"
@@ -580,5 +605,19 @@ input UpdateScoreInput {
   quality: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
+  id: Int!
+}
+
+"""Outline of information that is expected to create a new location"""
+input CreateLocationInput {
+  geohash: String!
+  geopoint: String!
+  status: String!
+}
+
+input UpdateLocationInput {
+  geohash: String
+  geopoint: String
+  status: String
   id: Int!
 }

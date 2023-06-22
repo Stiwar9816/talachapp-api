@@ -19,6 +19,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { MailModule } from './mail/mail.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -77,7 +78,8 @@ import { MailModule } from './mail/mail.module';
     PricesModule,
     ScoresModule,
     UsersModule,
-    MailModule
+    MailModule,
+    LocationModule
   ],
   controllers: [],
   providers: [],
