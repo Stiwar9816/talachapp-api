@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 // Nest Jwt
 import { JwtService } from '@nestjs/jwt';
 // Crypto
-import { compareEncryptedPasswords } from './utils/crypto';
+import * as bcrypt from 'bcryptjs'
 // Services
 import { UsersService } from 'src/users/users.service';
 // Types
@@ -29,8 +29,11 @@ export class AuthService {
 
     async signup(signupInput: SignupInput): Promise<AuthResponde> {
         const user = await this.usersService.create(signupInput)
+        // Guarda una copia sin encriptar de la contraseña
+        const plainPassword = signupInput.password;
+        // Envía la contraseña sin encriptar por correo electrónico
+        await this.mailService.sendUserConfirmation(user, plainPassword);
         const token = this.getjwtToken(user.id)
-        await this.mailService.sendUserConfirmation(user)
         return { token, user }
     }
 
@@ -38,7 +41,7 @@ export class AuthService {
         const { email, password } = signinInput
         const user = await this.usersService.findOneByEmail(email)
         // Compare password
-        if (!compareEncryptedPasswords(password, user.password)) {
+        if (!bcrypt.compareSync(password, user.password)) {
             throw new BadRequestException('Email or password do not match')
         }
         const token = this.getjwtToken(user.id)

@@ -13,10 +13,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 // Entity/Input
 import { User } from './entities/user.entity';
 import { SignupInput } from '../auth/dto/inputs/signup.input';
-// Crypto
-import { encrypt } from 'src/auth/utils/crypto';
+// Bcrypt
+import * as bcrypt from 'bcryptjs';
 // Auth (Enum)
 import { UserRoles } from 'src/auth/enums/user-role.enum';
+// Email
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +27,8 @@ export class UsersService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly mailService: MailService
   ) { }
 
   async create(signupInput: SignupInput): Promise<User> {
@@ -33,10 +36,8 @@ export class UsersService {
       const newUser = await this.userRepository.create({
         ...signupInput,
         // Encrypt password
-        password: encrypt(signupInput.password)
-        // password: bcrypt.hashSync(signupInput.password, 10)
+        password: bcrypt.hashSync(signupInput.password, 10)
       })
-
       return await this.userRepository.save(newUser)
     } catch (error) {
       this.handleDBException(error)
@@ -76,7 +77,17 @@ export class UsersService {
 
   async update(id: number, updateUserInput: UpdateUserInput, updateBy: User): Promise<User> {
     try {
-      const user = await this.userRepository.preload({ id, ...updateUserInput })
+      const user = await this.userRepository.preload({
+        id, ...updateUserInput,
+      })
+      if (updateUserInput.password) {
+        // Guarda una copia sin encriptar de la contraseña
+        const plainPassword = updateUserInput.password;
+        // Envía la contraseña sin encriptar por correo electrónico
+        await this.mailService.sendUpdatePassword(user, plainPassword);
+        // Encrypt password
+        user.password = bcrypt.hashSync(updateUserInput.password, 10)
+      }
       user.lastUpdateBy = updateBy
       return await this.userRepository.save(user)
     } catch (error) {

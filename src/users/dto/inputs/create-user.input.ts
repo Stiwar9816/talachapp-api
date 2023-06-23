@@ -26,7 +26,6 @@ export class CreateUserInput {
 
   @IsString()
   @MinLength(6)
-  @IsOptional()
   @Matches(
     /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'The password must have a Uppercase, lowercase letter and a number'
@@ -38,7 +37,7 @@ export class CreateUserInput {
     and the password must have an Uppercase, lowercase letter and a number
     `
   })
-  password?: string = randomPassword()
+  password: string
 
   @IsIn(['Activo', 'Inactivo'])
   @Field(() => String, {
