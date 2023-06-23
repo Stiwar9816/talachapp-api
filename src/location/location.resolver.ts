@@ -42,7 +42,7 @@ export class LocationResolver {
   findOne(@Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User
   ) {
-    return this.locationService.findOne(id);
+    return this.locationService.findOne(user.id);
   }
 
   // @Mutation(() => Location, { name: 'updateLocation' })
@@ -56,6 +56,6 @@ export class LocationResolver {
   })
   removeLocation(@Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User) {
-    return this.locationService.remove(id);
+    return this.locationService.remove(user.id);
   }
 }
