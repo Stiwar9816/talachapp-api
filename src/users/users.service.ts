@@ -117,4 +117,6 @@ export class UsersService {
   private handleDBNotFound(user: User, email: string) {
     if (!user) throw new NotFoundException(`User with email ${email} not found`)
   }
+
+  
 }
