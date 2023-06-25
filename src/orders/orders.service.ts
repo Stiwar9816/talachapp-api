@@ -69,7 +69,7 @@ export class OrdersService {
         const count = priceCount[price.id] || 0;
         subTotal += price.price * count;  // Sum of product values
       }
-      const vTotal = transactionPayment(subTotal);
+      const vTotal = transactionPayment(subTotal); // Subtotal with transaction fee
 
       const companies = await this.companiesService.findOne(idCompany);
 
