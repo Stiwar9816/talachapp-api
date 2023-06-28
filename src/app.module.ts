@@ -45,9 +45,14 @@ import { LocationModule } from './location/location.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
+      installSubscriptionHandlers:true,
+      subscriptions:{
+        "graphql-ws": true
+        // "subscriptions-transport-ws": true
+      },
       plugins: [
         ApolloServerPluginLandingPageLocalDefault()
-      ]
+      ],
     }),
     // TODO: Bloqueo de Schemas para usuarios no autenticados
     // GraphQLModule.forRootAsync({
