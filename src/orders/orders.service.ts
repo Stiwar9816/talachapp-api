@@ -23,6 +23,7 @@ import { CompaniesIdArgs } from './dto/args/companies.args';
 // Conekta / Axios
 import * as Conekta from 'conekta';
 import axios from 'axios';
+import { transactionPayment } from './utils/transactionPayment';
 
 @Injectable()
 export class OrdersService {
@@ -62,30 +63,22 @@ export class OrdersService {
         await this.pricesService.update(price.id, price, user); // Update the price in the database
       }
 
-      const comision = 3.40 / 100
-      const comisionConekta = 3
-      const iva = 16 / 100
-      let vTotal = 0;
-      let subTotal = 0
-      let descuentos = 0
-
+      // Transaction Payment
+      let subTotal = 0; // variable initialization
       for (const price of prices) {
         const count = priceCount[price.id] || 0;
-        subTotal += price.price * count;
-        console.log(+(subTotal / 100).toFixed(2))
-        descuentos = subTotal * comision + comisionConekta + iva
+        subTotal += price.price * count;  // Sum of product values
       }
-      vTotal = subTotal - descuentos
-      console.log(vTotal)
+      const vTotal = transactionPayment(subTotal); // Subtotal with transaction fee
 
-      const companies = await this.companiesService.findOne(idCompany)
+      const companies = await this.companiesService.findOne(idCompany);
 
       const newOrder = this.orderRepository.create({
         status,
         total: vTotal,
         prices,
         user,
-        companies
+        companies,
       });
 
       // List of products for create order
@@ -93,7 +86,7 @@ export class OrdersService {
         return {
           name: price.name,
           unit_price: +price.price,
-          quantity: priceCount[price.id], // Cantidad deseada para cada producto
+          quantity: priceCount[price.id], // Quantity desired for each product
         };
       });
 
