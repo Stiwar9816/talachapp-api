@@ -3,7 +3,6 @@ import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToM
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Company } from 'src/companies/entities/company.entity';
-import { Payment } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Price } from 'src/prices/entities/price.entity';
 @Entity({ name: 'orders' })
@@ -62,12 +61,6 @@ export class Order {
     description: 'Relationship with the many-to-one companies table'
   })
   companies: Company
-
-  @OneToOne(() => Payment, { lazy: true })
-  @Field(() => Payment, {
-    description: 'Relationship with the many-to-one payments table'
-  })
-  payments: Payment
 
   @ManyToMany(() => Price, { lazy: true })
   @JoinTable()

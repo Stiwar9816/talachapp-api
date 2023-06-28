@@ -15,7 +15,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PricesModule } from './prices/prices.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ScoresModule } from './scores/scores.module';
-import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { MailModule } from './mail/mail.module';
@@ -74,7 +73,6 @@ import { LocationModule } from './location/location.module';
     AuthModule,
     CompaniesModule,
     OrdersModule,
-    PaymentsModule,
     PricesModule,
     ScoresModule,
     UsersModule,
@@ -82,6 +80,6 @@ import { LocationModule } from './location/location.module';
     LocationModule
   ],
   controllers: [],
-  providers: [],
+  providers: []
 })
 export class AppModule { }

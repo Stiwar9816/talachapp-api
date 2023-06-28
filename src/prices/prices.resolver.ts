@@ -5,7 +5,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PricesService } from './prices.service';
 // Auth (Enums/Decorators/Guards)
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 // Entity/Dto's(Inputs)
 import { CreatePriceInput, UpdatePriceInput } from './dto';

@@ -3,7 +3,6 @@ import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColum
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Company } from 'src/companies/entities/company.entity';
-import { Payment } from 'src/payments/entities/payment.entity';
 import { Score } from 'src/scores/entities/score.entity';
 import { Price } from 'src/prices/entities/price.entity';
 import { Order } from 'src/orders/entities/order.entity';
@@ -81,12 +80,6 @@ export class User {
     description: 'One-to-many relationship with company table'
   })
   companies: Company
-
-  @OneToMany(() => Payment, payment => payment.user)
-  @Field(() => Payment, {
-    description: 'One-to-many relationship with payment table'
-  })
-  payments: Payment
 
   @OneToMany(() => Price, price => price.user)
   @Field(() => Price, {

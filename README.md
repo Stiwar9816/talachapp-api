@@ -83,3 +83,43 @@ docker-compose -f docker-compose.prod.yml up --build
 - Docker
 - Postgres
 - GraphQL
+
+## COMMIT STRUCUTRE
+
+| Type     | Definition                                            |
+| -------- | ----------------------------------------------------- |
+| feat     | When new features are added                           |
+| fix      | Correction of some error                              |
+| build    | Build system changes                                  |
+| chore    | Changes that do not affect the production environment |
+| ci       | Continuous Integration configuration changes          |
+| docs     | Documentation Changes                                 |
+| perf     | Application performance improvements                  |
+| refactor | Code refactoring processes                            |
+| revert   | Rollbacks to a previous commit                        |
+| style    | Style changes in the application                      |
+| syntax   | Code syntax changes                                   |
+| test     | Add or correct test                                   |
+| delete   | File deletion                                         |
+
+## Example
+
+```sh
+fix (button) = Change of any button
+```
+
+```sh
+fix (User) = Change in an entity
+```
+
+If the commit has a change that makes it incompatible with the new version, for example the ORM change, the commit will be created as follows:
+
+```sh
+fix (database)! = If you have the "!" at the end it means that it is a breaking change
+```
+
+and finally add a short message:
+
+```sh
+fix (UserController): Changing the HTTP method used in /register
+```

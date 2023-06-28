@@ -4,14 +4,13 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 // Services
 import { LocationService } from './location.service';
 // Auth (Enums/Decorators/Guards)
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
+import { JwtAuthGuard } from 'src/auth/guards';
 // Entity/Dto's(Inputs)
 import { CreateLocationInput, UpdateLocationInput } from './dto';
 import { Location } from './entities/location.entity';
 import { User } from 'src/users/entities/user.entity';
-
 
 @Resolver(() => Location)
 @UseGuards(JwtAuthGuard)

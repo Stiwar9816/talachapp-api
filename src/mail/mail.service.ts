@@ -30,4 +30,16 @@ export class MailService {
             }
         })
     }
+    async sendResetPassword(user: User, plainPassword: string) {
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: `Hi ${user.fullName}, Here is your new password`,
+            template: './resetPassword',
+            context: {
+                name: user.fullName,
+                password: plainPassword,
+                email: user.email
+            }
+        })
+    }
 }

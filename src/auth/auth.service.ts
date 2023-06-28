@@ -1,5 +1,5 @@
 // Nest Common
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UnauthorizedException, forwardRef } from '@nestjs/common';
 // Nest Jwt
 import { JwtService } from '@nestjs/jwt';
 // Crypto
@@ -18,12 +18,13 @@ import { MailService } from 'src/mail/mail.service';
 export class AuthService {
 
     constructor(
-        private readonly usersService: UsersService,
         private readonly jwtService: JwtService,
-        private readonly mailService: MailService
+        private readonly mailService: MailService,
+        @Inject(forwardRef(() => UsersService))
+        private readonly usersService: UsersService
     ) { }
 
-    private getjwtToken(id: number) {
+    getjwtToken(id: number) {
         return this.jwtService.sign({ id })
     }
 
@@ -60,5 +61,4 @@ export class AuthService {
         const token = this.getjwtToken(user.id)
         return { token, user }
     }
-
 }

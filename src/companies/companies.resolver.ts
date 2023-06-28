@@ -5,8 +5,8 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CompaniesService } from './companies.service';
 // Auth (Enums/Decorators/Guards)
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
+import { JwtAuthGuard } from 'src/auth/guards';
 // Entity/Dto's(Inputs)
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';

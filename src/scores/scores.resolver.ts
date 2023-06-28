@@ -5,7 +5,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ScoresService } from './scores.service';
 // Auth (Decorators/Guards)
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards';
 // Entity/Dto's(Inputs)
 import { CreateScoreInput, UpdateScoreInput } from './dto';
 import { Score } from './entities/score.entity';

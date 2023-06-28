@@ -2,42 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""Scheme where all the information about user payments will be displayed"""
-type Payment {
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
-
-  """Value of the payment of the service provided"""
-  toll: String!
-
-  """"""
-  transfer: String!
-
-  """"""
-  banner: String!
-
-  """User card type"""
-  card_type: String!
-
-  """Name of the bank that the user uses"""
-  bank_name: String!
-
-  """Total bill of requested services"""
-  total: Float!
-
-  """payment status [waiting, processing or completed]"""
-  state: String!
-  createdAt: DateTime!
-
-  """Relationship with the many-to-one orders table"""
-  order: Order!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 "\n  Scheme where the information about the company's inventory is saved,\n  it can be saved regarding products, \n  services or fixed costs that are handled internally\n  "
 type Price {
   """Id automatically generated in integer format eg: 1,2,3.."""
@@ -87,11 +51,13 @@ type Order {
 
   """Relationship with the many-to-one companies table"""
   companies: Company!
-
-  """Relationship with the many-to-one payments table"""
-  payments: Payment!
   prices: Price!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 """
 scheme of what the companies table looks like where the information of each company or talachero will be stored
@@ -220,9 +186,6 @@ type User {
   """One-to-many relationship with company table"""
   companies: Company!
 
-  """One-to-many relationship with payment table"""
-  payments: Payment!
-
   """One-to-many relationship with price table"""
   prices: Price!
 
@@ -274,12 +237,6 @@ type Query {
   priceByType(priceType: String!): [Price!]!
   pricesByIds(ids: [Int!]!): [Price!]!
 
-  """Find all payments"""
-  payments: [Payment!]!
-
-  """Search for a single payment by payment ID"""
-  payment(id: Int!): Payment!
-
   """Find all ratings"""
   scores: [Score!]!
 
@@ -314,6 +271,12 @@ type Mutation {
   """Inactivate a user"""
   blockUser(id: Int!): User!
 
+  """Reset password user"""
+  resetPassword(resetPassword: String!): User!
+
+  """Reset password user authenticed"""
+  resetPasswordAuth(newPassword: String!): User!
+
   """Create a new companies/talacheros"""
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
 
@@ -340,9 +303,6 @@ type Mutation {
 
   """Delete a price with a unique ID"""
   removePrice(id: Int!): Price!
-
-  """Create a new payment"""
-  createPayment(createPaymentInput: CreatePaymentInput!): Payment!
 
   """Create a new rating"""
   createScore(createScoreInput: CreateScoreInput!): Score!
@@ -372,7 +332,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "aUwMAJ&-U#w61h4#0¡UK"
+  password: String! = "Dñv6GUMZjk28UtufomzT"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -563,30 +523,6 @@ input UpdatePriceInput {
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: Int!
-}
-
-"""Schema of the information expected to create a new payment"""
-input CreatePaymentInput {
-  """Value of the payment of the service provided"""
-  toll: String!
-
-  """"""
-  transfer: String!
-
-  """"""
-  banner: String!
-
-  """User card type"""
-  card_type: String!
-
-  """Name of the bank that the user uses"""
-  bank_name: String!
-
-  """Total bill of requested services"""
-  total: Float!
-
-  """payment status [waiting, processing or completed]"""
-  state: String!
 }
 
 """Summary of information that is expected to create a new rating"""
