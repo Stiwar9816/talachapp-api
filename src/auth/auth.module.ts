@@ -11,9 +11,13 @@ import { AuthResolver } from './auth.resolver';
 // Module
 import { UsersModule } from 'src/users/users.module';
 import { MailModule } from 'src/mail/mail.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
-  providers: [AuthResolver, AuthService, JwtStrategy],
+  providers: [AuthResolver, AuthService, JwtStrategy, {
+    provide: 'PUB_SUB',
+    useValue: new PubSub(),
+  }],
   exports: [JwtStrategy, PassportModule, JwtModule, AuthService],
   imports: [
     ConfigModule,

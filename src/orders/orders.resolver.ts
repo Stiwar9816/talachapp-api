@@ -1,6 +1,6 @@
-import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Service
 import { OrdersService } from './orders.service';
 // Auth (Enums/Decorators/Guards)
@@ -14,11 +14,15 @@ import { User } from 'src/users/entities/user.entity';
 // Args
 import { PriceIdsArgs } from './dto/args/priceIds.args';
 import { CompaniesIdArgs } from './dto/args/companies.args';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Order)
 @UseGuards(JwtAuthGuard)
 export class OrdersResolver {
-  constructor(private readonly ordersService: OrdersService) { }
+  constructor(
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
+    private readonly ordersService: OrdersService
+  ) { }
 
   @Mutation(() => Order, {
     name: 'createOrder',
@@ -30,7 +34,9 @@ export class OrdersResolver {
     @Args() ids: PriceIdsArgs,
     @Args() company: CompaniesIdArgs
   ): Promise<Order> {
-    return this.ordersService.create(createOrderInput, user, ids, company);
+    const createOrder = this.ordersService.create(createOrderInput, user, ids, company);
+    this.pubSub.publish('newOrder', { newOrder: createOrder })
+    return createOrder
   }
 
   @Query(() => [Order], {
@@ -74,5 +80,13 @@ export class OrdersResolver {
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Order> {
     return this.ordersService.remove(id);
+  }
+
+  @Subscription(() => Order, {
+    name: 'newOrder',
+    description: 'Subscribe to new orders'
+  })
+  subscribeNewOrder(): AsyncIterator<Order> {
+    return this.pubSub.asyncIterator('newOrder')
   }
 }

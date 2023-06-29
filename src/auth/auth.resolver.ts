@@ -1,7 +1,7 @@
 // Nest Common
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 // Services
 import { AuthService } from './auth.service';
 // Types
@@ -13,17 +13,23 @@ import { SignupInput, SigninInput } from './dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 // Guards
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => AuthResponde)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
+    private readonly authService: AuthService
+  ) { }
 
   @Mutation(() => AuthResponde, {
     name: 'signup',
     description: 'Create a new user'
   })
   async signUp(@Args('signupInput') signupInput: SignupInput): Promise<AuthResponde> {
-    return this.authService.signup(signupInput)
+    const createUser = this.authService.signup(signupInput)
+    this.pubSub.publish('newUser', { newUser: createUser })
+    return createUser
   }
 
   @Mutation(() => AuthResponde, {
@@ -41,5 +47,13 @@ export class AuthResolver {
   @UseGuards(JwtAuthGuard)
   revalidateToken(@CurrentUser(/**[ValidRoles.admin]*/) user: User): AuthResponde {
     return this.authService.revalidateToken(user)
+  }
+
+  @Subscription(() => User, {
+    name: 'newUser',
+    description: 'Subscribe to new users'
+  })
+  subscribeNewUser(): AsyncIterator<User> {
+    return this.pubSub.asyncIterator('newUser')
   }
 }

@@ -12,11 +12,11 @@ import { Score } from './entities/score.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubSub = new PubSub();
 @Resolver(() => Score)
 @UseGuards(JwtAuthGuard)
 export class ScoresResolver {
   constructor(
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
     private readonly scoresService: ScoresService
   ) { }
 
@@ -29,7 +29,7 @@ export class ScoresResolver {
     @CurrentUser() user: User
   ): Promise<Score> {
     const createScore = this.scoresService.create(createScoreInput, user);
-    pubSub.publish('newScore', { newScore: createScore })
+    this.pubSub.publish('newScore', { newScore: createScore })
     return createScore
   }
 
@@ -79,6 +79,6 @@ export class ScoresResolver {
     description: 'Subscribe to new scores'
   })
   subscribeNewScore(): AsyncIterator<Score> {
-    return pubSub.asyncIterator('newScore')
+    return this.pubSub.asyncIterator('newScore')
   }
 }

@@ -1,6 +1,6 @@
-import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Services
 import { PricesService } from './prices.service';
 // Auth (Enums/Decorators/Guards)
@@ -11,11 +11,15 @@ import { UserRoles } from 'src/auth/enums/user-role.enum';
 import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Price)
 @UseGuards(JwtAuthGuard)
 export class PricesResolver {
-  constructor(private readonly pricesService: PricesService) { }
+  constructor(
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
+    private readonly pricesService: PricesService
+  ) { }
 
   @Mutation(() => Price, {
     name: 'createPrice',
@@ -25,7 +29,9 @@ export class PricesResolver {
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
-    return this.pricesService.create(createPriceInput, user);
+    const createPrice = this.pricesService.create(createPriceInput, user);
+    this.pubSub.publish('newPrice', { newPrice: createPrice })
+    return
   }
 
   @Query(() => [Price], {
@@ -85,5 +91,13 @@ export class PricesResolver {
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.remove(id);
+  }
+
+  @Subscription(() => Price, {
+    name: 'newPrice',
+    description: 'Subscribe to new prices'
+  })
+  subscribeNewPrice(): AsyncIterator<Price> {
+    return this.pubSub.asyncIterator('newPrice')
   }
 }
