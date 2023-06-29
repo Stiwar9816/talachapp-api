@@ -5,21 +5,23 @@ import { AuthGuard } from '@nestjs/passport';
 export class JwtAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    const { req, connection } = ctx.getContext();
+    const { req } = ctx.getContext();
+    const reqToken = req.connectionParams
+
+    if (reqToken) {
+      const headers = Object.entries(reqToken).reduce(
+        (acc, [key, value]) => {
+          acc[key.toLowerCase()] = value;
+          return acc;
+        },
+        {}
+      );
+
+      return { headers };
+    }
 
     if (req) {
-    //   return req;
-    
-    // Obtén el token de autorización del objeto connectionParamsParams
-    const headers = Object.entries(req.connectionParams).reduce(
-      (acc, [key, value]) => {
-        acc[key.toLowerCase()] = value;
-        return acc;
-      },
-      {},
-      );
-      console.log(headers)
-      return headers;
+      return req;
     }
   }
 }

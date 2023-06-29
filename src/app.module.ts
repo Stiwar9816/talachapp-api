@@ -45,10 +45,14 @@ import { LocationModule } from './location/location.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
-      installSubscriptionHandlers:true,
-      subscriptions:{
-        "graphql-ws": true
-        // "subscriptions-transport-ws": true
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        "graphql-ws": {
+          path: '/graphql'
+        },
+        "subscriptions-transport-ws": {
+          path: '/graphql'
+        }
       },
       plugins: [
         ApolloServerPluginLandingPageLocalDefault()

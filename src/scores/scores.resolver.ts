@@ -18,7 +18,7 @@ const pubSub = new PubSub();
 export class ScoresResolver {
   constructor(
     private readonly scoresService: ScoresService
-    ) { }
+  ) { }
 
   @Mutation(() => Score, {
     name: 'createScore',
@@ -29,7 +29,7 @@ export class ScoresResolver {
     @CurrentUser() user: User
   ): Promise<Score> {
     const createScore = this.scoresService.create(createScoreInput, user);
-    pubSub.publish('newScore', {newScore: createScore})
+    pubSub.publish('newScore', { newScore: createScore })
     return createScore
   }
 
@@ -78,7 +78,7 @@ export class ScoresResolver {
     name: 'newScore',
     description: 'Subscribe to new scores'
   })
-  susCribeToNewScore(@CurrentUser() user:User): AsyncIterator<Score>{
+  subscribeNewScore(): AsyncIterator<Score> {
     return pubSub.asyncIterator('newScore')
   }
 }
