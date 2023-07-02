@@ -1,6 +1,6 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 // Service
 import { CompaniesService } from './companies.service';
 // Auth (Enums/Decorators/Guards)
@@ -11,13 +11,10 @@ import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-import { PubSub } from 'graphql-subscriptions';
-
 @Resolver(() => Company)
 @UseGuards(JwtAuthGuard)
 export class CompaniesResolver {
   constructor(
-    @Inject('PUB_SUB') private readonly pubSub: PubSub,
     private readonly companiesService: CompaniesService
   ) { }
 
@@ -29,9 +26,7 @@ export class CompaniesResolver {
     @Args('createCompanyInput') createCompanyInput: CreateCompanyInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ) {
-    const createCompany = this.companiesService.create(createCompanyInput, user);
-    this.pubSub.publish('newCompany', { newCompany: createCompany })
-    return createCompany
+    return this.companiesService.create(createCompanyInput, user)
   }
 
   @Query(() => [Company], {
@@ -75,13 +70,5 @@ export class CompaniesResolver {
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.block(id, user);
-  }
-
-  @Subscription(() => Company, {
-    name: 'newCompany',
-    description: 'Subscribe to new companies'
-  })
-  subscribeNewScore(): AsyncIterator<Company> {
-    return this.pubSub.asyncIterator('newCompany')
   }
 }

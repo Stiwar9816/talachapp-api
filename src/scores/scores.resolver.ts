@@ -1,6 +1,6 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 // Service
 import { ScoresService } from './scores.service';
 // Auth (Decorators/Guards)
@@ -10,13 +10,11 @@ import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateScoreInput, UpdateScoreInput } from './dto';
 import { Score } from './entities/score.entity';
 import { User } from 'src/users/entities/user.entity';
-import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Score)
 @UseGuards(JwtAuthGuard)
 export class ScoresResolver {
   constructor(
-    @Inject('PUB_SUB') private readonly pubSub: PubSub,
     private readonly scoresService: ScoresService
   ) { }
 
@@ -28,9 +26,7 @@ export class ScoresResolver {
     @Args('createScoreInput') createScoreInput: CreateScoreInput,
     @CurrentUser() user: User
   ): Promise<Score> {
-    const createScore = this.scoresService.create(createScoreInput, user);
-    this.pubSub.publish('newScore', { newScore: createScore })
-    return createScore
+    return this.scoresService.create(createScoreInput, user);
   }
 
   @Query(() => [Score], {
@@ -72,13 +68,5 @@ export class ScoresResolver {
     @CurrentUser() user: User
   ): Promise<Score> {
     return this.scoresService.remove(id);
-  }
-
-  @Subscription(() => Score, {
-    name: 'newScore',
-    description: 'Subscribe to new scores'
-  })
-  subscribeNewScore(): AsyncIterator<Score> {
-    return this.pubSub.asyncIterator('newScore')
   }
 }

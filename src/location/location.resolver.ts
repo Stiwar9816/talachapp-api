@@ -1,6 +1,6 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 // Services
 import { LocationService } from './location.service';
 // Auth (Enums/Decorators/Guards)
@@ -11,13 +11,11 @@ import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateLocationInput, UpdateLocationInput } from './dto';
 import { Location } from './entities/location.entity';
 import { User } from 'src/users/entities/user.entity';
-import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Location)
 @UseGuards(JwtAuthGuard)
 export class LocationResolver {
   constructor(
-    @Inject('PUB_SUB') private readonly pubSub: PubSub,
     private readonly locationService: LocationService
   ) { }
 
@@ -27,9 +25,7 @@ export class LocationResolver {
   })
   createLocation(@Args('createLocationInput') createLocationInput: CreateLocationInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User) {
-    const createLocation = this.locationService.create(createLocationInput, user);
-    this.pubSub.publish('newLocation', { newLocation: createLocation })
-    return createLocation
+    return this.locationService.create(createLocationInput, user);
   }
 
   @Query(() => [Location], {
@@ -62,13 +58,5 @@ export class LocationResolver {
   removeLocation(@Args('id', { type: () => Int }, ParseIntPipe) id: number,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User) {
     return this.locationService.remove(user.id);
-  }
-
-  @Subscription(() => Location, {
-    name: 'newLocation',
-    description: 'Subscribe to new scores'
-  })
-  subscribeNewLocation(): AsyncIterator<Location> {
-    return this.pubSub.asyncIterator('newLocation')
   }
 }
