@@ -332,11 +332,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-<<<<<<< HEAD
-  password: String! = "Dñv6GUMZjk28UtufomzT"
-=======
-  password: String! = "8k-4Ltzq%ehQ2QTRmHMA"
->>>>>>> 7af8d17dcc48f12d743701cab669abbd399a5978
+  password: String! = "yEU-o-3C/eñHñr¡a_-02"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -559,4 +555,9 @@ input CreateLocationInput {
   geohash: String!
   geopoint: String!
   status: String!
+}
+
+type Subscription {
+  """Subscribe to new scores"""
+  newScore: Score!
 }

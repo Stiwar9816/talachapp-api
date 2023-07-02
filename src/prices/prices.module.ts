@@ -3,10 +3,13 @@ import { PricesService } from './prices.service';
 import { PricesResolver } from './prices.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Price } from './entities/price.entity';
-import { OrdersModule } from 'src/orders/orders.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
-  providers: [PricesResolver, PricesService],
+  providers: [PricesResolver, PricesService, {
+    provide: 'PUB_SUB',
+    useValue: new PubSub(),
+  }],
   imports: [TypeOrmModule.forFeature([Price])],
   exports: [PricesService, TypeOrmModule]
 })
