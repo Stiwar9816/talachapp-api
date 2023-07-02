@@ -29,13 +29,16 @@ export class PricesService {
         .getOne();
 
       if (sameUserPrice) {
-        throw new Error('Ya has registrado un precio con este nombre anteriormente');
+        throw new Error ()
       }
 
       const newPrice = await this.priceRepository.create({ ...createPriceInput, user });
       return await this.priceRepository.save(newPrice);
     } catch (error) {
-      this.handleDBException(error);
+      this.handleDBException({
+        code: '23505',
+        detail: `${createPriceInput.name} already exists`
+      });
     }
   }
 
