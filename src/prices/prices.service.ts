@@ -19,10 +19,23 @@ export class PricesService {
 
   async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
     try {
-      const newPrice = await this.priceRepository.create({ ...createPriceInput, user })
-      return await this.priceRepository.save(newPrice)
+      const { name } = createPriceInput;
+
+      // Verificar si existe un precio con el mismo nombre y el mismo usuario
+      const sameUserPrice = await this.priceRepository
+        .createQueryBuilder('price')
+        .where('price.name = :name', { name })
+        .andWhere('price.createBy = :userId', { userId: user.id })
+        .getOne();
+
+      if (sameUserPrice) {
+        throw new Error('Ya has registrado un precio con este nombre anteriormente');
+      }
+
+      const newPrice = await this.priceRepository.create({ ...createPriceInput, user });
+      return await this.priceRepository.save(newPrice);
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
 
