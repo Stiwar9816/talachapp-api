@@ -89,12 +89,14 @@ export class PricesService {
     updatePriceInput: UpdatePriceInput,
     updateBy: User,
   ): Promise<Price> {
+   const userId = await this.findOne(id)
     try {
       const price = await this.priceRepository.preload({
         id,
         ...updatePriceInput,
       });
       price.lastUpdateBy = updateBy;
+      price.user = userId.user
       return await this.priceRepository.save(price);
     } catch (error) {
       this.handleDBException(error);

@@ -19,7 +19,7 @@ export class Price {
   })
   id: number
 
-  @Column('text')
+  @Column('text', { unique: true })
   @Field(() => String, {
     description: 'Name of the product, service or fixed cost'
   })
