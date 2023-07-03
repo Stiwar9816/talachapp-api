@@ -53,15 +53,14 @@ export class PricesService {
     let query = this.priceRepository
       .createQueryBuilder('price')
       .leftJoinAndSelect('price.user', 'createBy');
-    if (price === 'Producto'
-      && createBy.roles == UserRoles.Administrador.match(UserRoles.Administrador)
-      || createBy.roles == UserRoles.superAdmin.match(UserRoles.superAdmin)) {
-      query = query.where('price.type = :type AND price.createBy = :userId', {
-        type: price,
-        userId: createBy.id,
-      });
-    }
-    else {
+      if (price === 'Producto'
+      && createBy.roles[0] == UserRoles.Talachero) {
+        query = query.where('price.type = :type AND price.createBy = :userId', {
+          type: price,
+          userId: createBy.id,
+        });
+      }
+      else { 
       query = query.where('price.type = :type', { type: price });
     }
     return query.getMany();
