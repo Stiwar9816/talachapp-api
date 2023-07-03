@@ -9,13 +9,12 @@ import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PricesService {
-
-  private readonly logger = new Logger('PricesServices')
+  private readonly logger = new Logger('PricesServices');
 
   constructor(
     @InjectRepository(Price)
-    private readonly priceRepository: Repository<Price>
-  ) { }
+    private readonly priceRepository: Repository<Price>,
+  ) {}
 
   async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
     try {
@@ -29,75 +28,97 @@ export class PricesService {
         .getOne();
 
       if (sameUserPrice) {
-        throw new Error ()
+        throw new Error();
       }
 
-      const newPrice = await this.priceRepository.create({ ...createPriceInput, user });
+      const newPrice = await this.priceRepository.create({
+        ...createPriceInput,
+        user,
+      });
       return await this.priceRepository.save(newPrice);
     } catch (error) {
       this.handleDBException({
         code: '23505',
-        detail: `${createPriceInput.name} already exists`
+        detail: `${createPriceInput.name} already exists`,
       });
     }
   }
 
   async findAll(): Promise<Price[]> {
-    return await this.priceRepository.find()
+    return await this.priceRepository.find();
   }
 
-  async findAllByType(price: Price, createBy: User): Promise<Price[]> {
-    return this.priceRepository.createQueryBuilder('price')
-      .leftJoinAndSelect('price.user', 'createBy')
-      .where('price.type = :price AND price.createBy = :user', { price: price, user: createBy.id })
-      .getMany();
+  async findAllByType(price: string, createBy: User): Promise<Price[]> {
+    let query = this.priceRepository
+      .createQueryBuilder('price')
+      .leftJoinAndSelect('price.user', 'createBy');
+    if (price === 'Producto') {
+      query = query.where('price.type = :type AND price.createBy = :userId', {
+        type: price,
+        userId: createBy.id,
+      });
+    } else {
+      query = query.where('price.type = :type', { type: price });
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: number): Promise<Price> {
     try {
-      return await this.priceRepository.findOneByOrFail({ id })
+      return await this.priceRepository.findOneByOrFail({ id });
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `${id} not found`,
+      });
     }
   }
 
   async findAllId(ids: number[]): Promise<Price[]> {
-    return await this.priceRepository.createQueryBuilder('price')
+    return await this.priceRepository
+      .createQueryBuilder('price')
       .where('price.id IN (:...ids)', { ids })
       .getMany();
   }
 
-  async update(id: number, updatePriceInput: UpdatePriceInput, updateBy: User): Promise<Price> {
+  async update(
+    id: number,
+    updatePriceInput: UpdatePriceInput,
+    updateBy: User,
+  ): Promise<Price> {
     try {
-      const price = await this.priceRepository.preload({ id, ...updatePriceInput })
-      price.lastUpdateBy = updateBy
-      return await this.priceRepository.save(price)
+      const price = await this.priceRepository.preload({
+        id,
+        ...updatePriceInput,
+      });
+      price.lastUpdateBy = updateBy;
+      return await this.priceRepository.save(price);
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
 
   async remove(id: number): Promise<Price> {
-    const price = await this.findOne(id)
-    return await this.priceRepository.remove(price)
+    const price = await this.findOne(id);
+    return await this.priceRepository.remove(price);
   }
 
   // Manejo de excepciones
   private handleDBException(error: any): never {
     if (error.code === '23505')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 
   private handleDBNotFound(price: Price, id: number) {
-    if (!price) throw new NotFoundException(`Price with id ${id} not found`)
+    if (!price) throw new NotFoundException(`Price with id ${id} not found`);
   }
 }

@@ -332,7 +332,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "n-PgMlÑuT4p+GÑ%uE37i"
+  password: String! = "ZeHkn/eCtB6%¡S+n+DSi"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role

@@ -56,7 +56,7 @@ export class PricesResolver {
     description: 'Filters all prices depending on the type passed as a parameter'
   })
   findAllByType(
-    @Args('priceType', { type: () => String }) price: Price,
+    @Args('priceType', { type: () => String }) price: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User,
   ): Promise<Price[]> {
     return this.pricesService.findAllByType(price, user);
