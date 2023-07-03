@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
+import { UserRoles } from 'src/auth/enums/user-role.enum';
 
 @Injectable()
 export class PricesService {
@@ -14,7 +15,7 @@ export class PricesService {
   constructor(
     @InjectRepository(Price)
     private readonly priceRepository: Repository<Price>,
-  ) {}
+  ) { }
 
   async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
     try {
@@ -52,15 +53,17 @@ export class PricesService {
     let query = this.priceRepository
       .createQueryBuilder('price')
       .leftJoinAndSelect('price.user', 'createBy');
-    if (price === 'Producto') {
+    if (price === 'Producto'
+      && createBy.roles == UserRoles.Administrador.match(UserRoles.Administrador)
+      || createBy.roles == UserRoles.superAdmin.match(UserRoles.superAdmin)) {
       query = query.where('price.type = :type AND price.createBy = :userId', {
         type: price,
         userId: createBy.id,
       });
-    } else {
+    }
+    else {
       query = query.where('price.type = :type', { type: price });
     }
-
     return query.getMany();
   }
 
