@@ -41,6 +41,9 @@ export class AuthService {
     async signin(signinInput: SigninInput): Promise<AuthResponde> {
         const { email, password } = signinInput
         const user = await this.usersService.findOneByEmail(email)
+        
+        await this.validateUser(user.id)
+
         // Compare password
         if (!bcrypt.compareSync(password, user.password)) {
             throw new BadRequestException('Email or password do not match')
@@ -51,7 +54,7 @@ export class AuthService {
 
     async validateUser(id: number): Promise<User> {
         const user = await this.usersService.findOneById(id)
-        if (!user.isActive)
+        if (user.isActive === 'Inactivo')
             throw new UnauthorizedException(`User is inactive, talk with an admin`)
         delete user.password
         return user
