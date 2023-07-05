@@ -110,6 +110,10 @@ export class User {
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.email = this.email.toLowerCase().trim()
+
+    if(this.roles[0] === 'Talachero'){
+      this.isActive = 'Inactivo'
+    }
   }
 
   @BeforeUpdate()
