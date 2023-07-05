@@ -33,21 +33,21 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     private readonly pricesService: PricesService,
-    private readonly companiesService: CompaniesService
+    private readonly companiesService: CompaniesService,
   ) {
-    Conekta.api_key = process.env.PRIVARTE_KEY
-    Conekta.apiVersion = '2.1.0'
+    Conekta.api_key = process.env.PRIVARTE_KEY;
+    Conekta.apiVersion = '2.1.0';
   }
 
   async create(
     createOrderInput: CreateOrderInput,
     user: User,
     priceIds: PriceIdsArgs,
-    companyId: CompaniesIdArgs
+    companyId: CompaniesIdArgs,
   ): Promise<Order> {
     let { status, total } = createOrderInput;
     const { ids } = priceIds;
-    const { idCompany } = companyId
+    const { idCompany } = companyId;
     try {
       const prices = await this.pricesService.findAllId(ids);
       const priceCount = ids.reduce((count, id) => {
@@ -59,7 +59,7 @@ export class OrdersService {
       for (const price of prices) {
         const count = priceCount[price.id] || 0;
         price.stock -= count;
-        this.handleNotQuantity(price)
+        this.handleNotQuantity(price);
         await this.pricesService.update(price.id, price, user); // Update the price in the database
       }
 
@@ -67,7 +67,7 @@ export class OrdersService {
       let subTotal = 0; // variable initialization
       for (const price of prices) {
         const count = priceCount[price.id] || 0;
-        subTotal += price.price * count;  // Sum of product values
+        subTotal += price.price * count; // Sum of product values
       }
       const vTotal = transactionPayment(subTotal); // Subtotal with transaction fee
 
@@ -90,9 +90,11 @@ export class OrdersService {
         };
       });
 
-      //Create expiresAt 24hr 
+      //Create expiresAt 24hr
       const now = new Date();
-      const expiresAt = Math.round((now.getTime() + 24 * 60 * 60 * 1000) / 1000);
+      const expiresAt = Math.round(
+        (now.getTime() + 24 * 60 * 60 * 1000) / 1000,
+      );
 
       const paymentLink = await Conekta.Checkout.create({
         name: 'Link de pago',
@@ -110,7 +112,7 @@ export class OrdersService {
         },
         expires_at: expiresAt,
         needs_shipping_contact: false,
-        recurrent: false
+        recurrent: false,
       });
       await this.sendPaymentEmail(user.email, paymentLink._json.id);
       return await this.orderRepository.save(newOrder);
@@ -145,8 +147,8 @@ export class OrdersService {
     };
     const url = 'https://api.conekta.io/orders';
     try {
-      const res = await axios.get(url, { headers })
-      return res.data.data
+      const res = await axios.get(url, { headers });
+      return res.data.data;
     } catch (error) {
       this.handleDBException({
         code: 'ERR_BAD_REQUEST',
@@ -155,9 +157,15 @@ export class OrdersService {
     }
   }
 
-  async findAll(): Promise<Order[]> {
-    await this.getOrders()
-    return await this.orderRepository.find();
+  async findAll(userId: User): Promise<Order[]> {
+    await this.getOrders();
+    let query = this.orderRepository
+      .createQueryBuilder('orders')
+      .leftJoinAndSelect('orders.user', 'userId');
+    if (userId.roles[0] === 'Talachero') {
+      query = query.where('orders.userId = :userId', { userId: userId.id });
+    }
+    return query.getMany();
   }
 
   async findOne(id: number): Promise<Order> {
