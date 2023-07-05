@@ -42,7 +42,7 @@ export class OrdersResolver {
   findAll(
     @CurrentUser() user: User
   ): Promise<Order[]> {
-    return this.ordersService.findAll();
+    return this.ordersService.findAll(user);
   }
 
   @Query(() => Order, {
@@ -62,7 +62,7 @@ export class OrdersResolver {
   })
   updateOrder(
     @Args('updateOrderInput') updateOrderInput: UpdateOrderInput,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<Order> {
     return this.ordersService.update(updateOrderInput.id, updateOrderInput, user);
   }

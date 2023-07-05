@@ -32,7 +32,9 @@ export class LocationResolver {
     name: 'locations',
     description: ''
   })
-  findAll() {
+  findAll(
+    @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User
+  ) {
     return this.locationService.findAll();
   }
 

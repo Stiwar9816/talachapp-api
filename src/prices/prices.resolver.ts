@@ -84,7 +84,7 @@ export class PricesResolver {
   })
   removePrice(
     @Args('id', { type: () => Int }, ParseIntPipe) id: number,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<Price> {
     return this.pricesService.remove(id);
   }
