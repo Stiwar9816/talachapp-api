@@ -140,25 +140,7 @@ export class OrdersService {
     }
   }
 
-  async getOrders() {
-    const headers = {
-      accept: 'application/vnd.conekta-v2.1.0+json',
-      authorization: `Bearer ${process.env.PRIVARTE_KEY}`,
-    };
-    const url = 'https://api.conekta.io/orders';
-    try {
-      const res = await axios.get(url, { headers });
-      return res.data.data;
-    } catch (error) {
-      this.handleDBException({
-        code: 'ERR_BAD_REQUEST',
-        detail: `Error al obtener la información:' ${error}`,
-      });
-    }
-  }
-
   async findAll(userId: User): Promise<Order[]> {
-    await this.getOrders();
     let query = this.orderRepository
       .createQueryBuilder('orders')
       .leftJoinAndSelect('orders.user', 'userId');
