@@ -5,9 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
-  providers: [UsersResolver, UsersService],
+  providers: [UsersResolver, UsersService, {
+    provide: 'PUB_SUB',
+    useValue: new PubSub(),
+  }],
   imports: [TypeOrmModule.forFeature([User]), MailModule, forwardRef(() => AuthModule)],
   exports: [UsersService]
 })
