@@ -14,6 +14,7 @@ import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Geofence } from '../interface/geofence.interface';
+import { Price } from 'src/prices/entities/price.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType({
@@ -123,6 +124,10 @@ export class Company {
   @Field(() => Order)
   order: Order
 
+  @OneToMany(() => Price, (price) => price.companies)
+  @Field(() => Price)
+  price: Price
+
   @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, {
@@ -130,5 +135,4 @@ export class Company {
     description: 'Returns the information of the user who made the last update of the company data'
   })
   lastUpdateBy?: User
-
 }

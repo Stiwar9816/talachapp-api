@@ -7,13 +7,11 @@ import { OrdersService } from './orders.service';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
-// Entity/Dto's(Inputs)
-import { CreateOrderInput, UpdateOrderInput } from './dto';
+// Entity/Dto's(Inputs)/Args
+import { CreateOrderInput, UpdateOrderInput, PriceIdsArgs, CompaniesIdArgs } from './dto';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-// Args
-import { PriceIdsArgs } from './dto/args/priceIds.args';
-import { CompaniesIdArgs } from './dto/args/companies.args';
+// Subcription
 import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Order)

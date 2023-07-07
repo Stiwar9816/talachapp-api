@@ -29,6 +29,9 @@ type Price {
   Returns the information of the user who made the last update of the company data
   """
   lastUpdateBy: User
+
+  """Relationship with the many-to-one companies table"""
+  companies: Company
 }
 
 "\n  Scheme where all the information on customer orders is stored, \n  as well as the company that will provide the service, the products or services, \n  the method of payment and the user's data.\n  "
@@ -105,6 +108,7 @@ type Company {
   lat: Float!
   lng: Float!
   order: Order!
+  price: Price!
 
   """
   Returns the information of the user who made the last update of the company data
@@ -296,7 +300,7 @@ type Mutation {
   removeOrder(id: Int!): Order!
 
   """Create a new price for either a [product, service, or cost]"""
-  createPrice(createPriceInput: CreatePriceInput!): Price!
+  createPrice(createPriceInput: CreatePriceInput!, idCompany: Int!): Price!
 
   """Update the price data"""
   updatePrice(updatePriceInput: UpdatePriceInput!): Price!
@@ -332,7 +336,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "idFNd¡wZñgfVXXAbUjLj"
+  password: String! = "4Pm1JDXL5$bvA0LaAVU2"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -555,4 +559,24 @@ input CreateLocationInput {
   geohash: String!
   geopoint: String!
   status: String!
+}
+
+type Subscription {
+  """Subscribe to new users"""
+  newUser: AuthResponde!
+
+  """Subscribe to new companies"""
+  newCompany: Company!
+
+  """Subscribe to new orders"""
+  newOrder: Order!
+
+  """Subscribe to new prices"""
+  newPrice: Price!
+
+  """Subscribe to new scores"""
+  newScore: Score!
+
+  """Subscribe to new scores"""
+  newLocation: Location!
 }

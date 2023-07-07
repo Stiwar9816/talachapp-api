@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
+import { Company } from 'src/companies/entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'prices' })
 @ObjectType({
@@ -70,4 +71,13 @@ export class Price {
     description: 'Returns the information of the user who made the last update of the company data'
   })
   lastUpdateBy?: User
+
+  @ManyToOne(() => Company, comapny => comapny.order, { lazy: true, eager: true, nullable: true })
+  @Index('companyId')
+  @JoinColumn({ name: 'company' })
+  @Field(() => Company, {
+    nullable: true,
+    description: 'Relationship with the many-to-one companies table'
+  })
+  companies: Company
 }

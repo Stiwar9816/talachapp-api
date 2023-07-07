@@ -12,6 +12,7 @@ import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PubSub } from 'graphql-subscriptions';
+import { CompaniesIdArgs } from 'src/orders/dto';
 
 @Resolver(() => Price)
 @UseGuards(JwtAuthGuard)
@@ -27,9 +28,10 @@ export class PricesResolver {
   })
   createPrice(
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @Args() company: CompaniesIdArgs
   ): Promise<Price> {
-    const createPrice = this.pricesService.create(createPriceInput, user);
+    const createPrice = this.pricesService.create(createPriceInput, user, company);
     this.pubSub.publish('newPrice', { newPrice: createPrice })
     return createPrice
   }

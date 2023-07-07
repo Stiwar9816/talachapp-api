@@ -7,6 +7,8 @@ import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
+import { CompaniesIdArgs } from 'src/orders/dto';
+import { CompaniesService } from 'src/companies/companies.service';
 
 @Injectable()
 export class PricesService {
@@ -15,12 +17,13 @@ export class PricesService {
   constructor(
     @InjectRepository(Price)
     private readonly priceRepository: Repository<Price>,
+    private readonly companiesService: CompaniesService
   ) { }
 
-  async create(createPriceInput: CreatePriceInput, user: User): Promise<Price> {
+  async create(createPriceInput: CreatePriceInput, user: User, company: CompaniesIdArgs): Promise<Price> {
+    const { idCompany } = company
+    const { name } = createPriceInput;
     try {
-      const { name } = createPriceInput;
-
       // Verificar si existe un precio con el mismo nombre y el mismo usuario
       const sameUserPrice = await this.priceRepository
         .createQueryBuilder('price')
@@ -32,10 +35,14 @@ export class PricesService {
         throw new Error();
       }
 
+      const companies = await this.companiesService.findOne(idCompany);
+
       const newPrice = await this.priceRepository.create({
         ...createPriceInput,
         user,
+        companies
       });
+
       return await this.priceRepository.save(newPrice);
     } catch (error) {
       this.handleDBException({
@@ -53,14 +60,14 @@ export class PricesService {
     let query = this.priceRepository
       .createQueryBuilder('price')
       .leftJoinAndSelect('price.user', 'createBy');
-      if (price === 'Producto'
+    if (price === 'Producto'
       && createBy.roles[0] == UserRoles.Talachero) {
-        query = query.where('price.type = :type AND price.createBy = :userId', {
-          type: price,
-          userId: createBy.id,
-        });
-      }
-      else { 
+      query = query.where('price.type = :type AND price.createBy = :userId', {
+        type: price,
+        userId: createBy.id,
+      });
+    }
+    else {
       query = query.where('price.type = :type', { type: price });
     }
     return query.getMany();
@@ -89,7 +96,7 @@ export class PricesService {
     updatePriceInput: UpdatePriceInput,
     updateBy: User,
   ): Promise<Price> {
-   const userId = await this.findOne(id)
+    const userId = await this.findOne(id)
     try {
       const price = await this.priceRepository.preload({
         id,
