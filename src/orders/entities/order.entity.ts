@@ -1,10 +1,11 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 // GraphQL
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Company } from 'src/companies/entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Price } from 'src/prices/entities/price.entity';
+import { Score } from 'src/scores/entities/score.entity';
 @Entity({ name: 'orders' })
 @ObjectType({
   description:
@@ -31,6 +32,13 @@ export class Order {
   @Column('float', { nullable: true })
   @Field(() => Float, { nullable: true })
   total?: number
+
+  @Column('text', {nullable: true})
+  @Field(()=> String, { 
+    nullable: true,
+    description: ' id order api coneckta'
+  })
+  idOrderConekta?: string
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   @Field(() => Date)
@@ -66,4 +74,8 @@ export class Order {
   @JoinTable()
   @Field(() => Price)
   prices: Price[];
+
+  @OneToMany(()=> Score, score => score.orders, { lazy:true, nullable:true})
+  @Field(()=> Score, { description: 'Order score'})
+  score?: Score
 }

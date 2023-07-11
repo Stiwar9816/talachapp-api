@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { Company } from 'src/companies/entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'prices' })
 @ObjectType({
@@ -51,6 +51,14 @@ export class Price {
     description: 'Description of the added elements [ products, services or fixed costs ]'
   })
   description?: string
+
+  @Column('text', {nullable: true})
+  @Field(()=> String, { 
+    nullable: true,
+    description: 'image of price type product'
+  })
+  image?: string
+
 
   @CreateDateColumn()
   createdAt: Date;
