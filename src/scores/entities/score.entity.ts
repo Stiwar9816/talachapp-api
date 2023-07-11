@@ -1,4 +1,5 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
+import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -22,8 +23,8 @@ export class Score {
   })
   id: number;
 
-  @Column('int')
-  @Field(() => Int, {
+  @Column('float4')
+  @Field(() => Float, {
     description:
       'Rating that the user gives to the company or vice versa score from 1 to 5',
   })
@@ -44,6 +45,14 @@ export class Score {
   updatedAt: Date;
   
   // Relations
+
+
+  @ManyToOne(()=> Order, order => order.score, {lazy:true, eager:true,nullable:true})
+  @Field(()=> Order, { description: 'Order score'})
+  @JoinColumn({name: 'scoreOrder'})
+  orders?: Order
+
+
   @ManyToOne(() => User, (user) => user.scores, { eager: true })
   @Field(() => User, { description: 'User information' })
   @JoinColumn({ name: 'userID' })
