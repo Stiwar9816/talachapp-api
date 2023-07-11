@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
+import { ObjectType, Field, Float } from '@nestjs/graphql';
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -17,18 +17,27 @@ import {
     'Scheme where user rating information is stored for the services provided',
 })
 export class Score {
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, {
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..',
   })
-  id: number;
+  id: string;
 
   @Column('float4')
   @Field(() => Float, {
     description:
       'Rating that the user gives to the company or vice versa score from 1 to 5',
+    nullable: true
   })
-  rank: number;
+  rankClient?: number;
+
+  @Column('float4')
+  @Field(() => Float, {
+    description:
+      'Rating that the user gives to the company or vice versa score from 1 to 5',
+    nullable: true
+  })
+  rankTalachero?: number;
 
   @Column('text', { nullable: true })
   @Field(() => String, {
@@ -43,13 +52,12 @@ export class Score {
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
-  
+
   // Relations
 
-
-  @ManyToOne(()=> Order, order => order.score, {lazy:true, eager:true,nullable:true})
-  @Field(()=> Order, { description: 'Order score'})
-  @JoinColumn({name: 'scoreOrder'})
+  @ManyToOne(() => Order, order => order.score, { lazy: true, eager: true, nullable: true })
+  @Field(() => Order, { description: 'Order score', nullable: true })
+  @JoinColumn({ name: 'scoreOrder' })
   orders?: Order
 
 
@@ -57,7 +65,6 @@ export class Score {
   @Field(() => User, { description: 'User information' })
   @JoinColumn({ name: 'userID' })
   user: User;
-
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, {
     nullable: true,

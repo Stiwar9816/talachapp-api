@@ -1,6 +1,6 @@
-import { IsInt, IsPositive } from 'class-validator';
+import { IsPositive, IsString, IsUUID } from 'class-validator';
 import { CreateOrderInput } from './create-order.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 
 @InputType({
   description:
@@ -10,10 +10,9 @@ import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
   `
 })
 export class UpdateOrderInput extends PartialType(CreateOrderInput) {
-  @IsInt()
-  @IsPositive()
-  @Field(() => Int, {
+  @IsUUID()
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..'
   })
-  id: number;
+  id: string;
 }

@@ -31,7 +31,7 @@ export class CompaniesService {
     return this.companyRepository.find()
   }
 
-  async findOne(id: number): Promise<Company> {
+  async findOne(id: string): Promise<Company> {
     try {
       return await this.companyRepository.findOneByOrFail({ id })
     } catch (error) {
@@ -42,7 +42,7 @@ export class CompaniesService {
     }
   }
 
-  async update(id: number, updateCompanyInput: UpdateCompanyInput, updateBy: User): Promise<Company> {
+  async update(id: string, updateCompanyInput: UpdateCompanyInput, updateBy: User): Promise<Company> {
     try {
       const company = await this.companyRepository.preload({ id, ...updateCompanyInput })
       company.lastUpdateBy = updateBy
@@ -55,7 +55,7 @@ export class CompaniesService {
     }
   }
 
-  async block(id: number, user: User): Promise<Company> {
+  async block(id: string, user: User): Promise<Company> {
     const companyToBlock = await this.findOne(id)
     companyToBlock.isActive = 'Inactivo'
     companyToBlock.lastUpdateBy = user
@@ -74,7 +74,7 @@ export class CompaniesService {
     throw new InternalServerErrorException('Unexpected error, check server logs')
   }
 
-  private handleDBNotFound(company: Company, id: number) {
+  private handleDBNotFound(company: Company, id: string) {
     if (!company) throw new NotFoundException(`Company with id ${id} not found`)
   }
 }

@@ -16,11 +16,11 @@ import { Score } from 'src/scores/entities/score.entity';
   `
 })
 export class Order {
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, {
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..'
   })
-  id: number
+  id: string
 
   @Column('text', { nullable: true })
   @Field(() => String, {
@@ -33,8 +33,8 @@ export class Order {
   @Field(() => Float, { nullable: true })
   total?: number
 
-  @Column('text', {nullable: true})
-  @Field(()=> String, { 
+  @Column('text', { nullable: true })
+  @Field(() => String, {
     nullable: true,
     description: ' id order api coneckta'
   })
@@ -75,7 +75,7 @@ export class Order {
   @Field(() => Price)
   prices: Price[];
 
-  @OneToMany(()=> Score, score => score.orders, { lazy:true, nullable:true})
-  @Field(()=> Score, { description: 'Order score'})
+  @OneToMany(() => Score, score => score.orders, { lazy: true, nullable: true })
+  @Field(() => Score, { description: 'Order score' })
   score?: Score
 }

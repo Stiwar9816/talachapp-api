@@ -72,7 +72,7 @@ export class UsersService {
     }
   }
 
-  async findOneById(id: number): Promise<User> {
+  async findOneById(id: string): Promise<User> {
     try {
       return await this.userRepository.findOneByOrFail({ id })
     } catch (error) {
@@ -83,7 +83,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserInput: UpdateUserInput, updateBy: User): Promise<User> {
+  async update(id: string, updateUserInput: UpdateUserInput, updateBy: User): Promise<User> {
     try {
       const user = await this.userRepository.preload({
         id, ...updateUserInput,
@@ -103,7 +103,7 @@ export class UsersService {
     }
   }
 
-  async block(id: number, user: User): Promise<User> {
+  async block(id: string, user: User): Promise<User> {
     const userToBlock = await this.findOneById(id)
     userToBlock.isActive = 'Inactivo'
     userToBlock.lastUpdateBy = user
@@ -157,5 +157,5 @@ export class UsersService {
 
   private handleDBNotFound(user: User, email: string) {
     if (!user) throw new NotFoundException(`User with email ${email} not found`)
-  }  
+  }
 }

@@ -1,6 +1,5 @@
 import { Field, Float, InputType } from "@nestjs/graphql"
 import { IsArray, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Matches, MinLength } from "class-validator"
-import { UserRoles } from "src/auth/enums/user-role.enum"
 import { randomPassword } from "src/auth/utils/randomPassword"
 
 @InputType({

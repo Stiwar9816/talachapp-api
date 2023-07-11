@@ -24,7 +24,7 @@ export class AuthService {
         private readonly usersService: UsersService
     ) { }
 
-    getjwtToken(id: number) {
+    getjwtToken(id: string) {
         return this.jwtService.sign({ id })
     }
 
@@ -52,7 +52,7 @@ export class AuthService {
         return { token, user }
     }
 
-    async validateUser(id: number): Promise<User> {
+    async validateUser(id: string): Promise<User> {
         const user = await this.usersService.findOneById(id)
         if (user.isActive === 'Inactivo')
             throw new UnauthorizedException(`User is inactive, talk with an admin`)

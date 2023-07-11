@@ -20,7 +20,7 @@ export class PricesService {
     private readonly companiesService: CompaniesService
   ) { }
 
-  async create(createPriceInput: CreatePriceInput, user: User, company: CompaniesIdArgs): Promise<Price> {
+  async create(createPriceInput: CreatePriceInput, user: User, company?: CompaniesIdArgs): Promise<Price> {
     const { idCompany } = company
     const { name } = createPriceInput;
     try {
@@ -73,7 +73,7 @@ export class PricesService {
     return query.getMany();
   }
 
-  async findOne(id: number): Promise<Price> {
+  async findOne(id: string): Promise<Price> {
     try {
       return await this.priceRepository.findOneByOrFail({ id });
     } catch (error) {
@@ -84,7 +84,7 @@ export class PricesService {
     }
   }
 
-  async findAllId(ids: number[]): Promise<Price[]> {
+  async findAllId(ids: string[]): Promise<Price[]> {
     return await this.priceRepository
       .createQueryBuilder('price')
       .where('price.id IN (:...ids)', { ids })
@@ -92,7 +92,7 @@ export class PricesService {
   }
 
   async update(
-    id: number,
+    id: string,
     updatePriceInput: UpdatePriceInput,
     updateBy: User,
   ): Promise<Price> {
@@ -110,7 +110,7 @@ export class PricesService {
     }
   }
 
-  async remove(id: number): Promise<Price> {
+  async remove(id: string): Promise<Price> {
     const price = await this.findOne(id);
     return await this.priceRepository.remove(price);
   }
@@ -129,7 +129,7 @@ export class PricesService {
     );
   }
 
-  private handleDBNotFound(price: Price, id: number) {
+  private handleDBNotFound(price: Price, id: string) {
     if (!price) throw new NotFoundException(`Price with id ${id} not found`);
   }
 }

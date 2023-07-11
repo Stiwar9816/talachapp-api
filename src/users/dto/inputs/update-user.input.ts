@@ -1,18 +1,17 @@
 import { CreateUserInput } from './create-user.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-import { IsInt, IsPositive, IsOptional, IsIn, IsArray } from 'class-validator';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
+import { IsOptional, IsIn, IsArray, IsUUID } from 'class-validator';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 
 @InputType({
   description: 'Diagram of the fields enabled to be able to be modified by the system admin for a specific user'
 })
 export class UpdateUserInput extends PartialType(CreateUserInput) {
-  @IsInt()
-  @IsPositive()
-  @Field(() => Int, {
+  @IsUUID()
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..'
   })
-  id: number
+  id: string
 
   @IsArray()
   @IsOptional()

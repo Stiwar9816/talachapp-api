@@ -1,4 +1,4 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseIntPipe, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
 import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Service
@@ -46,7 +46,7 @@ export class ScoresResolver {
     description: 'Search for a rating by a unique ID'
   })
   findOne(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<Score> {
     return this.scoresService.findOne(id);
@@ -68,7 +68,7 @@ export class ScoresResolver {
     description: 'Remove a rating with a unique ID'
   })
   removeScore(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<Score> {
     return this.scoresService.remove(id);

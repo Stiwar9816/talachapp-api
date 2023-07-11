@@ -12,11 +12,11 @@ import { Location } from 'src/location/entities/location.entity';
   description: 'Schema where the information of the system users is stored'
 })
 export class User {
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, {
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..'
   })
-  id: number
+  id: string
 
   @Column('text')
   @Field(() => String, {
@@ -99,8 +99,8 @@ export class User {
   })
   orders: Order
 
-  @OneToMany(()=> Location, location => location.user)
-  @Field(()=> Location,{
+  @OneToMany(() => Location, location => location.user)
+  @Field(() => Location, {
     nullable: true,
     description: 'One-to-many relationship with order table'
   })
@@ -111,7 +111,7 @@ export class User {
   checkFieldsBeforeInsert() {
     this.email = this.email.toLowerCase().trim()
 
-    if(this.roles[0] === 'Talachero'){
+    if (this.roles[0] === 'Talachero') {
       this.isActive = 'Inactivo'
     }
   }

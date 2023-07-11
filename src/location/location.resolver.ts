@@ -1,4 +1,4 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
 import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Services
@@ -44,7 +44,7 @@ export class LocationResolver {
     name: 'location',
     description: ''
   })
-  findOne(@Args('id', { type: () => Int }, ParseIntPipe) id: number,
+  findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User
   ) {
     return this.locationService.findOne(user.id);
@@ -59,7 +59,7 @@ export class LocationResolver {
     name: 'removeLocation',
     description: 'remove location for userId'
   })
-  removeLocation(@Args('id', { type: () => Int }, ParseIntPipe) id: number,
+  removeLocation(@Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.Talachero, UserRoles.Usuario, UserRoles.superAdmin]) user: User) {
     return this.locationService.remove(user.id);
   }

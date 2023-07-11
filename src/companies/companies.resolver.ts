@@ -1,4 +1,4 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
 import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Service
@@ -49,7 +49,7 @@ export class CompaniesResolver {
     description: 'Returns a single specific record queried by ID'
   })
   findOne(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.findOne(id);
@@ -71,7 +71,7 @@ export class CompaniesResolver {
     description: 'Inactivates a company by passing the company ID as a parameter'
   })
   blockCompany(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ) {
     return this.companiesService.block(id, user);

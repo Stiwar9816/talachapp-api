@@ -5,7 +5,7 @@
 "\n  Scheme where the information about the company's inventory is saved,\n  it can be saved regarding products, \n  services or fixed costs that are handled internally\n  "
 type Price {
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 
   """Name of the product, service or fixed cost"""
   name: String!
@@ -23,6 +23,9 @@ type Price {
   Description of the added elements [ products, services or fixed costs ]
   """
   description: String
+
+  """image of price type product"""
+  image: String
   user: User!
 
   """
@@ -34,14 +37,55 @@ type Price {
   companies: Company
 }
 
+"""
+Scheme where user rating information is stored for the services provided
+"""
+type Score {
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: String!
+
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
+  rankClient: Float
+
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
+  rankTalachero: Float
+
+  """Quality of service provided"""
+  quality: String
+  createdAt: DateTime!
+
+  """Order score"""
+  orders: Order
+
+  """User information"""
+  user: User!
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
+  lastUpdateBy: User
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 "\n  Scheme where all the information on customer orders is stored, \n  as well as the company that will provide the service, the products or services, \n  the method of payment and the user's data.\n  "
 type Order {
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 
   """order status [waiting or completed]"""
   status: String
   total: Float
+
+  """ id order api coneckta"""
+  idOrderConekta: String
   createdAt: DateTime!
 
   """Relationship with the many-to-one users table"""
@@ -55,19 +99,17 @@ type Order {
   """Relationship with the many-to-one companies table"""
   companies: Company!
   prices: Price!
-}
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+  """Order score"""
+  score: Score!
+}
 
 """
 scheme of what the companies table looks like where the information of each company or talachero will be stored
 """
 type Company {
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 
   """company name or talachero"""
   name_company: String!
@@ -116,35 +158,10 @@ type Company {
   lastUpdateBy: User
 }
 
-"""
-Scheme where user rating information is stored for the services provided
-"""
-type Score {
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
-
-  """
-  Rating that the user gives to the company or vice versa score from 1 to 5
-  """
-  rank: Int!
-
-  """Quality of service provided"""
-  quality: String
-  createdAt: DateTime!
-
-  """User information"""
-  user: User!
-
-  """
-  Returns the information of the user who made the last update of the company data
-  """
-  lastUpdateBy: User
-}
-
 """Schema where the information of the system locations is stored"""
 type Location {
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 
   """Geohash Firebase"""
   geohash: String!
@@ -160,7 +177,7 @@ type Location {
 """Schema where the information of the system users is stored"""
 type User {
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 
   """Full name of the user"""
   fullName: String!
@@ -217,41 +234,41 @@ type Query {
   users(roles: [UserRoles!] = []): [User!]!
 
   """Search for a user by a unique ID"""
-  user(id: Int!): User!
+  user(id: String!): User!
 
   """Returns all of the registered companies or talacheros"""
   companies: [Company!]!
 
   """Returns a single specific record queried by ID"""
-  company(id: Int!): Company!
+  company(id: String!): Company!
 
   """Search all service orders"""
   orders: [Order!]!
 
   """Search for a service order by order ID"""
-  order(id: Int!): Order!
+  order(id: String!): Order!
 
   """Search all prices"""
   prices: [Price!]!
 
   """Search for a single price by price ID"""
-  price(id: Int!): Price!
+  price(id: String!): Price!
 
   """Filters all prices depending on the type passed as a parameter"""
   priceByType(priceType: String!): [Price!]!
-  pricesByIds(ids: [Int!]!): [Price!]!
+  pricesByIds(ids: [String!]!): [Price!]!
 
   """Find all ratings"""
   scores: [Score!]!
 
   """Search for a rating by a unique ID"""
-  score(id: Int!): Score!
+  score(id: String!): Score!
 
   """"""
   locations: [Location!]!
 
   """"""
-  location(id: Int!): Location!
+  location(id: String!): Location!
 }
 
 """Roles allowed in the system [superAdmin, admin, talachero, user]"""
@@ -273,7 +290,7 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
 
   """Inactivate a user"""
-  blockUser(id: Int!): User!
+  blockUser(id: String!): User!
 
   """Reset password user"""
   resetPassword(resetPassword: String!): User!
@@ -288,25 +305,25 @@ type Mutation {
   updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
 
   """Inactivates a company by passing the company ID as a parameter"""
-  blockCompany(id: Int!): Company!
+  blockCompany(id: String!): Company!
 
   """Create a new service order"""
-  createOrder(createOrderInput: CreateOrderInput!, ids: [Int!]!, idCompany: Int!): Order!
+  createOrder(createOrderInput: CreateOrderInput!, ids: [String!]!, idCompany: String): Order!
 
   """Update order status"""
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
 
   """Delete the order"""
-  removeOrder(id: Int!): Order!
+  removeOrder(id: String!): Order!
 
   """Create a new price for either a [product, service, or cost]"""
-  createPrice(createPriceInput: CreatePriceInput!, idCompany: Int!): Price!
+  createPrice(createPriceInput: CreatePriceInput!, idCompany: String): Price!
 
   """Update the price data"""
   updatePrice(updatePriceInput: UpdatePriceInput!): Price!
 
   """Delete a price with a unique ID"""
-  removePrice(id: Int!): Price!
+  removePrice(id: String!): Price!
 
   """Create a new rating"""
   createScore(createScoreInput: CreateScoreInput!): Score!
@@ -315,13 +332,13 @@ type Mutation {
   updateScore(updateScoreInput: UpdateScoreInput!): Score!
 
   """Remove a rating with a unique ID"""
-  removeScore(id: Int!): Score!
+  removeScore(id: String!): Score!
 
   """"""
   createLocation(createLocationInput: CreateLocationInput!): Location!
 
   """remove location for userId"""
-  removeLocation(id: Int!): Location!
+  removeLocation(id: String!): Location!
 }
 
 """Diagram of the fields requested for the registration of a user"""
@@ -336,7 +353,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "4Pm1JDXL5$bvA0LaAVU2"
+  password: String! = "HAAGcOGbS8yGamRtZC_6"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -379,7 +396,7 @@ input UpdateUserInput {
   roles: [UserRoles!]
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 }
 
 """Diagram of the information expected to create a new company/talacheros"""
@@ -464,7 +481,7 @@ input UpdateCompanyInput {
   lng: Float
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 }
 
 """Schema of the information expected to create a new service order"""
@@ -481,7 +498,7 @@ input UpdateOrderInput {
   total: Float
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 }
 
 """
@@ -526,7 +543,7 @@ input UpdatePriceInput {
   description: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 }
 
 """Summary of information that is expected to create a new rating"""
@@ -534,7 +551,12 @@ input CreateScoreInput {
   """
   Rating that the user gives to the company or vice versa score from 1 to 5
   """
-  rank: Int!
+  rankClient: Float
+
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
+  rankTalachero: Float
 
   """Quality of service provided"""
   quality: String
@@ -545,13 +567,18 @@ input UpdateScoreInput {
   """
   Rating that the user gives to the company or vice versa score from 1 to 5
   """
-  rank: Int
+  rankClient: Float
+
+  """
+  Rating that the user gives to the company or vice versa score from 1 to 5
+  """
+  rankTalachero: Float
 
   """Quality of service provided"""
   quality: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: Int!
+  id: String!
 }
 
 """Outline of information that is expected to create a new location"""

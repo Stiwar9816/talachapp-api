@@ -28,11 +28,11 @@ export class ScoresService {
   }
 
   async findAll(): Promise<Score[]> {
-    const allScore = await this.scoreRepository.find({ relations:['user']})
+    const allScore = await this.scoreRepository.find({ relations: ['user'] })
     return allScore;
   }
 
-  async findOne(id: number): Promise<Score> {
+  async findOne(id: string): Promise<Score> {
     try {
       return await this.scoreRepository.findOneByOrFail({ id })
     } catch (error) {
@@ -43,7 +43,7 @@ export class ScoresService {
     }
   }
 
-  async update(id: number, updateScoreInput: UpdateScoreInput, updateBy: User): Promise<Score> {
+  async update(id: string, updateScoreInput: UpdateScoreInput, updateBy: User): Promise<Score> {
     try {
       const score = await this.scoreRepository.preload({ id, ...updateScoreInput })
       score.lastUpdateBy = updateBy
@@ -53,7 +53,7 @@ export class ScoresService {
     }
   }
 
-  async remove(id: number): Promise<Score> {
+  async remove(id: string): Promise<Score> {
     const score = await this.findOne(id)
     return await this.scoreRepository.remove(score)
   }
@@ -70,7 +70,7 @@ export class ScoresService {
     throw new InternalServerErrorException('Unexpected error, check server logs')
   }
 
-  private handleDBNotFound(score: Score, id: number) {
+  private handleDBNotFound(score: Score, id: string) {
     if (!score) throw new NotFoundException(`Score with id ${id} not found`)
   }
 }

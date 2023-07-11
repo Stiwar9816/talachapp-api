@@ -1,4 +1,4 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseIntPipe, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
 import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 // Services
@@ -29,7 +29,7 @@ export class PricesResolver {
   createPrice(
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
-    @Args() company: CompaniesIdArgs
+    @Args() company?: CompaniesIdArgs
   ): Promise<Price> {
     const createPrice = this.pricesService.create(createPriceInput, user, company);
     this.pubSub.publish('newPrice', { newPrice: createPrice })
@@ -51,7 +51,7 @@ export class PricesResolver {
     description: 'Search for a single price by price ID'
   })
   findOne(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Talachero]) user: User
   ): Promise<Price> {
     return this.pricesService.findOne(id);
@@ -69,7 +69,7 @@ export class PricesResolver {
   }
 
   @Query(() => [Price])
-  pricesByIds(@Args({ name: 'ids', type: () => [Int] }) ids: number[]): Promise<Price[]> {
+  pricesByIds(@Args({ name: 'ids', type: () => [String] }, ParseUUIDPipe) ids: string[]): Promise<Price[]> {
     return this.pricesService.findAllId(ids)
   }
 
@@ -89,7 +89,7 @@ export class PricesResolver {
     description: 'Delete a price with a unique ID'
   })
   removePrice(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<Price> {
     return this.pricesService.remove(id);

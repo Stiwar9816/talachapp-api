@@ -7,9 +7,9 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
   description: 'Schema where the information of the system locations is stored'
 })
 export class Location {
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, { description: 'Id automatically generated in integer format eg: 1,2,3..' })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, { description: 'Id automatically generated in integer format eg: 1,2,3..' })
+  id: string;
 
 
   @Column('text')

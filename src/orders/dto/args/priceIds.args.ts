@@ -1,10 +1,9 @@
-import { ArgsType, Field, Int } from "@nestjs/graphql";
-import { IsArray, IsInt } from "class-validator";
+import { ArgsType, Field } from "@nestjs/graphql";
+import { IsArray, IsUUID } from "class-validator";
 
 @ArgsType()
 export class PriceIdsArgs {
     @IsArray()
-    @IsInt({ each: true })
-    @Field(() => [Int])
-    ids: number[]
+    @Field(() => [String])
+    ids: string[]
 }

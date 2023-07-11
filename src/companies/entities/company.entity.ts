@@ -22,11 +22,11 @@ import { Price } from 'src/prices/entities/price.entity';
 })
 export class Company {
 
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, {
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
     description: 'Id automatically generated in integer format eg: 1,2,3..'
   })
-  id: number
+  id: string
 
   @Column('text', { unique: true })
   @Field(() => String, {

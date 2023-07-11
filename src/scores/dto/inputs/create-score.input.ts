@@ -1,18 +1,31 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsInt, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
+import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import { IsInt, IsNumber, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
 
 @InputType({
   description: 'Summary of information that is expected to create a new rating'
 })
 export class CreateScoreInput {
-  @IsInt()
+  @IsNumber()
   @IsPositive()
+  @IsOptional()
   @Min(1)
   @Max(5)
-  @Field(() => Int, {
-    description: 'Rating that the user gives to the company or vice versa score from 1 to 5'
+  @Field(() => Float, {
+    description: 'Rating that the user gives to the company or vice versa score from 1 to 5',
+    nullable: true
   })
-  rank: number
+  rankClient?: number
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  @Min(1)
+  @Max(5)
+  @Field(() => Float, {
+    description: 'Rating that the user gives to the company or vice versa score from 1 to 5',
+    nullable: true
+  })
+  rankTalachero?: number
 
   @IsString()
   @IsOptional()

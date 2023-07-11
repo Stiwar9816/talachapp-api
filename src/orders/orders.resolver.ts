@@ -1,6 +1,6 @@
-import { Inject, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 // Service
 import { OrdersService } from './orders.service';
 // Auth (Enums/Decorators/Guards)
@@ -52,7 +52,7 @@ export class OrdersResolver {
     description: 'Search for a service order by order ID'
   })
   findOne(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<Order> {
     return this.ordersService.findOne(id);
@@ -74,7 +74,7 @@ export class OrdersResolver {
     description: 'Delete the order'
   })
   removeOrder(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<Order> {
     return this.ordersService.remove(id);

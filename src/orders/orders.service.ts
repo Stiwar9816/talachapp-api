@@ -150,7 +150,7 @@ export class OrdersService {
     return query.getMany();
   }
 
-  async findOne(id: number): Promise<Order> {
+  async findOne(id: string): Promise<Order> {
     try {
       return await this.orderRepository.findOneByOrFail({ id });
     } catch (error) {
@@ -162,7 +162,7 @@ export class OrdersService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateOrderInput: UpdateOrderInput,
     updateBy: User,
   ): Promise<Order> {
@@ -181,7 +181,7 @@ export class OrdersService {
     }
   }
 
-  async remove(id: number): Promise<Order> {
+  async remove(id: string): Promise<Order> {
     const order = await this.findOne(id);
     return await this.orderRepository.remove(order);
   }
@@ -200,7 +200,7 @@ export class OrdersService {
     );
   }
 
-  private handleDBNotFound(order: Order, id: number) {
+  private handleDBNotFound(order: Order, id: string) {
     if (!order) throw new NotFoundException(`Order with id ${id} not found`);
   }
 

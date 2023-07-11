@@ -1,6 +1,6 @@
-import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 // Services
 import { UsersService } from './users.service';
 // Entity/Dto's
@@ -33,7 +33,7 @@ export class UsersResolver {
   })
   @UseGuards(JwtAuthGuard)
   findOne(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User> {
     return this.usersService.findOneById(id);
@@ -57,7 +57,7 @@ export class UsersResolver {
   })
   @UseGuards(JwtAuthGuard)
   blockUser(
-    @Args('id', { type: () => Int }, ParseIntPipe) id: number,
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User
   ): Promise<User> {
     return this.usersService.block(id, user);

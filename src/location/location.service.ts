@@ -35,7 +35,7 @@ export class LocationService {
     return this.locationRepository.find();
   }
 
-  async findOne(id: number): Promise<Location> {
+  async findOne(id: string): Promise<Location> {
     try {
       const query = await this.locationRepository
         .createQueryBuilder('locations')
@@ -58,7 +58,7 @@ export class LocationService {
   //   return `This action updates a #${id} location`;
   // }
 
-  async remove(id: number): Promise<Location> {
+  async remove(id: string): Promise<Location> {
     const location = await this.findOne(id);
     this.handleDBNotFound(location, id);
     try {
@@ -88,7 +88,7 @@ export class LocationService {
     );
   }
 
-  private handleDBNotFound(location: Location, id: number) {
+  private handleDBNotFound(location: Location, id: string) {
     if (!location)
       throw new NotFoundException(`Location with id ${id} not found`);
   }
