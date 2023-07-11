@@ -48,7 +48,7 @@ export class Score {
 
 
   @ManyToOne(()=> Order, order => order.score, {lazy:true, eager:true,nullable:true})
-  @Field(()=> Order, { description: 'Order score'})
+  @Field(()=> Order, { description: 'Order score', nullable:true})
   @JoinColumn({name: 'scoreOrder'})
   orders?: Order
 

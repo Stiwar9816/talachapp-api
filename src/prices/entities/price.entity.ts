@@ -87,5 +87,5 @@ export class Price {
     nullable: true,
     description: 'Relationship with the many-to-one companies table'
   })
-  companies: Company
+  companies?: Company
 }
