@@ -178,6 +178,7 @@ type Location {
 type User {
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
+  idFirebase: String
 
   """Full name of the user"""
   fullName: String!
@@ -343,6 +344,8 @@ type Mutation {
 
 """Diagram of the fields requested for the registration of a user"""
 input SignupInput {
+  idFirebase: String
+
   """User email"""
   email: String!
 
@@ -353,7 +356,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "HAAGcOGbS8yGamRtZC_6"
+  password: String!
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -377,6 +380,8 @@ input SigninInput {
 Diagram of the fields enabled to be able to be modified by the system admin for a specific user
 """
 input UpdateUserInput {
+  idFirebase: String
+
   """User email"""
   email: String
 

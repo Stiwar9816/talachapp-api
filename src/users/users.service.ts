@@ -126,7 +126,7 @@ export class UsersService {
   }
 
   async resetPasswordAuth(password: string, user: User) {
-    const token = await this.authService.getjwtToken(user.id)
+    const token = await this.authService.getjwtToken(user.id,user.roles)
     const decodedToken = this.jwtService.verify(token); // Decodifica el token
     const id = decodedToken.id; // Obtiene el ID del usuario del token decodificado
     try {
