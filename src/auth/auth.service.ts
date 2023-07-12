@@ -29,8 +29,8 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
-  getjwtToken(id: string, roles: string[]) {
-    return this.jwtService.sign({ id, roles });
+  getjwtToken(id: string, roles: string[], name: string) {
+    return this.jwtService.sign({ id, roles, name });
   }
 
   async signup(signupInput: SignupInput): Promise<AuthResponde> {
@@ -39,7 +39,7 @@ export class AuthService {
     const plainPassword = signupInput.password;
     // Envía la contraseña sin encriptar por correo electrónico
     await this.mailService.sendUserConfirmation(user, plainPassword);
-    const token = this.getjwtToken(user.id, user.roles);
+    const token = this.getjwtToken(user.id, user.roles, user.fullName);
     return { token, user };
   }
 
@@ -53,7 +53,7 @@ export class AuthService {
     if (!bcrypt.compareSync(password, user.password)) {
       throw new BadRequestException('Email or password do not match');
     }
-    const token = this.getjwtToken(user.id, user.roles);
+    const token = this.getjwtToken(user.id, user.roles, user.fullName);
     return { token, user };
   }
 
@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   revalidateToken(user: User): AuthResponde {
-    const token = this.getjwtToken(user.id, user.roles);
+    const token = this.getjwtToken(user.id, user.roles, user.fullName);
     return { token, user };
   }
 }
