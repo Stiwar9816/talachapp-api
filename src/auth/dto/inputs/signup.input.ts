@@ -11,6 +11,7 @@ import {
 	Matches,
 	MinLength,
 } from 'class-validator';
+import { randomPassword } from 'src/auth/utils/randomPassword';
 
 @InputType({
 	description: 'Diagram of the fields requested for the registration of a user',
@@ -53,6 +54,7 @@ export class SignupInput {
         User password that must have a minimum length of 6 digits
         and the password must have an Uppercase, lowercase letter and a number
         `,
+		defaultValue: randomPassword()
 	})
 	password?: string;
 
