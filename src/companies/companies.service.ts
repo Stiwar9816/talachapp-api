@@ -19,7 +19,7 @@ export class CompaniesService {
 
   async create(createCompanyInput: CreateCompanyInput, createBy: User): Promise<Company> {
     try {
-      const newCompany = await this.companyRepository.create(createCompanyInput)
+      const newCompany = this.companyRepository.create(createCompanyInput)
       newCompany.user = createBy
       return await this.companyRepository.save(newCompany)
     } catch (error) {

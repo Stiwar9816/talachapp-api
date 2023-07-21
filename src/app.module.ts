@@ -19,6 +19,7 @@ import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { MailModule } from './mail/mail.module';
 import { LocationModule } from './location/location.module';
+import { WorkersModule } from './workers/workers.module';
 
 @Module({
   imports: [
@@ -86,7 +87,8 @@ import { LocationModule } from './location/location.module';
     ScoresModule,
     UsersModule,
     MailModule,
-    LocationModule
+    LocationModule,
+    WorkersModule
   ],
   controllers: [],
   providers: []

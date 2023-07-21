@@ -18,6 +18,7 @@ import { Score } from 'src/scores/entities/score.entity';
 import { Price } from 'src/prices/entities/price.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Location } from 'src/location/entities/location.entity';
+import { Worker } from 'src/workers/entities/worker.entity';
 @Entity({ name: 'users' })
 @ObjectType({
   description: 'Schema where the information of the system users is stored',
@@ -124,6 +125,12 @@ export class User {
     description: 'One-to-many relationship with order table',
   })
   location?: Location;
+
+  @OneToMany(() => Worker, (worker) => worker.user)
+  @Field(() => Worker, {
+    description: 'One-to-many relationship with worker table',
+  })
+  worker: Worker;
 
   // Convertimos los datos del email a minúsculas
   @BeforeInsert()

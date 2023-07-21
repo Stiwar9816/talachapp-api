@@ -6,7 +6,7 @@ import {
   Entity,
   OneToMany,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
 // GraphQL
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
@@ -15,99 +15,105 @@ import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Geofence } from '../interface/geofence.interface';
 import { Price } from 'src/prices/entities/price.entity';
+import { Worker } from 'src/workers/entities/worker.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType({
-  description: `scheme of what the companies table looks like where the information of each company or talachero will be stored`
+  description: `scheme of what the companies table looks like where the information of each company or talachero will be stored`,
 })
 export class Company {
-
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String, {
-    description: 'Id automatically generated in integer format eg: 1,2,3..'
+    description: 'Id automatically generated in integer format eg: 1,2,3..',
   })
-  id: string
+  id: string;
 
   @Column('text', { unique: true })
   @Field(() => String, {
-    description: 'company name or talachero'
+    description: 'company name or talachero',
   })
-  name_company: string
+  name_company: string;
 
   @Column('bigint')
   @Field(() => Float, {
-    description: 'company phone or talachero'
+    description: 'company phone or talachero',
   })
-  phone: number
+  phone: number;
 
   @Column('text', { nullable: true })
   @Field(() => String, {
     nullable: true,
-    description: 'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"'
+    description:
+      'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"',
   })
-  rfc?: string
+  rfc?: string;
 
   @Column('text', { nullable: true })
   @Field(() => String, {
     nullable: true,
-    description: 'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.'
+    description:
+      'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.',
   })
-  cfdi?: string
+  cfdi?: string;
 
   @Column('text')
   @Field(() => String, {
-    description: 'business name of the company'
+    description: 'business name of the company',
   })
-  bussiness_name: string
+  bussiness_name: string;
 
   @Column('text', { nullable: true })
   @Field(() => String, {
     nullable: true,
-    description: 'Company address'
+    description: 'Company address',
   })
-  address?: string
+  address?: string;
 
   @Column('text')
   @Field(() => String, {
-    description: 'State where the company is located'
+    description: 'State where the company is located',
   })
-  department: string
+  department: string;
 
   @Column('text')
   @Field(() => String, {
-    description: 'City where the company is located'
+    description: 'City where the company is located',
   })
-  city: string
+  city: string;
 
   @Column('int', { nullable: true })
   @Field(() => Int, {
     nullable: true,
-    description: 'Company Postal Code'
+    description: 'Company Postal Code',
   })
-  postal_code?: number
+  postal_code?: number;
 
   @Column('text', {
-    default: 'Inactivo'
+    default: 'Inactivo',
   })
   @Field(() => String, {
-    description: 'Company status within the system "active || inactive "'
+    description: 'Company status within the system "active || inactive "',
   })
-  isActive: string
+  isActive: string;
+
+  @Column('text', { nullable: true })
+  @Field(() => String, { nullable: true })
+  tax_regime?: string;
 
   @Column('text', {
     array: true,
-    nullable: true
+    nullable: true,
   })
   @Field(() => [String], { nullable: true })
-  geofence?: Geofence[]
+  geofence?: Geofence[];
 
   @Column('float')
   @Field(() => Float)
-  lat: number
+  lat: number;
 
   @Column('float')
   @Field(() => Float)
-  lng: number
+  lng: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -118,21 +124,32 @@ export class Company {
   // Relations
   @ManyToOne(() => User, (user) => user.companies)
   @JoinColumn({ name: 'userId' })
-  user: User
+  user: User;
 
   @OneToMany(() => Order, (order) => order.companies)
-  @Field(() => Order)
-  order: Order
+  @Field(() => [Order])
+  order: Order[];
 
   @OneToMany(() => Price, (price) => price.companies)
-  @Field(() => Price)
-  price: Price
+  @Field(() => [Price])
+  price: Price[];
 
-  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, {
+    nullable: true,
+    lazy: true,
+  })
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, {
     nullable: true,
-    description: 'Returns the information of the user who made the last update of the company data'
+    description:
+      'Returns the information of the user who made the last update of the company data',
   })
-  lastUpdateBy?: User
+  lastUpdateBy?: User;
+
+  @OneToMany(() => Worker, (worker) => worker.companies, {
+    lazy: true,
+    eager: true,
+  })
+  @Field(() => [Worker])
+  worker: Worker[];
 }
