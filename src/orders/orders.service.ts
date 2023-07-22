@@ -147,7 +147,7 @@ export class OrdersService {
     if (userId.roles[0] === 'Talachero') {
       query = query.where('orders.userId = :userId', { userId: userId.id });
     }
-    return query.getMany();
+    return await query.getMany();
   }
 
   async findOne(id: string): Promise<Order> {

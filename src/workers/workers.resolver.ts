@@ -47,7 +47,7 @@ export class WorkersResolver {
     ])
     user: User,
   ) {
-    return this.workersService.findAll();
+    return this.workersService.findAll(user);
   }
 
   @Query(() => Worker, { name: 'worker' })

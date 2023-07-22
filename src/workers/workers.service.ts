@@ -44,8 +44,22 @@ export class WorkersService {
     }
   }
 
-  async findAll(): Promise<Worker[]> {
-    return await this.workerRepository.find();
+  async findAll(user: User): Promise<Worker[]> {
+    // Find All companies assing to a user
+    const company = await this.companiesService.findAll(user);
+
+    // Filtering of workers assigned to a company
+    let query = this.workerRepository
+      .createQueryBuilder('workers')
+      .leftJoinAndSelect('workers.companies', 'company');
+    if (user.roles[0] === 'Talachero' || user.roles[0] === 'Centro Talachero') {
+      const companiesIds = company.map((company) => company.id);
+      query = query.where('workers.companies IN (:...company)', {
+        company: companiesIds,
+      });
+    }
+    // Retur all workers
+    return await query.getMany();
   }
 
   async findOne(id: string) {
