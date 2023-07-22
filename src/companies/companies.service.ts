@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,75 +12,101 @@ import { Repository } from 'typeorm';
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-
 @Injectable()
 export class CompaniesService {
-
-  private readonly logger = new Logger('CompaniesService')
+  private readonly logger = new Logger('CompaniesService');
 
   constructor(
     @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>
-  ) { }
+    private readonly companyRepository: Repository<Company>,
+  ) {}
 
-  async create(createCompanyInput: CreateCompanyInput, createBy: User): Promise<Company> {
+  async create(
+    createCompanyInput: CreateCompanyInput,
+    createBy: User,
+  ): Promise<Company> {
     try {
-      const newCompany = this.companyRepository.create(createCompanyInput)
-      newCompany.user = createBy
-      return await this.companyRepository.save(newCompany)
+      const newCompany = this.companyRepository.create(createCompanyInput);
+      newCompany.user = createBy;
+      return await this.companyRepository.save(newCompany);
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
 
   async findAll(): Promise<Company[]> {
-    return this.companyRepository.find()
+    return this.companyRepository.find();
   }
 
   async findOne(id: string): Promise<Company> {
     try {
-      return await this.companyRepository.findOneByOrFail({ id })
+      return await this.companyRepository.findOneByOrFail({ id });
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `${id} not found`,
+      });
     }
   }
 
-  async update(id: string, updateCompanyInput: UpdateCompanyInput, updateBy: User): Promise<Company> {
+  async getWorkerCountByCompany(companyId: string): Promise<number> {
     try {
-      const company = await this.companyRepository.preload({ id, ...updateCompanyInput })
-      company.lastUpdateBy = updateBy
-      return await this.companyRepository.save(company)
+      const workerCount = await this.companyRepository
+        .createQueryBuilder('company')
+        .leftJoin('company.worker', 'worker')
+        .where('company.id = :id', { id: companyId })
+        .andWhere('worker.isActive = :isActive', { isActive: 'Activo' })
+        .getCount();
+
+      return workerCount;
+    } catch (error) {
+      this.handleDBException(error);
+    }
+  }
+
+  async update(
+    id: string,
+    updateCompanyInput: UpdateCompanyInput,
+    updateBy: User,
+  ): Promise<Company> {
+    try {
+      const company = await this.companyRepository.preload({
+        id,
+        ...updateCompanyInput,
+      });
+      company.lastUpdateBy = updateBy;
+      return await this.companyRepository.save(company);
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `${id} not found`,
+      });
     }
   }
 
   async block(id: string, user: User): Promise<Company> {
-    const companyToBlock = await this.findOne(id)
-    companyToBlock.isActive = 'Inactivo'
-    companyToBlock.lastUpdateBy = user
-    return await this.companyRepository.save(companyToBlock)
+    const companyToBlock = await this.findOne(id);
+    companyToBlock.isActive = 'Inactivo';
+    companyToBlock.lastUpdateBy = user;
+    return await this.companyRepository.save(companyToBlock);
   }
 
   // Manejo de excepciones
   private handleDBException(error: any): never {
     if (error.code === '23505')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 
   private handleDBNotFound(company: Company, id: string) {
-    if (!company) throw new NotFoundException(`Company with id ${id} not found`)
+    if (!company)
+      throw new NotFoundException(`Company with id ${id} not found`);
   }
 }

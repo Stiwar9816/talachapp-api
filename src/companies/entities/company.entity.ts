@@ -40,7 +40,7 @@ export class Company {
   })
   phone: number;
 
-  @Column('text', { nullable: true })
+  @Column('text', { nullable: true, unique: true })
   @Field(() => String, {
     nullable: true,
     description:
@@ -48,7 +48,7 @@ export class Company {
   })
   rfc?: string;
 
-  @Column('text', { nullable: true })
+  @Column('text', { nullable: true, unique: true })
   @Field(() => String, {
     nullable: true,
     description:
@@ -56,7 +56,7 @@ export class Company {
   })
   cfdi?: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   @Field(() => String, {
     description: 'business name of the company',
   })

@@ -86,7 +86,7 @@ export class WorkersResolver {
     description: 'Subscribe to new workers',
   })
   @UseGuards(NoAuthAuthGuard)
-  subscribeNewWorker(@CurrentUser() user: User): AsyncIterator<Worker> {
+  subscribeNewWorker(): AsyncIterator<Worker> {
     return this.pubSub.asyncIterator('newWorker');
   }
 }

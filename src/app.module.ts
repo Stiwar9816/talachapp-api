@@ -27,18 +27,20 @@ import { WorkersModule } from './workers/workers.module';
     // Configuración de credenciales de la DB
     TypeOrmModule.forRoot({
       type: 'postgres',
-      ssl: (process.env.STATE === 'prod')
-        ? {
-          rejectUnauthorized: false,
-          sslmode: 'require'
-        } : false as any,
+      ssl:
+        process.env.STATE === 'prod'
+          ? {
+              rejectUnauthorized: false,
+              sslmode: 'require',
+            }
+          : (false as any),
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: true
+      synchronize: true,
     }),
     // GraphQL
     // TODO: Configuración básica
@@ -48,16 +50,14 @@ import { WorkersModule } from './workers/workers.module';
       playground: false,
       installSubscriptionHandlers: true,
       subscriptions: {
-        "graphql-ws": {
-          path: '/graphql'
+        'graphql-ws': {
+          path: '/graphql',
         },
-        "subscriptions-transport-ws": {
-          path: '/graphql'
-        }
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+        },
       },
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault()
-      ],
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     // TODO: Bloqueo de Schemas para usuarios no autenticados
     // GraphQLModule.forRootAsync({
@@ -82,15 +82,15 @@ import { WorkersModule } from './workers/workers.module';
     // }),
     AuthModule,
     CompaniesModule,
+    WorkersModule,
     OrdersModule,
     PricesModule,
     ScoresModule,
     UsersModule,
     MailModule,
     LocationModule,
-    WorkersModule
   ],
   controllers: [],
-  providers: []
+  providers: [],
 })
-export class AppModule { }
+export class AppModule {}
