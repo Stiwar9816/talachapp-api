@@ -26,9 +26,15 @@ export class CompaniesService {
       this.handleDBException(error)
     }
   }
-
-  async findAll(): Promise<Company[]> {
-    return this.companyRepository.find()
+  //Filter talacheros companies by id
+  async findAll(userId: User): Promise<Company[]> {
+    let query = this.companyRepository
+    .createQueryBuilder('companies')
+    .leftJoinAndSelect('companies.user', 'userId');
+    if(userId.roles[0] === 'Talachero' || userId.roles[0]=== 'Centro Talachero'){
+      query = query.where('companies.userId = :userId', {userId: userId.id})
+    }
+    return await query.getMany();
   }
 
   async findOne(id: string): Promise<Company> {

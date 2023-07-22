@@ -55,9 +55,9 @@ export class CompaniesResolver {
   })
   @UseGuards(JwtAuthGuard)
   findAll(
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
   ) {
-    return this.companiesService.findAll();
+    return this.companiesService.findAll(user);
   }
 
   @Query(() => Company, {
