@@ -4,6 +4,7 @@ import { CompaniesResolver } from './companies.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { PubSub } from 'graphql-subscriptions';
+import { MailModule } from 'src/mail/mail.module';
 @Module({
   providers: [
     CompaniesResolver,
@@ -13,7 +14,7 @@ import { PubSub } from 'graphql-subscriptions';
       useValue: new PubSub(),
     },
   ],
-  imports: [TypeOrmModule.forFeature([Company])],
+  imports: [TypeOrmModule.forFeature([Company]), MailModule],
   exports: [CompaniesService, TypeOrmModule],
 })
 export class CompaniesModule {}

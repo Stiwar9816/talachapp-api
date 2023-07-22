@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class CompaniesService {
   private readonly logger = new Logger('CompaniesService');
@@ -19,6 +20,7 @@ export class CompaniesService {
   constructor(
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(
@@ -28,6 +30,7 @@ export class CompaniesService {
     try {
       const newCompany = this.companyRepository.create(createCompanyInput);
       newCompany.user = createBy;
+      await this.mailService.sendNewCompany(newCompany);
       return await this.companyRepository.save(newCompany);
     } catch (error) {
       this.handleDBException(error);
