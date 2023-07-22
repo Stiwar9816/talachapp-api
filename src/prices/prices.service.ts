@@ -37,7 +37,7 @@ export class PricesService {
 
       const companies = await this.companiesService.findOne(idCompany);
 
-      const newPrice = await this.priceRepository.create({
+      const newPrice = this.priceRepository.create({
         ...createPriceInput,
         user,
         companies

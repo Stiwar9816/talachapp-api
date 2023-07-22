@@ -1,95 +1,111 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
-import { IsString, IsNotEmpty, IsInt, IsPositive, IsOptional, IsIn, IsNumber, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsPositive,
+  IsOptional,
+  IsIn,
+  IsNumber,
+  IsArray,
+} from 'class-validator';
 import { Geofence } from 'src/companies/interface/geofence.interface';
 
 @InputType({
-  description: 'Diagram of the information expected to create a new company/talacheros'
+  description:
+    'Diagram of the information expected to create a new company/talacheros',
 })
 export class CreateCompanyInput {
-
   @IsString()
   @IsNotEmpty()
   @Field(() => String, {
-    description: 'company name or talachero'
+    description: 'company name or talachero',
   })
-  name_company: string
+  name_company: string;
 
   @IsNumber()
   @IsPositive()
   @Field(() => Float, {
-    description: 'company phone or talachero'
+    description: 'company phone or talachero',
   })
-  phone: number
+  phone: number;
 
   @IsString()
   @IsOptional()
   @Field(() => String, {
     nullable: true,
-    description: 'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"'
+    description:
+      'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"',
   })
-  rfc?: string
+  rfc?: string;
 
   @IsString()
   @IsOptional()
   @Field(() => String, {
     nullable: true,
-    description: 'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.'
+    description:
+      'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.',
   })
-  cfdi?: string
+  cfdi?: string;
 
   @IsString()
   @IsNotEmpty()
   @Field(() => String, {
-    description: 'business name of the company'
+    description: 'business name of the company',
   })
-  bussiness_name: string
+  bussiness_name: string;
 
   @IsString()
   @IsOptional()
   @Field(() => String, {
     nullable: true,
-    description: 'Company address'
+    description: 'Company address',
   })
-  address?: string
+  address?: string;
 
   @IsString()
   @IsNotEmpty()
   @Field(() => String, {
-    description: 'State where the company is located'
+    description: 'State where the company is located',
   })
-  department: string
+  department: string;
 
   @IsString()
   @IsNotEmpty()
   @Field(() => String, {
-    description: 'City where the company is located'
+    description: 'City where the company is located',
   })
-  city: string
+  city: string;
 
   @IsInt()
   @IsOptional()
   @IsPositive()
   @Field(() => Int, {
     nullable: true,
-    description: 'Company Postal Code'
+    description: 'Company Postal Code',
   })
-  postal_code?: number
+  postal_code?: number;
 
   @IsIn(['Activo', 'Inactivo'])
   @Field(() => String)
-  isActive: string = 'Inactivo'
+  isActive: string = 'Inactivo';
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   @Field(() => [String], { nullable: true })
-  geofence?: Geofence[]
+  geofence?: Geofence[];
 
   @IsNumber()
   @Field(() => Float)
-  lat: number
+  lat: number;
 
   @IsNumber()
   @Field(() => Float)
-  lng: number
+  lng: number;
+
+  @IsOptional()
+  @IsIn(['Moral', 'Fisica'])
+  @Field(() => String, { nullable: true })
+  tax_regime?: string;
 }
