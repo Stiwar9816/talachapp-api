@@ -105,6 +105,8 @@ type Order {
 }
 
 type Worker {
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: String!
   fullName: String!
   email: String!
   phone: Float!
@@ -266,6 +268,11 @@ type Query {
   """Returns a single specific record queried by ID"""
   company(id: String!): Company!
 
+  """Returns the count of workers related to a specific company"""
+  workerCountByCompany(companyId: String!): Float!
+  workers: [Worker!]!
+  worker(id: String!): Worker!
+
   """Search all service orders"""
   orders: [Order!]!
 
@@ -293,8 +300,6 @@ type Query {
 
   """"""
   location(id: String!): Location!
-  workers: [Worker!]!
-  worker(id: String!): Worker!
 }
 
 """
@@ -335,6 +340,8 @@ type Mutation {
 
   """Inactivates a company by passing the company ID as a parameter"""
   blockCompany(id: String!): Company!
+  createWorker(createWorkerInput: CreateWorkerInput!, idCompany: String): Worker!
+  updatedWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 
   """Create a new service order"""
   createOrder(createOrderInput: CreateOrderInput!, ids: [String!]!, idCompany: String): Order!
@@ -368,8 +375,6 @@ type Mutation {
 
   """remove location for userId"""
   removeLocation(id: String!): Location!
-  createWorker(createWorkerInput: CreateWorkerInput!, idCompany: String): Worker!
-  updatedWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 }
 
 """Diagram of the fields requested for the registration of a user"""
@@ -386,7 +391,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "fF5+jNCQ&BZG6/qYdN3o"
+  password: String! = "vVzBuO_9w9Nt%wñUtñRt"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -521,6 +526,41 @@ input UpdateCompanyInput {
   id: String!
 }
 
+input CreateWorkerInput {
+  """Worker Name"""
+  fullName: String!
+
+  """Worker Email"""
+  email: String!
+
+  """Worker phone"""
+  phone: Float!
+
+  """User status in the system [ active (true) or inactive (false) ]"""
+  isActive: String = "Activo"
+  geofence: [String!]
+  lat: Float
+  lng: Float
+}
+
+input UpdateWorkerInput {
+  """Worker Name"""
+  fullName: String
+
+  """Worker Email"""
+  email: String
+
+  """Worker phone"""
+  phone: Float
+
+  """User status in the system [ active (true) or inactive (false) ]"""
+  isActive: String! = "Activo"
+  geofence: [String!]
+  lat: Float
+  lng: Float
+  id: String!
+}
+
 """Schema of the information expected to create a new service order"""
 input CreateOrderInput {
   """order status [waiting or completed]"""
@@ -625,47 +665,15 @@ input CreateLocationInput {
   status: String!
 }
 
-input CreateWorkerInput {
-  """Worker Name"""
-  fullName: String!
-
-  """Worker Email"""
-  email: String!
-
-  """Worker phone"""
-  phone: Float!
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
-}
-
-input UpdateWorkerInput {
-  """Worker Name"""
-  fullName: String
-
-  """Worker Email"""
-  email: String
-
-  """Worker phone"""
-  phone: Float
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String! = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
-  id: String!
-}
-
 type Subscription {
   """Subscribe to new users"""
   newUser: AuthResponde!
 
   """Subscribe to new companies"""
   newCompany: Company!
+
+  """Subscribe to new workers"""
+  newWorker: Worker!
 
   """Subscribe to new orders"""
   newOrder: Order!
@@ -678,7 +686,4 @@ type Subscription {
 
   """Subscribe to new scores"""
   newLocation: Location!
-
-  """Subscribe to new workers"""
-  newWorker: Worker!
 }

@@ -4,13 +4,17 @@ import { CompaniesResolver } from './companies.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { PubSub } from 'graphql-subscriptions';
-
+import { MailModule } from 'src/mail/mail.module';
 @Module({
-  providers: [CompaniesResolver, CompaniesService, {
-    provide: 'PUB_SUB',
-    useValue: new PubSub(),
-  }],
-  imports: [TypeOrmModule.forFeature([Company])],
-  exports: [CompaniesService, TypeOrmModule]
+  providers: [
+    CompaniesResolver,
+    CompaniesService,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
+  ],
+  imports: [TypeOrmModule.forFeature([Company]), MailModule],
+  exports: [CompaniesService, TypeOrmModule],
 })
-export class CompaniesModule { }
+export class CompaniesModule {}

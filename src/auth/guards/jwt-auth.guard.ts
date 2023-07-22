@@ -6,17 +6,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
-    const reqToken = req.connectionParams
-
+    const reqToken = req.connectionParams;
     if (reqToken) {
-      const headers = Object.entries(reqToken).reduce(
-        (acc, [key, value]) => {
-          acc[key.toLowerCase()] = value;
-          return acc;
-        },
-        {}
-      );
-
+      const headers = Object.entries(reqToken).reduce((acc, [key, value]) => {
+        acc[key.toLowerCase()] = value;
+        return acc;
+      }, {});
       return { headers };
     }
 

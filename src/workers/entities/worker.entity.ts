@@ -14,6 +14,9 @@ import {
 @ObjectType()
 export class Worker {
   @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
+    description: 'Id automatically generated in integer format eg: 1,2,3..',
+  })
   id: string;
 
   @Column('text')

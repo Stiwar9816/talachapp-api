@@ -1,13 +1,6 @@
 import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Subscription,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 // Service
 import { CompaniesService } from './companies.service';
 // Auth (Enums/Decorators/Guards)
@@ -101,12 +94,25 @@ export class CompaniesResolver {
     return this.companiesService.block(id, user);
   }
 
+  @Query(() => Number, {
+    name: 'workerCountByCompany',
+    description: 'Returns the count of workers related to a specific company',
+  })
+  @UseGuards(JwtAuthGuard)
+  getWorkerCountByCompanyId(
+    @Args('companyId', { type: () => String }, ParseUUIDPipe)
+    companyId: string,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+  ): Promise<number> {
+    return this.companiesService.getWorkerCountByCompany(companyId);
+  }
+
   @Subscription(() => Company, {
     name: 'newCompany',
     description: 'Subscribe to new companies',
   })
   @UseGuards(NoAuthAuthGuard)
-  subscribeNewScore(@CurrentUser() user: User): AsyncIterator<Company> {
+  subscribeNewCompany(): AsyncIterator<Company> {
     return this.pubSub.asyncIterator('newCompany');
   }
 }
