@@ -38,13 +38,21 @@ export class CompaniesService {
   }
   //Filter talacheros companies by id
   async findAll(userId: User): Promise<Company[]> {
-    let query = this.companyRepository
-    .createQueryBuilder('companies')
-    .leftJoinAndSelect('companies.user', 'userId');
-    if(userId.roles[0] === 'Talachero' || userId.roles[0]=== 'Centro Talachero'){
-      query = query.where('companies.userId = :userId', {userId: userId.id})
-    }
+    try {
+      let query = this.companyRepository
+        .createQueryBuilder('companies')
+        .leftJoinAndSelect('companies.user', 'userId');
+      if( userId.roles[0]=== 'Talachero' || userId.roles[0]=== 'Centro Talachero'){
+        query = query.where('companies.userId = :userId', {userId: userId.id})
+      }
     return await query.getMany();
+    } catch (error) {
+      this.handleDBException({
+        code: 'error-001',
+        detail: `companies not found`,
+      });
+    }
+    
   }
 
   async findOne(id: string): Promise<Company> {
@@ -109,7 +117,7 @@ export class CompaniesService {
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     this.logger.error(error);
-    throw new InternalServerErrorException(
+       throw new InternalServerErrorException(
       'Unexpected error, check server logs',
     );
   }

@@ -60,7 +60,7 @@ export class CompaniesResolver {
   @UseGuards(JwtAuthGuard)
   findOne(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
   ) {
     return this.companiesService.findOne(id);
   }
@@ -102,7 +102,7 @@ export class CompaniesResolver {
   getWorkerCountByCompanyId(
     @Args('companyId', { type: () => String }, ParseUUIDPipe)
     companyId: string,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
   ): Promise<number> {
     return this.companiesService.getWorkerCountByCompany(companyId);
   }
