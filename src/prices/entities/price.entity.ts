@@ -59,7 +59,6 @@ export class Price {
   })
   image?: string
 
-
   @CreateDateColumn()
   createdAt: Date;
 

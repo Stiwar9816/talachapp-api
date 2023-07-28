@@ -353,7 +353,7 @@ type Mutation {
   removeOrder(id: String!): Order!
 
   """Create a new price for either a [product, service, or cost]"""
-  createPrice(createPriceInput: CreatePriceInput!, idCompany: String): Price!
+  createPrice(createPriceInput: CreatePriceInput!, idCompany: String, file: Upload): Price!
 
   """Update the price data"""
   updatePrice(updatePriceInput: UpdatePriceInput!): Price!
@@ -391,7 +391,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "vVzBuO_9w9Nt%wñUtñRt"
+  password: String! = "OvKrb3NUIVfQoqt!#teb"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -598,7 +598,12 @@ input CreatePriceInput {
   Description of the added elements [ products, services or fixed costs ]
   """
   description: String
+  file: Upload
+  image: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 "\n  Diagram of the fields enabled to be able to be modified \n  by the admin or talachero for a specific price\n  "
 input UpdatePriceInput {
@@ -618,6 +623,8 @@ input UpdatePriceInput {
   Description of the added elements [ products, services or fixed costs ]
   """
   description: String
+  file: Upload
+  image: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
