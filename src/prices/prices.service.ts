@@ -23,6 +23,8 @@ import { join } from 'path';
 import { query } from 'express';
 import { async } from 'rxjs';
 import { FileUpload } from './interfaces/fileupload.interface';
+import { Readable } from 'stream';
+import { s3Client } from './utils/s3Client';
 
 @Injectable()
 export class PricesService {
@@ -68,14 +70,27 @@ export class PricesService {
         const { filename, createReadStream } = await file;
         newPrice.image = filename;
 
-        // Guardar la imagen en el servidor
-        createReadStream()
-          .pipe(
-            createWriteStream(join(process.cwd(), `./uploads/${filename}`)),
-          )
-          .on('error', () => {
-            throw new Error('Could not save image');
-          });
+        // Obtén el stream del archivo FileUpload
+        const fileStream = createReadStream();
+        // Crea un objeto de parámetros para la operación PutObjectCommand
+        const putParams = {
+          Bucket: process.env.BUCKET_NAME, // Reemplaza con el nombre de tu espacio de DigitalOcean
+          Key: filename,
+          Body: fileStream as Readable,
+        };
+
+        try {
+          await s3Client.upload(putParams).promise();
+        } catch (error) {
+          this.handleDBException(error);
+        }
+        // Envía el archivo a DigitalOcean Spaces usando la operación PutObjectCommand
+        // // Guardar la imagen en el servidor
+        // createReadStream()
+        //   .pipe(createWriteStream(join(process.cwd(), `./uploads/${filename}`)))
+        //   .on('error', () => {
+        //     throw new Error('Could not save image');
+        //   });
       }
 
       return await this.priceRepository.save(newPrice);
