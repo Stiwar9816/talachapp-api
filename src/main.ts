@@ -2,15 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
-import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
-  // Configurar la ruta estática para la carpeta 'uploads'
-  app.useStaticAssets(join(process.cwd(), 'uploads'));
+  const app = await NestFactory.create(AppModule);
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
