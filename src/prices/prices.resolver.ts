@@ -20,6 +20,8 @@ import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PubSub } from 'graphql-subscriptions';
 import { CompaniesIdArgs } from 'src/orders/dto';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from './interfaces/fileupload.interface';
 
 @Resolver(() => Price)
 export class PricesResolver {
@@ -33,15 +35,18 @@ export class PricesResolver {
     description: 'Create a new price for either a [product, service, or cost]',
   })
   @UseGuards(JwtAuthGuard)
-  createPrice(
+  async createPrice(
     @Args('createPriceInput') createPriceInput: CreatePriceInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
     @Args() company?: CompaniesIdArgs,
+    @Args('file', { type: () => GraphQLUpload, nullable: true })
+    file?: GraphQLUpload,
   ): Promise<Price> {
     const createPrice = this.pricesService.create(
       createPriceInput,
       user,
       company,
+      file,
     );
     this.pubSub.publish('newPrice', { newPrice: createPrice });
     return createPrice;
@@ -128,7 +133,7 @@ export class PricesResolver {
   ): Promise<Price> {
     return this.pricesService.remove(id);
   }
-
+  
   @Subscription(() => Price, {
     name: 'newPrice',
     description: 'Subscribe to new prices',

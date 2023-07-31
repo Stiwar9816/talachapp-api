@@ -20,6 +20,7 @@ import { OrdersModule } from './orders/orders.module';
 import { MailModule } from './mail/mail.module';
 import { LocationModule } from './location/location.module';
 import { WorkersModule } from './workers/workers.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { WorkersModule } from './workers/workers.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
+      csrfPrevention: false,
       installSubscriptionHandlers: true,
       subscriptions: {
         'graphql-ws': {
@@ -89,6 +91,7 @@ import { WorkersModule } from './workers/workers.module';
     UsersModule,
     MailModule,
     LocationModule,
+    ImagesModule,
   ],
   controllers: [],
   providers: [],
