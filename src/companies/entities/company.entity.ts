@@ -48,14 +48,6 @@ export class Company {
   })
   rfc?: string;
 
-  @Column('text', { nullable: true, unique: true })
-  @Field(() => String, {
-    nullable: true,
-    description:
-      'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.',
-  })
-  cfdi?: string;
-
   @Column('text', { unique: true })
   @Field(() => String, {
     description: 'business name of the company',
