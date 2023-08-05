@@ -22,7 +22,7 @@ export class UpdateCompanyInput extends PartialType(CreateCompanyInput) {
   isActive?: string;
 
   @IsOptional()
-  @IsIn(['Moral', 'Fisica'])
+  @IsIn(['Moral', 'Físico'])
   @Field(() => String, { nullable: true })
   tax_regime?: string;
 }

@@ -39,20 +39,40 @@ export class PricesService {
     const { idCompany } = company;
     const { name } = createPriceInput;
     try {
-      // Verificar si existe un precio con el mismo nombre y el mismo usuario
+      const companies = await this.companiesService.findOne(idCompany);
+      // Verificar si existe un precio con el mismo nombre pero no pertenece a la misma empresa
+      const sameNameDifferentCompany = await this.priceRepository
+        .createQueryBuilder('price')
+        .where('price.name = :name', { name })
+        .andWhere('price.company != :companyId', { companyId: companies.id })
+        .getOne();
+
+      // Verificar si existe un precio con el mismo nombre y la misma empresa
       const sameUserPrice = await this.priceRepository
         .createQueryBuilder('price')
         .where('price.name = :name', { name })
-        .andWhere('price.createBy = :userId', { userId: user.id })
+        .andWhere('price.company = :companyId', { companyId: companies.id })
         .getOne();
 
       if (sameUserPrice) {
-        throw new Error(`${name} already exists`);
+        throw new Error(
+          `${name} already exists for this ${companies.name_company}`,
+        );
       }
 
-      const companies = await this.companiesService.findOne(idCompany);
+      if (sameNameDifferentCompany) {
+        // Agregar el nuevo precio si ya existe uno con el mismo nombre pero para otra empresa
+        const newPrice = this.priceRepository.create({
+          ...createPriceInput,
+          image: '', // Save the filename to the 'image' property of the new price entity
+          user,
+          companies,
+        });
 
-      let newPrice = this.priceRepository.create({
+        return this.priceRepository.save(newPrice);
+      }
+
+      const newPrice = this.priceRepository.create({
         ...createPriceInput,
         image: '', // Save the filename to the 'image' property of the new price entity
         user,

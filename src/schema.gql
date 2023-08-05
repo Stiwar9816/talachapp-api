@@ -142,11 +142,6 @@ type Company {
   """
   rfc: String
 
-  """
-  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
-  """
-  cfdi: String
-
   """business name of the company"""
   bussiness_name: String!
 
@@ -391,7 +386,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "*$StCRQP*20w%Ae5hkBl"
+  password: String! = "C+HFERj7BB&L$l!RFUXV"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -452,11 +447,6 @@ input CreateCompanyInput {
   """
   rfc: String
 
-  """
-  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
-  """
-  cfdi: String
-
   """business name of the company"""
   bussiness_name: String!
 
@@ -492,11 +482,6 @@ input UpdateCompanyInput {
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
   """
   rfc: String
-
-  """
-  The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.
-  """
-  cfdi: String
 
   """business name of the company"""
   bussiness_name: String

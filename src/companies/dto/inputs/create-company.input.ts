@@ -40,15 +40,6 @@ export class CreateCompanyInput {
   rfc?: string;
 
   @IsString()
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-    description:
-      'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.',
-  })
-  cfdi?: string;
-
-  @IsString()
   @IsNotEmpty()
   @Field(() => String, {
     description: 'business name of the company',
@@ -105,7 +96,7 @@ export class CreateCompanyInput {
   lng: number;
 
   @IsOptional()
-  @IsIn(['Moral', 'Fisica'])
+  @IsIn(['Moral', 'Físico'])
   @Field(() => String, { nullable: true })
   tax_regime?: string;
 }
