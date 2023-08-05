@@ -19,8 +19,9 @@ export class UpdatePriceInput extends PartialType(CreatePriceInput) {
 
   @IsOptional()
   @Field(() => GraphQLUpload, { nullable: true })
-  file?: Promise<FileUpload>; // Campo para recibir el archivo en el resolver
+  file?: Promise<FileUpload>; // Campo para recibir el archivo en el resolver 
 
+  @IsOptional()
   @Field(() => String, { nullable: true })
   image?: string; // Campo para almacenar el nombre del archivo en la base de datos
 }

@@ -125,6 +125,7 @@ export class PricesService {
     id: string,
     updatePriceInput: UpdatePriceInput,
     updateBy: User,
+    file?: Promise<FileUpload>,
   ): Promise<Price> {
     const userId = await this.findOne(id);
     try {
@@ -134,6 +135,26 @@ export class PricesService {
       });
       price.lastUpdateBy = updateBy;
       price.user = userId.user;
+
+      if (file) {
+        const { filename, createReadStream } = await file;
+        const uuid = uuidv4();
+        const nameImage = `${uuid}-${filename}`;
+        price.image = nameImage;
+
+        const uploadParams = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: nameImage,
+          Body: createReadStream(),
+        };
+
+        try {
+          await s3Client.upload(uploadParams).promise();
+        } catch (error) {
+          this.handleDBException(error);
+        }
+      }
+
       return await this.priceRepository.save(price);
     } catch (error) {
       this.handleDBException(error);
