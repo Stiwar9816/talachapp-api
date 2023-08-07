@@ -52,6 +52,14 @@ export class User {
   })
   email: string;
 
+  @Column('text', { nullable: true, unique: true })
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"',
+  })
+  rfc?: string;
+
   @Column('text', { array: true })
   @Field(() => [String], {
     description:

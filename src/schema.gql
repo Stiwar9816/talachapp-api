@@ -207,6 +207,11 @@ type User {
   email: String!
 
   """
+  The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
+  """
+  rfc: String
+
+  """
   User roles which can be [ admin, user or talachero ] by default takes the user role
   """
   roles: [String!]!
@@ -351,7 +356,7 @@ type Mutation {
   createPrice(createPriceInput: CreatePriceInput!, idCompany: String, file: Upload): Price!
 
   """Update the price data"""
-  updatePrice(updatePriceInput: UpdatePriceInput!): Price!
+  updatePrice(updatePriceInput: UpdatePriceInput!, file: Upload): Price!
 
   """Delete a price with a unique ID"""
   removePrice(id: String!): Price!
@@ -386,7 +391,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "C+HFERj7BB&L$l!RFUXV"
+  password: String! = "c&0cRY¡Xd0hcCte1AXHT"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -429,6 +434,11 @@ input UpdateUserInput {
 
   """User role in the system [ Administrador, Talachero or Usuario ]"""
   roles: [UserRoles!]
+
+  """
+  The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
+  """
+  rfc: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
