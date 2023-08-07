@@ -114,11 +114,14 @@ export class PricesResolver {
   updatePrice(
     @Args('updatePriceInput') updatePriceInput: UpdatePriceInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @Args('file', { type: () => GraphQLUpload, nullable: true })
+    file?: GraphQLUpload,
   ): Promise<Price> {
     return this.pricesService.update(
       updatePriceInput.id,
       updatePriceInput,
       user,
+      file,
     );
   }
 
