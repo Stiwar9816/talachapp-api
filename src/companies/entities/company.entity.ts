@@ -116,6 +116,7 @@ export class Company {
   // Relations
   @ManyToOne(() => User, (user) => user.companies)
   @JoinColumn({ name: 'userId' })
+  @Field(() => User)
   user: User;
 
   @OneToMany(() => Order, (order) => order.companies)
@@ -137,11 +138,4 @@ export class Company {
       'Returns the information of the user who made the last update of the company data',
   })
   lastUpdateBy?: User;
-
-  @OneToMany(() => Worker, (worker) => worker.companies, {
-    lazy: true,
-    eager: true,
-  })
-  @Field(() => [Worker])
-  worker: Worker[];
 }

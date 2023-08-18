@@ -53,14 +53,6 @@ export class Worker {
   lng?: number;
 
   // Relations
-  @ManyToOne(() => Company, (companies) => companies.worker, { lazy: true })
-  @JoinColumn({ name: 'company' })
-  @Field(() => Company)
-  companies: Company;
-
-  @ManyToOne(() => User, (user) => user.worker)
-  @JoinColumn({ name: 'createBy' })
-  user: User;
 
   @ManyToOne(() => User, (user) => user.lastUpdateBy, {
     nullable: true,

@@ -22,27 +22,27 @@ export class WorkersService {
     private readonly companiesService: CompaniesService,
   ) {}
 
-  async create(
-    createWorkerInput: CreateWorkerInput,
-    createBy: User,
-    company?: CompaniesIdArgs,
-  ): Promise<Worker> {
-    const { idCompany } = company;
-    try {
-      const companies = await this.companiesService.findOne(idCompany);
-      const newWorker = this.workerRepository.create({
-        ...createWorkerInput,
-        user: createBy,
-        companies,
-      });
-      return await this.workerRepository.save(newWorker);
-    } catch (error) {
-      this.handleDBException({
-        code: '23505',
-        detail: `${createWorkerInput.fullName} already exists`,
-      });
-    }
-  }
+  // async create(
+  //   createWorkerInput: CreateWorkerInput,
+  //   createBy: User,
+  //   company?: CompaniesIdArgs,
+  // ): Promise<Worker> {
+  //   const { idCompany } = company;
+  //   try {
+  //     const companies = await this.companiesService.findOne(idCompany);
+  //     const newWorker = this.workerRepository.create({
+  //       ...createWorkerInput,
+  //       user: createBy,
+  //       companies,
+  //     });
+  //     return await this.workerRepository.save(newWorker);
+  //   } catch (error) {
+  //     this.handleDBException({
+  //       code: '23505',
+  //       detail: `${createWorkerInput.fullName} already exists`,
+  //     });
+  //   }
+  // }
 
   async findAll(user: User): Promise<Worker[]> {
     // Find All companies assing to a user

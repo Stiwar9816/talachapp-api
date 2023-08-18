@@ -18,7 +18,8 @@ import { Score } from 'src/scores/entities/score.entity';
 import { Price } from 'src/prices/entities/price.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Location } from 'src/location/entities/location.entity';
-import { Worker } from 'src/workers/entities/worker.entity';
+import { Geofence } from 'src/companies/interface/geofence.interface';
+
 @Entity({ name: 'users' })
 @ObjectType({
   description: 'Schema where the information of the system users is stored',
@@ -84,6 +85,21 @@ export class User {
   })
   isActive: string;
 
+  @Column('text', {
+    array: true,
+    nullable: true,
+  })
+  @Field(() => [String], { nullable: true })
+  geofence?: Geofence[];
+
+  @Column('float', { nullable: true })
+  @Field(() => Float, { nullable: true })
+  lat?: number;
+
+  @Column('float', { nullable: true })
+  @Field(() => Float, { nullable: true })
+  lng?: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -91,6 +107,13 @@ export class User {
   updatedAt: Date;
 
   // Relations
+  @OneToMany(() => Company, (company) => company.user, { lazy: true })
+  @JoinColumn({ name: 'company' })
+  @Field(() => [Company], {
+    description: 'One-to-many relationship with company table',
+  })
+  companies: Company[];
+
   @ManyToOne(() => User, (user) => user.lastUpdateBy, {
     nullable: true,
     lazy: true,
@@ -102,12 +125,6 @@ export class User {
       'Returns the information of the user who made the last update of the company data',
   })
   lastUpdateBy?: User;
-
-  @OneToMany(() => Company, (company) => company.user)
-  @Field(() => Company, {
-    description: 'One-to-many relationship with company table',
-  })
-  companies: Company;
 
   @OneToMany(() => Price, (price) => price.user)
   @Field(() => Price, {
@@ -133,12 +150,6 @@ export class User {
     description: 'One-to-many relationship with order table',
   })
   location?: Location;
-
-  @OneToMany(() => Worker, (worker) => worker.user)
-  @Field(() => Worker, {
-    description: 'One-to-many relationship with worker table',
-  })
-  worker: Worker;
 
   // Convertimos los datos del email a minúsculas
   @BeforeInsert()

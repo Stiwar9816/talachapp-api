@@ -10,7 +10,6 @@ import {
   IsArray,
 } from 'class-validator';
 import { Geofence } from 'src/companies/interface/geofence.interface';
-
 @InputType({
   description:
     'Diagram of the information expected to create a new company/talacheros',

@@ -104,26 +104,6 @@ type Order {
   score: Score!
 }
 
-type Worker {
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: String!
-  fullName: String!
-  email: String!
-  phone: Float!
-
-  """User status in the system [ active or inactive ]"""
-  isActive: String!
-  geofence: [String!]
-  lat: Float
-  lng: Float
-  companies: Company!
-
-  """
-  Returns the information of the user who made the last update of the company data
-  """
-  lastUpdateBy: User
-}
-
 """
 scheme of what the companies table looks like where the information of each company or talachero will be stored
 """
@@ -165,6 +145,7 @@ type Company {
   geofence: [String!]
   lat: Float!
   lng: Float!
+  user: User!
   order: [Order!]!
   price: [Price!]!
 
@@ -172,7 +153,6 @@ type Company {
   Returns the information of the user who made the last update of the company data
   """
   lastUpdateBy: User
-  worker: [Worker!]!
 }
 
 """Schema where the information of the system locations is stored"""
@@ -221,14 +201,17 @@ type User {
 
   """User status in the system [ active or inactive ]"""
   isActive: String!
+  geofence: [String!]
+  lat: Float
+  lng: Float
+
+  """One-to-many relationship with company table"""
+  companies: [Company!]!
 
   """
   Returns the information of the user who made the last update of the company data
   """
   lastUpdateBy: User
-
-  """One-to-many relationship with company table"""
-  companies: Company!
 
   """One-to-many relationship with price table"""
   prices: Price!
@@ -241,15 +224,31 @@ type User {
 
   """One-to-many relationship with order table"""
   location: Location
-
-  """One-to-many relationship with worker table"""
-  worker: Worker!
 }
 
 "\n        Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n        mutations and [ revalidateToken ] queries \n        { \n            token, \n            User[] \n        }\n    "
 type AuthResponde {
   token: String!
   user: User!
+}
+
+type Worker {
+  """Id automatically generated in integer format eg: 1,2,3.."""
+  id: String!
+  fullName: String!
+  email: String!
+  phone: Float!
+
+  """User status in the system [ active or inactive ]"""
+  isActive: String!
+  geofence: [String!]
+  lat: Float
+  lng: Float
+
+  """
+  Returns the information of the user who made the last update of the company data
+  """
+  lastUpdateBy: User
 }
 
 type Query {
@@ -302,15 +301,13 @@ type Query {
   location(id: String!): Location!
 }
 
-"""
-Roles allowed in the system [superAdmin, admin, centroTalachero,talachero, user]
-"""
+"""Roles allowed in the system [superAdmin, admin,talachero, user]"""
 enum UserRoles {
   Administrador
-  centroTalachero
   Talachero
   Usuario
   superAdmin
+  Trabajador
 }
 
 type Mutation {
@@ -333,14 +330,13 @@ type Mutation {
   resetPasswordAuth(newPassword: String!): User!
 
   """Create a new companies/talacheros"""
-  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  createCompany(createCompanyInput: CreateCompanyInput!, idTalachero: String!): Company!
 
   """Update the data of a specific company"""
-  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!, idTalachero: String): Company!
 
   """Inactivates a company by passing the company ID as a parameter"""
   blockCompany(id: String!): Company!
-  createWorker(createWorkerInput: CreateWorkerInput!, idCompany: String): Worker!
   updatedWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 
   """Create a new service order"""
@@ -391,7 +387,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "c&0cRY¡Xd0hcCte1AXHT"
+  password: String! = "9xFTEac5iy5xLIoaOa+I"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -439,6 +435,9 @@ input UpdateUserInput {
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
   """
   rfc: String
+  geofence: [String!]
+  lat: Float
+  lng: Float
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
@@ -519,23 +518,6 @@ input UpdateCompanyInput {
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
-}
-
-input CreateWorkerInput {
-  """Worker Name"""
-  fullName: String!
-
-  """Worker Email"""
-  email: String!
-
-  """Worker phone"""
-  phone: Float!
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
 }
 
 input UpdateWorkerInput {

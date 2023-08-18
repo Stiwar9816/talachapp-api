@@ -6,13 +6,23 @@ import { User } from './entities/user.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { PubSub } from 'graphql-subscriptions';
+import { CompaniesModule } from 'src/companies/companies.module';
 
 @Module({
-  providers: [UsersResolver, UsersService, {
-    provide: 'PUB_SUB',
-    useValue: new PubSub(),
-  }],
-  imports: [TypeOrmModule.forFeature([User]), MailModule, forwardRef(() => AuthModule)],
-  exports: [UsersService]
+  providers: [
+    UsersResolver,
+    UsersService,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
+  ],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    MailModule,
+    forwardRef(() => CompaniesModule),
+    forwardRef(() => AuthModule),
+  ],
+  exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

@@ -17,24 +17,24 @@ export class WorkersResolver {
     private readonly workersService: WorkersService,
   ) {}
 
-  @Mutation(() => Worker, {
-    name: 'createWorker',
-  })
-  @UseGuards(JwtAuthGuard)
-  createWorker(
-    @Args('createWorkerInput') createWorkerInput: CreateWorkerInput,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin])
-    user: User,
-    @Args() company?: CompaniesIdArgs,
-  ) {
-    const createWorker = this.workersService.create(
-      createWorkerInput,
-      user,
-      company,
-    );
-    this.pubSub.publish('newWorker', { newWorker: createWorker });
-    return createWorker;
-  }
+  // @Mutation(() => Worker, {
+  //   name: 'createWorker',
+  // })
+  // @UseGuards(JwtAuthGuard)
+  // createWorker(
+  //   @Args('createWorkerInput') createWorkerInput: CreateWorkerInput,
+  //   @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin])
+  //   user: User,
+  //   @Args() company?: CompaniesIdArgs,
+  // ) {
+  //   const createWorker = this.workersService.create(
+  //     createWorkerInput,
+  //     user,
+  //     company,
+  //   );
+  //   this.pubSub.publish('newWorker', { newWorker: createWorker });
+  //   return createWorker;
+  // }
 
   @Query(() => [Worker], { name: 'workers' })
   @UseGuards(JwtAuthGuard)
@@ -42,7 +42,6 @@ export class WorkersResolver {
     @CurrentUser([
       UserRoles.Administrador,
       UserRoles.superAdmin,
-      UserRoles.centroTalachero,
       UserRoles.Talachero,
     ])
     user: User,
@@ -57,7 +56,6 @@ export class WorkersResolver {
     @CurrentUser([
       UserRoles.Administrador,
       UserRoles.superAdmin,
-      UserRoles.centroTalachero,
       UserRoles.Talachero,
     ])
     user: User,

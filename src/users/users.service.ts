@@ -24,6 +24,7 @@ import { MailService } from 'src/mail/mail.service';
 import { randomPassword } from 'src/auth/utils/randomPassword';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { CompaniesService } from 'src/companies/companies.service';
 
 @Injectable()
 export class UsersService {
@@ -36,11 +37,16 @@ export class UsersService {
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => CompaniesService))
+    private readonly companiesService: CompaniesService,
   ) {}
 
   async create(signupInput: SignupInput): Promise<User> {
     try {
-      const newUser = await this.userRepository.create({
+      if (signupInput.roles[0] == 'Trabajador') {
+        signupInput.isActive = 'Inactivo'; // Set to inactive for worker role
+      }
+      const newUser = this.userRepository.create({
         ...signupInput,
         // Encrypt password
         password: bcrypt.hashSync(signupInput.password, 10),
@@ -52,13 +58,16 @@ export class UsersService {
   }
 
   async findAll(roles: UserRoles[]): Promise<User[]> {
-    if (roles.length === 0) return await this.userRepository.find();
-    // Find by role
-    return this.userRepository
-      .createQueryBuilder()
-      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
-      .setParameter('roles', roles)
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    if (roles.length > 0) {
+      queryBuilder.andWhere('ARRAY[:...roles] && user.roles', { roles });
+    }
+
+    const users = await queryBuilder
+      .leftJoinAndSelect('user.companies', 'companies')
       .getMany();
+
+    return users;
   }
 
   async findOneByEmail(email: string): Promise<User> {

@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsUUID } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 import { CreateCompanyInput } from './create-company.input';
 import { InputType, Field, PartialType } from '@nestjs/graphql';
 

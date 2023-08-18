@@ -25,18 +25,20 @@ export class CompaniesResolver {
     description: 'Create a new companies/talacheros',
   })
   @UseGuards(JwtAuthGuard)
-  createCompany(
+  async createCompany(
     @Args('createCompanyInput') createCompanyInput: CreateCompanyInput,
     @CurrentUser([
       UserRoles.Administrador,
       UserRoles.superAdmin,
       UserRoles.Talachero,
     ])
-    user: User,
+    currentUser: User,
+    @Args('idTalachero', { type: () => String }, ParseUUIDPipe)
+    idTalachero: string,
   ) {
-    const createCompany = this.companiesService.create(
+    const createCompany = await this.companiesService.create(
       createCompanyInput,
-      user,
+      idTalachero,
     );
     this.pubSub.publish('newCompany', { newCompany: createCompany });
     return createCompany;
@@ -48,7 +50,12 @@ export class CompaniesResolver {
   })
   @UseGuards(JwtAuthGuard)
   findAll(
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
+    @CurrentUser([
+      UserRoles.Administrador,
+      UserRoles.superAdmin,
+      UserRoles.Talachero,
+    ])
+    user: User,
   ) {
     return this.companiesService.findAll(user);
   }
@@ -60,7 +67,12 @@ export class CompaniesResolver {
   @UseGuards(JwtAuthGuard)
   findOne(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
+    @CurrentUser([
+      UserRoles.Administrador,
+      UserRoles.superAdmin,
+      UserRoles.Talachero,
+    ])
+    user: User,
   ) {
     return this.companiesService.findOne(id);
   }
@@ -73,11 +85,14 @@ export class CompaniesResolver {
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @Args('idTalachero', { type: () => String, nullable: true }, ParseUUIDPipe)
+    idTalachero?: string,
   ) {
     return this.companiesService.update(
       updateCompanyInput.id,
       updateCompanyInput,
       user,
+      idTalachero,
     );
   }
 
@@ -102,7 +117,12 @@ export class CompaniesResolver {
   getWorkerCountByCompanyId(
     @Args('companyId', { type: () => String }, ParseUUIDPipe)
     companyId: string,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.centroTalachero, UserRoles.Talachero]) user: User,
+    @CurrentUser([
+      UserRoles.Administrador,
+      UserRoles.superAdmin,
+      UserRoles.Talachero,
+    ])
+    user: User,
   ): Promise<number> {
     return this.companiesService.getWorkerCountByCompany(companyId);
   }
