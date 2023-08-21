@@ -107,6 +107,17 @@ export class User {
   updatedAt: Date;
 
   // Relations
+
+  @ManyToOne(() => Company, (company) => company.user, {
+    nullable: true,
+    lazy: true
+  })
+  @JoinColumn({ name: 'companyWorker' })
+  @Field(() => Company,{
+    nullable: true
+  })
+  companiesWorker?: Company;
+
   @OneToMany(() => Company, (company) => company.user, { lazy: true })
   @JoinColumn({ name: 'company' })
   @Field(() => [Company], {
@@ -155,7 +166,7 @@ export class User {
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.email = this.email.toLowerCase().trim();
-    if (this.roles[0] === 'Talachero') {
+    if (this.roles[0] === 'Talachero' || this.roles[0] === 'Trabajador') {
       this.isActive = 'Inactivo';
     }
   }

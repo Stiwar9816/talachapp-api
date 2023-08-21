@@ -114,6 +114,14 @@ export class Company {
   updatedAt: Date;
 
   // Relations
+  @OneToMany(() => User, (user) => user.companiesWorker, { lazy: true,  eager:true, nullable:true})
+  @JoinColumn({ name: 'companiesWorker' })
+  @Field(() => [User], {
+    nullable:true,
+    description: 'One-to-many relationship with user table',
+  })
+  userWorker?: User[];
+
   @ManyToOne(() => User, (user) => user.companies)
   @JoinColumn({ name: 'userId' })
   @Field(() => User)
