@@ -19,6 +19,7 @@ import { User } from 'src/users/entities/user.entity';
 import { SignupInput, SigninInput } from './dto';
 // MailService
 import { MailService } from 'src/mail/mail.service';
+import { CompanyWorkerArgs } from './dto/args/company-worker.args';
 
 @Injectable()
 export class AuthService {
@@ -33,8 +34,8 @@ export class AuthService {
     return this.jwtService.sign({ id, roles, name });
   }
 
-  async signup(signupInput: SignupInput): Promise<AuthResponde> {
-    const user = await this.usersService.create(signupInput);
+  async signup(signupInput: SignupInput, companyWorker:CompanyWorkerArgs): Promise<AuthResponde> {
+    const user = await this.usersService.create(signupInput, companyWorker);
     // Guarda una copia sin encriptar de la contraseña
     const plainPassword = signupInput.password;
     // Envía la contraseña sin encriptar por correo electrónico

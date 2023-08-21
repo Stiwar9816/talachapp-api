@@ -25,6 +25,7 @@ import { randomPassword } from 'src/auth/utils/randomPassword';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { CompaniesService } from 'src/companies/companies.service';
+import { CompanyWorkerArgs } from 'src/auth/dto/args/company-worker.args';
 
 @Injectable()
 export class UsersService {
@@ -41,16 +42,34 @@ export class UsersService {
     private readonly companiesService: CompaniesService,
   ) {}
 
-  async create(signupInput: SignupInput): Promise<User> {
+  async create(
+    signupInput: SignupInput,
+    companyWorker: CompanyWorkerArgs,
+  ): Promise<User> {
     try {
-      if (signupInput.roles[0] == 'Trabajador') {
-        signupInput.isActive = 'Inactivo'; // Set to inactive for worker role
+      if (!companyWorker && signupInput.roles[0] === 'Trabajador')
+        this.handleDBException({
+          code: 'error-002',
+          detail: 'Error user with role Trabajador not have assigned companies',
+        });
+      if (!companyWorker) {
+        const newUser = this.userRepository.create({
+          ...signupInput,
+          password: bcrypt.hashSync(signupInput.password, 10),
+        });
+        return await this.userRepository.save(newUser);
       }
+
+      const company = await this.companiesService.findOne(
+        companyWorker.companyWorker,
+      );
       const newUser = this.userRepository.create({
         ...signupInput,
         // Encrypt password
         password: bcrypt.hashSync(signupInput.password, 10),
+        companiesWorker: company,
       });
+
       return await this.userRepository.save(newUser);
     } catch (error) {
       this.handleDBException(error);
@@ -65,6 +84,7 @@ export class UsersService {
 
     const users = await queryBuilder
       .leftJoinAndSelect('user.companies', 'companies')
+      .leftJoinAndSelect('user.companiesWorker', 'companiesWorker')
       .getMany();
 
     return users;
@@ -167,6 +187,9 @@ export class UsersService {
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+
+    if (error.code === 'error-002')
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     this.logger.error(error);

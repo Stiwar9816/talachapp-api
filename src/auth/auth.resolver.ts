@@ -1,5 +1,5 @@
 // Nest Common
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 // Services
@@ -15,6 +15,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { PubSub } from 'graphql-subscriptions';
 import { NoAuthAuthGuard } from './guards';
+import { CompanyWorkerArgs } from './dto/args/company-worker.args';
 
 @Resolver(() => AuthResponde)
 export class AuthResolver {
@@ -29,8 +30,9 @@ export class AuthResolver {
   })
   async signUp(
     @Args('signupInput') signupInput: SignupInput,
+    @Args('companyWorker', {type: ()=> String, nullable: true }) companyWorker: CompanyWorkerArgs
   ): Promise<AuthResponde> {
-    const createUser = this.authService.signup(signupInput);
+    const createUser = this.authService.signup(signupInput, companyWorker);
     this.pubSub.publish('newUser', { newUser: createUser });
     return createUser;
   }

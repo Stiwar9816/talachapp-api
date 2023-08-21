@@ -85,7 +85,7 @@ export class CompaniesResolver {
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
-    @Args('idTalachero', { type: () => String, nullable: true }, ParseUUIDPipe)
+    @Args('idTalachero', { type: () => String, nullable: true })
     idTalachero?: string,
   ) {
     return this.companiesService.update(
