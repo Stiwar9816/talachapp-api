@@ -80,12 +80,13 @@ export class CompaniesService {
     try {
       const workerCount = await this.companyRepository
         .createQueryBuilder('company')
-        .leftJoin('company.user', 'user')
+        .leftJoinAndSelect('company.userWorker', 'user')
         .where('company.id = :id', { id: companyId })
         .andWhere('user.isActive = :isActive', { isActive: 'Activo' })
-        .getCount();
+        .getMany();
 
-      return workerCount;
+      const count = workerCount[0]?.userWorker.length || 0;
+      return count;
     } catch (error) {
       this.handleDBException(error);
     }
