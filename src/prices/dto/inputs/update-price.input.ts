@@ -1,7 +1,7 @@
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { CreatePriceInput } from './create-price.input';
 import { InputType, Field, PartialType } from '@nestjs/graphql';
-import { FileUpload } from 'src/prices/interfaces/fileupload.interface';
+import { FileUpload } from 'src/common/interfaces/fileupload.interface';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 
 @InputType({

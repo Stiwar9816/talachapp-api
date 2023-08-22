@@ -17,13 +17,11 @@ import { Price } from 'src/prices/entities/price.entity';
 // Service
 import { PricesService } from 'src/prices/prices.service';
 import { CompaniesService } from 'src/companies/companies.service';
-// Args
-import { PriceIdsArgs } from './dto/args/priceIds.args';
-import { CompaniesIdArgs } from './dto/args/companies.args';
 // Conekta / Axios
 import * as Conekta from 'conekta';
 import axios from 'axios';
-import { transactionPayment } from './utils/transactionPayment';
+// Common / Utils / Args
+import { CompaniesIdArgs, PriceIdsArgs, transactionPayment } from 'src/common';
 
 @Injectable()
 export class OrdersService {

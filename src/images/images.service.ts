@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { s3Client } from 'src/prices/utils/s3Client';
+import { s3Client } from 'src/common/utils/s3Client';
 
 @Injectable()
 export class ImagesService {

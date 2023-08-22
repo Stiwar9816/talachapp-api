@@ -78,15 +78,15 @@ export class CompaniesService {
 
   async getWorkerCountByCompany(companyId: string): Promise<number> {
     try {
-      const workerCount = await this.companyRepository
+      const conteoTrabajadores = await this.companyRepository
         .createQueryBuilder('company')
-        .leftJoinAndSelect('company.userWorker', 'user')
+        .leftJoin('company.userWorker', 'user')
         .where('company.id = :id', { id: companyId })
         .andWhere('user.isActive = :isActive', { isActive: 'Activo' })
-        .getMany();
+        .select('COUNT(DISTINCT user.id)', 'conteo')
+        .getRawOne();
 
-      const count = workerCount[0]?.userWorker.length || 0;
-      return count;
+      return conteoTrabajadores.conteo;
     } catch (error) {
       this.handleDBException(error);
     }

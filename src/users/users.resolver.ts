@@ -5,11 +5,13 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 // Entity/Dto's
 import { User } from './entities/user.entity';
-import { UserRolesArgs, UpdateUserInput } from './dto';
+import { UpdateUserInput } from './dto';
 // Auth (Enums/Decorators/Guards)
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard, NoAuthAuthGuard } from 'src/auth/guards';
+// Common / Args / utils
+import { CompaniesIdArgs, UserRolesArgs } from 'src/common';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -47,8 +49,14 @@ export class UsersResolver {
   updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+    @Args() company?: CompaniesIdArgs,
   ): Promise<User> {
-    return this.usersService.update(updateUserInput.id, updateUserInput, user);
+    return this.usersService.update(
+      updateUserInput.id,
+      updateUserInput,
+      user,
+      company,
+    );
   }
 
   @Mutation(() => User, {

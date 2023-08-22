@@ -145,6 +145,9 @@ type Company {
   geofence: [String!]
   lat: Float!
   lng: Float!
+
+  """One-to-many relationship with user table"""
+  userWorker: [User!]
   user: User!
   order: [Order!]!
   price: [Price!]!
@@ -204,6 +207,7 @@ type User {
   geofence: [String!]
   lat: Float
   lng: Float
+  companiesWorker: Company
 
   """One-to-many relationship with company table"""
   companies: [Company!]!
@@ -232,25 +236,6 @@ type AuthResponde {
   user: User!
 }
 
-type Worker {
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: String!
-  fullName: String!
-  email: String!
-  phone: Float!
-
-  """User status in the system [ active or inactive ]"""
-  isActive: String!
-  geofence: [String!]
-  lat: Float
-  lng: Float
-
-  """
-  Returns the information of the user who made the last update of the company data
-  """
-  lastUpdateBy: User
-}
-
 type Query {
   """Validates the token of the logged in user"""
   revalidate: AuthResponde!
@@ -269,8 +254,6 @@ type Query {
 
   """Returns the count of workers related to a specific company"""
   workerCountByCompany(companyId: String!): Float!
-  workers: [Worker!]!
-  worker(id: String!): Worker!
 
   """Search all service orders"""
   orders: [Order!]!
@@ -312,13 +295,13 @@ enum UserRoles {
 
 type Mutation {
   """Create a new user"""
-  signup(signupInput: SignupInput!): AuthResponde!
+  signup(signupInput: SignupInput!, idCompany: String): AuthResponde!
 
   """User login"""
   signin(signinInput: SigninInput!): AuthResponde!
 
   """Updates the data of a user by a unique ID"""
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!, idCompany: String): User!
 
   """Inactivate a user"""
   blockUser(id: String!): User!
@@ -337,7 +320,6 @@ type Mutation {
 
   """Inactivates a company by passing the company ID as a parameter"""
   blockCompany(id: String!): Company!
-  updatedWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 
   """Create a new service order"""
   createOrder(createOrderInput: CreateOrderInput!, ids: [String!]!, idCompany: String): Order!
@@ -387,7 +369,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "9xFTEac5iy5xLIoaOa+I"
+  password: String! = "6_Z5zGJw&b3Yn/e-xPJt"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -520,24 +502,6 @@ input UpdateCompanyInput {
   id: String!
 }
 
-input UpdateWorkerInput {
-  """Worker Name"""
-  fullName: String
-
-  """Worker Email"""
-  email: String
-
-  """Worker phone"""
-  phone: Float
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String! = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
-  id: String!
-}
-
 """Schema of the information expected to create a new service order"""
 input CreateOrderInput {
   """order status [waiting or completed]"""
@@ -655,9 +619,6 @@ type Subscription {
 
   """Subscribe to new companies"""
   newCompany: Company!
-
-  """Subscribe to new workers"""
-  newWorker: Worker!
 
   """Subscribe to new orders"""
   newOrder: Order!

@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 import { Geofence } from 'src/companies/interface/geofence.interface';
+
 @InputType()
 export class CreateUserInput {
   @IsString()

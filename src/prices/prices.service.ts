@@ -13,12 +13,11 @@ import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
-import { CompaniesIdArgs } from 'src/orders/dto';
 import { CompaniesService } from 'src/companies/companies.service';
 // FileUpload
 import { v4 as uuidv4 } from 'uuid';
-import { s3Client } from './utils/s3Client';
-import { FileUpload } from './interfaces/fileupload.interface';
+// Commno / Args / Utils / Interface
+import { CompaniesIdArgs, FileUpload, s3Client } from 'src/common';
 
 @Injectable()
 export class PricesService {

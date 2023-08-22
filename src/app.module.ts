@@ -19,7 +19,6 @@ import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { MailModule } from './mail/mail.module';
 import { LocationModule } from './location/location.module';
-import { WorkersModule } from './workers/workers.module';
 import { ImagesModule } from './images/images.module';
 
 @Module({
@@ -84,7 +83,6 @@ import { ImagesModule } from './images/images.module';
     // }),
     AuthModule,
     CompaniesModule,
-    WorkersModule,
     OrdersModule,
     PricesModule,
     ScoresModule,

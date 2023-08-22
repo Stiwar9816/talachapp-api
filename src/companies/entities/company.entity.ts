@@ -15,7 +15,6 @@ import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Geofence } from '../interface/geofence.interface';
 import { Price } from 'src/prices/entities/price.entity';
-import { Worker } from 'src/workers/entities/worker.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType({
@@ -114,10 +113,14 @@ export class Company {
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => User, (user) => user.companiesWorker, { lazy: true,  eager:true, nullable:true})
+  @OneToMany(() => User, (user) => user.companiesWorker, {
+    lazy: true,
+    eager: true,
+    nullable: true,
+  })
   @JoinColumn({ name: 'companiesWorker' })
   @Field(() => [User], {
-    nullable:true,
+    nullable: true,
     description: 'One-to-many relationship with user table',
   })
   userWorker?: User[];
