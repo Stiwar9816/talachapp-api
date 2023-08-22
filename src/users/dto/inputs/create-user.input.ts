@@ -12,6 +12,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
+import { Geofence } from 'src/companies/interface/geofence.interface';
+
 @InputType()
 export class CreateUserInput {
   @IsString()
@@ -75,4 +77,20 @@ export class CreateUserInput {
       'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"',
   })
   rfc?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  geofence?: Geofence[];
+
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Float, { nullable: true })
+  lat?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Float, { nullable: true })
+  lng?: number;
 }

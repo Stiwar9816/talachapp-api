@@ -1,9 +1,11 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +15,7 @@ import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class CompaniesService {
   private readonly logger = new Logger('CompaniesService');
@@ -20,16 +23,19 @@ export class CompaniesService {
   constructor(
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
     private readonly mailService: MailService,
   ) {}
 
   async create(
     createCompanyInput: CreateCompanyInput,
-    createBy: User,
+    idTalachero: string,
   ): Promise<Company> {
     try {
+      const user = await this.usersService.findOneById(idTalachero);
       const newCompany = this.companyRepository.create(createCompanyInput);
-      newCompany.user = createBy;
+      newCompany.user = user;
       await this.mailService.sendNewCompany(newCompany);
       return await this.companyRepository.save(newCompany);
     } catch (error) {
@@ -42,17 +48,21 @@ export class CompaniesService {
       let query = this.companyRepository
         .createQueryBuilder('companies')
         .leftJoinAndSelect('companies.user', 'userId');
-      if( userId.roles[0]=== 'Talachero' || userId.roles[0]=== 'Centro Talachero'){
-        query = query.where('companies.userId = :userId', {userId: userId.id})
+      if (
+        userId.roles[0] === 'Talachero' ||
+        userId.roles[0] === 'Centro Talachero'
+      ) {
+        query = query.where('companies.userId = :userId', {
+          userId: userId.id,
+        });
       }
-    return await query.getMany();
+      return await query.getMany();
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
         detail: `companies not found`,
       });
     }
-    
   }
 
   async findOne(id: string): Promise<Company> {
@@ -68,14 +78,15 @@ export class CompaniesService {
 
   async getWorkerCountByCompany(companyId: string): Promise<number> {
     try {
-      const workerCount = await this.companyRepository
+      const conteoTrabajadores = await this.companyRepository
         .createQueryBuilder('company')
-        .leftJoin('company.worker', 'worker')
+        .leftJoin('company.userWorker', 'user')
         .where('company.id = :id', { id: companyId })
-        .andWhere('worker.isActive = :isActive', { isActive: 'Activo' })
-        .getCount();
+        .andWhere('user.isActive = :isActive', { isActive: 'Activo' })
+        .select('COUNT(DISTINCT user.id)', 'conteo')
+        .getRawOne();
 
-      return workerCount;
+      return conteoTrabajadores.conteo;
     } catch (error) {
       this.handleDBException(error);
     }
@@ -85,13 +96,16 @@ export class CompaniesService {
     id: string,
     updateCompanyInput: UpdateCompanyInput,
     updateBy: User,
+    idTalachero?: string,
   ): Promise<Company> {
     try {
+      const user = await this.usersService.findOneById(idTalachero);
       const company = await this.companyRepository.preload({
         id,
         ...updateCompanyInput,
       });
       company.lastUpdateBy = updateBy;
+      company.user = user;
       return await this.companyRepository.save(company);
     } catch (error) {
       this.handleDBException({
@@ -117,7 +131,7 @@ export class CompaniesService {
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     this.logger.error(error);
-       throw new InternalServerErrorException(
+    throw new InternalServerErrorException(
       'Unexpected error, check server logs',
     );
   }

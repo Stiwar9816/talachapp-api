@@ -1,13 +1,6 @@
 import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Subscription,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 // Service
 import { ScoresService } from './scores.service';
 // Auth (Decorators/Guards)

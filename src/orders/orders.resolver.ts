@@ -8,16 +8,13 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard, NoAuthAuthGuard } from 'src/auth/guards';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 // Entity/Dto's(Inputs)/Args
-import {
-  CreateOrderInput,
-  UpdateOrderInput,
-  PriceIdsArgs,
-  CompaniesIdArgs,
-} from './dto';
+import { CreateOrderInput, UpdateOrderInput } from './dto';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 // Subcription
 import { PubSub } from 'graphql-subscriptions';
+// Common / Args
+import { CompaniesIdArgs, PriceIdsArgs } from 'src/common';
 
 @Resolver(() => Order)
 export class OrdersResolver {

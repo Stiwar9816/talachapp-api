@@ -1,13 +1,6 @@
 import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 // GraphQL
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Subscription,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 // Services
 import { PricesService } from './prices.service';
 // Auth (Enums/Decorators/Guards)
@@ -19,9 +12,9 @@ import { CreatePriceInput, UpdatePriceInput } from './dto';
 import { Price } from './entities/price.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PubSub } from 'graphql-subscriptions';
-import { CompaniesIdArgs } from 'src/orders/dto';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from './interfaces/fileupload.interface';
+// Common
+import { CompaniesIdArgs } from 'src/common';
 
 @Resolver(() => Price)
 export class PricesResolver {
@@ -136,7 +129,7 @@ export class PricesResolver {
   ): Promise<Price> {
     return this.pricesService.remove(id);
   }
-  
+
   @Subscription(() => Price, {
     name: 'newPrice',
     description: 'Subscribe to new prices',

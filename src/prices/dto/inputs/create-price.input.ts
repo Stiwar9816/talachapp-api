@@ -10,7 +10,7 @@ import {
   Min,
 } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from 'src/prices/interfaces/fileupload.interface';
+import { FileUpload } from 'src/common/interfaces/fileupload.interface';
 
 @InputType({
   description:

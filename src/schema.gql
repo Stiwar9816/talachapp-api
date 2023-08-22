@@ -104,26 +104,6 @@ type Order {
   score: Score!
 }
 
-type Worker {
-  """Id automatically generated in integer format eg: 1,2,3.."""
-  id: String!
-  fullName: String!
-  email: String!
-  phone: Float!
-
-  """User status in the system [ active or inactive ]"""
-  isActive: String!
-  geofence: [String!]
-  lat: Float
-  lng: Float
-  companies: Company!
-
-  """
-  Returns the information of the user who made the last update of the company data
-  """
-  lastUpdateBy: User
-}
-
 """
 scheme of what the companies table looks like where the information of each company or talachero will be stored
 """
@@ -165,6 +145,10 @@ type Company {
   geofence: [String!]
   lat: Float!
   lng: Float!
+
+  """One-to-many relationship with user table"""
+  userWorker: [User!]
+  user: User!
   order: [Order!]!
   price: [Price!]!
 
@@ -172,7 +156,6 @@ type Company {
   Returns the information of the user who made the last update of the company data
   """
   lastUpdateBy: User
-  worker: [Worker!]!
 }
 
 """Schema where the information of the system locations is stored"""
@@ -221,14 +204,18 @@ type User {
 
   """User status in the system [ active or inactive ]"""
   isActive: String!
+  geofence: [String!]
+  lat: Float
+  lng: Float
+  companiesWorker: Company
+
+  """One-to-many relationship with company table"""
+  companies: [Company!]!
 
   """
   Returns the information of the user who made the last update of the company data
   """
   lastUpdateBy: User
-
-  """One-to-many relationship with company table"""
-  companies: Company!
 
   """One-to-many relationship with price table"""
   prices: Price!
@@ -241,9 +228,6 @@ type User {
 
   """One-to-many relationship with order table"""
   location: Location
-
-  """One-to-many relationship with worker table"""
-  worker: Worker!
 }
 
 "\n        Scheme of how to expect the response from the Auth module of users of [ Signin & Signup ] \n        mutations and [ revalidateToken ] queries \n        { \n            token, \n            User[] \n        }\n    "
@@ -270,8 +254,6 @@ type Query {
 
   """Returns the count of workers related to a specific company"""
   workerCountByCompany(companyId: String!): Float!
-  workers: [Worker!]!
-  worker(id: String!): Worker!
 
   """Search all service orders"""
   orders: [Order!]!
@@ -302,26 +284,24 @@ type Query {
   location(id: String!): Location!
 }
 
-"""
-Roles allowed in the system [superAdmin, admin, centroTalachero,talachero, user]
-"""
+"""Roles allowed in the system [superAdmin, admin,talachero, user]"""
 enum UserRoles {
   Administrador
-  centroTalachero
   Talachero
   Usuario
   superAdmin
+  Trabajador
 }
 
 type Mutation {
   """Create a new user"""
-  signup(signupInput: SignupInput!): AuthResponde!
+  signup(signupInput: SignupInput!, idCompany: String): AuthResponde!
 
   """User login"""
   signin(signinInput: SigninInput!): AuthResponde!
 
   """Updates the data of a user by a unique ID"""
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!, idCompany: String): User!
 
   """Inactivate a user"""
   blockUser(id: String!): User!
@@ -333,15 +313,13 @@ type Mutation {
   resetPasswordAuth(newPassword: String!): User!
 
   """Create a new companies/talacheros"""
-  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  createCompany(createCompanyInput: CreateCompanyInput!, idTalachero: String!): Company!
 
   """Update the data of a specific company"""
-  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!, idTalachero: String): Company!
 
   """Inactivates a company by passing the company ID as a parameter"""
   blockCompany(id: String!): Company!
-  createWorker(createWorkerInput: CreateWorkerInput!, idCompany: String): Worker!
-  updatedWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 
   """Create a new service order"""
   createOrder(createOrderInput: CreateOrderInput!, ids: [String!]!, idCompany: String): Order!
@@ -391,7 +369,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "c&0cRY¡Xd0hcCte1AXHT"
+  password: String! = "6_Z5zGJw&b3Yn/e-xPJt"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -439,6 +417,9 @@ input UpdateUserInput {
   The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"
   """
   rfc: String
+  geofence: [String!]
+  lat: Float
+  lng: Float
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!
@@ -518,41 +499,6 @@ input UpdateCompanyInput {
   tax_regime: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
-  id: String!
-}
-
-input CreateWorkerInput {
-  """Worker Name"""
-  fullName: String!
-
-  """Worker Email"""
-  email: String!
-
-  """Worker phone"""
-  phone: Float!
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
-}
-
-input UpdateWorkerInput {
-  """Worker Name"""
-  fullName: String
-
-  """Worker Email"""
-  email: String
-
-  """Worker phone"""
-  phone: Float
-
-  """User status in the system [ active (true) or inactive (false) ]"""
-  isActive: String! = "Activo"
-  geofence: [String!]
-  lat: Float
-  lng: Float
   id: String!
 }
 
@@ -673,9 +619,6 @@ type Subscription {
 
   """Subscribe to new companies"""
   newCompany: Company!
-
-  """Subscribe to new workers"""
-  newWorker: Worker!
 
   """Subscribe to new orders"""
   newOrder: Order!

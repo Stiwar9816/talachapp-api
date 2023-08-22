@@ -21,9 +21,11 @@ import * as bcrypt from 'bcryptjs';
 import { UserRoles } from 'src/auth/enums/user-role.enum';
 // Email
 import { MailService } from 'src/mail/mail.service';
-import { randomPassword } from 'src/auth/utils/randomPassword';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { CompaniesService } from 'src/companies/companies.service';
+// Common / Args / Utils
+import { CompaniesIdArgs, randomPassword } from 'src/common';
 
 @Injectable()
 export class UsersService {
@@ -36,15 +38,43 @@ export class UsersService {
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => CompaniesService))
+    private readonly companiesService: CompaniesService,
   ) {}
 
-  async create(signupInput: SignupInput): Promise<User> {
+  async create(
+    signupInput: SignupInput,
+    company?: CompaniesIdArgs,
+  ): Promise<User> {
+    const { idCompany } = company;
     try {
-      const newUser = await this.userRepository.create({
+      if (signupInput.roles.includes('Trabajador')) {
+        if (!idCompany) {
+          this.handleDBException({
+            code: 'error-002',
+            detail:
+              'Error: A user with the role "Trabajador" must be assigned to a company.',
+          });
+        }
+      } else {
+        if (idCompany) {
+          this.handleDBException({
+            code: 'error-003',
+            detail:
+              'Error: Only users with role "Trabajador" can be assigned to a company.',
+          });
+        }
+      }
+      const newUser = this.userRepository.create({
         ...signupInput,
-        // Encrypt password
         password: bcrypt.hashSync(signupInput.password, 10),
       });
+
+      if (idCompany) {
+        const companiesWorker = await this.companiesService.findOne(idCompany);
+        newUser.companiesWorker = companiesWorker;
+      }
+
       return await this.userRepository.save(newUser);
     } catch (error) {
       this.handleDBException(error);
@@ -52,13 +82,17 @@ export class UsersService {
   }
 
   async findAll(roles: UserRoles[]): Promise<User[]> {
-    if (roles.length === 0) return await this.userRepository.find();
-    // Find by role
-    return this.userRepository
-      .createQueryBuilder()
-      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
-      .setParameter('roles', roles)
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    if (roles.length > 0) {
+      queryBuilder.andWhere('ARRAY[:...roles] && user.roles', { roles });
+    }
+
+    const users = await queryBuilder
+      .leftJoinAndSelect('user.companies', 'companies')
+      .leftJoinAndSelect('user.companiesWorker', 'companiesWorker')
       .getMany();
+
+    return users;
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -87,12 +121,16 @@ export class UsersService {
     id: string,
     updateUserInput: UpdateUserInput,
     updateBy: User,
+    company?: CompaniesIdArgs,
   ): Promise<User> {
+    const { idCompany } = company;
     try {
+      const companiesWorker = await this.companiesService.findOne(idCompany);
       const user = await this.userRepository.preload({
         id,
         ...updateUserInput,
       });
+
       if (updateUserInput.password) {
         // Guarda una copia sin encriptar de la contraseña
         const plainPassword = updateUserInput.password;
@@ -102,6 +140,7 @@ export class UsersService {
         user.password = bcrypt.hashSync(updateUserInput.password, 10);
       }
       user.lastUpdateBy = updateBy;
+      user.companiesWorker = companiesWorker;
       return await this.userRepository.save(user);
     } catch (error) {
       this.handleDBException(error);
@@ -158,6 +197,9 @@ export class UsersService {
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+
+    if (error.code === 'error-002')
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
     this.logger.error(error);

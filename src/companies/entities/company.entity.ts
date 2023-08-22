@@ -15,7 +15,6 @@ import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Geofence } from '../interface/geofence.interface';
 import { Price } from 'src/prices/entities/price.entity';
-import { Worker } from 'src/workers/entities/worker.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType({
@@ -114,8 +113,21 @@ export class Company {
   updatedAt: Date;
 
   // Relations
+  @OneToMany(() => User, (user) => user.companiesWorker, {
+    lazy: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'companiesWorker' })
+  @Field(() => [User], {
+    nullable: true,
+    description: 'One-to-many relationship with user table',
+  })
+  userWorker?: User[];
+
   @ManyToOne(() => User, (user) => user.companies)
   @JoinColumn({ name: 'userId' })
+  @Field(() => User)
   user: User;
 
   @OneToMany(() => Order, (order) => order.companies)
@@ -137,11 +149,4 @@ export class Company {
       'Returns the information of the user who made the last update of the company data',
   })
   lastUpdateBy?: User;
-
-  @OneToMany(() => Worker, (worker) => worker.companies, {
-    lazy: true,
-    eager: true,
-  })
-  @Field(() => [Worker])
-  worker: Worker[];
 }

@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 // Entity/Input
-import { CreateLocationInput, UpdateLocationInput } from './dto';
+import { CreateLocationInput } from './dto';
 import { User } from 'src/users/entities/user.entity';
 import { Location } from './entities/location.entity';
 
@@ -53,10 +59,6 @@ export class LocationService {
       });
     }
   }
-
-  // update(id: number, updateLocationInput: UpdateLocationInput) {
-  //   return `This action updates a #${id} location`;
-  // }
 
   async remove(id: string): Promise<Location> {
     const location = await this.findOne(id);
