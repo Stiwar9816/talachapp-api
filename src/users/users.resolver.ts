@@ -41,6 +41,18 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
+  @Query(() => User, {
+    name: 'userByEmail',
+    description: 'Search for a user by a unique Email',
+  })
+  @UseGuards(JwtAuthGuard)
+  findOneByEmail(
+    @Args('email', { type: () => String }) email: string,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
+  ): Promise<User> {
+    return this.usersService.findOneByEmail(email);
+  }
+
   @Mutation(() => User, {
     name: 'updateUser',
     description: 'Updates the data of a user by a unique ID',

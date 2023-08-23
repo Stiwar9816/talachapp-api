@@ -246,6 +246,9 @@ type Query {
   """Search for a user by a unique ID"""
   user(id: String!): User!
 
+  """Search for a user by a unique Email"""
+  userByEmail(email: String!): User!
+
   """Returns all of the registered companies or talacheros"""
   companies: [Company!]!
 
@@ -369,7 +372,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "6_Z5zGJw&b3Yn/e-xPJt"
+  password: String! = "%IplUMH1SxD4*fuIntLt"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
