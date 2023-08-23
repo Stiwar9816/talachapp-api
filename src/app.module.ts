@@ -15,28 +15,32 @@ import { JwtService } from '@nestjs/jwt';
 import { PricesModule } from './prices/prices.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ScoresModule } from './scores/scores.module';
-import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
+import { MailModule } from './mail/mail.module';
+import { LocationModule } from './location/location.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     // Configuración de credenciales de la DB
     TypeOrmModule.forRoot({
-      ssl: (process.env.STATE === 'prod')
-        ? {
-          rejectUnauthorized: false,
-          sslmode: 'require'
-        } : false as any,
       type: 'postgres',
+      ssl:
+        process.env.STATE === 'prod'
+          ? {
+              rejectUnauthorized: false,
+              sslmode: 'require',
+            }
+          : (false as any),
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: true
+      synchronize: true,
     }),
     // GraphQL
     // TODO: Configuración básica
@@ -44,9 +48,17 @@ import { OrdersModule } from './orders/orders.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault()
-      ]
+      csrfPrevention: false,
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': {
+          path: '/graphql',
+        },
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+        },
+      },
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     // TODO: Bloqueo de Schemas para usuarios no autenticados
     // GraphQLModule.forRootAsync({
@@ -72,12 +84,14 @@ import { OrdersModule } from './orders/orders.module';
     AuthModule,
     CompaniesModule,
     OrdersModule,
-    PaymentsModule,
     PricesModule,
     ScoresModule,
-    UsersModule
+    UsersModule,
+    MailModule,
+    LocationModule,
+    ImagesModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

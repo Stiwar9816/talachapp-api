@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 // Auth Jwt
 import { PassportModule } from '@nestjs/passport';
@@ -10,10 +10,15 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 // Module
 import { UsersModule } from 'src/users/users.module';
+import { MailModule } from 'src/mail/mail.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
-  providers: [AuthResolver, AuthService, JwtStrategy],
-  exports: [JwtStrategy, PassportModule, JwtModule],
+  providers: [AuthResolver, AuthService, JwtStrategy, {
+    provide: 'PUB_SUB',
+    useValue: new PubSub(),
+  }],
+  exports: [JwtStrategy, PassportModule, JwtModule, AuthService],
   imports: [
     ConfigModule,
     // Passport & JWT
@@ -23,14 +28,12 @@ import { UsersModule } from 'src/users/users.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          secret: configService.get('JWT_SECRET'),
-          signOptions: {
-            expiresIn: '4h'
-          }
+          secret: configService.get('JWT_SECRET')
         }
       }
     }),
-    UsersModule,
+    MailModule,
+    forwardRef(() => UsersModule)
   ]
 })
 export class AuthModule { }

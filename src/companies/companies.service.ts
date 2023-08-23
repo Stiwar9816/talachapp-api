@@ -1,4 +1,12 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,75 +14,130 @@ import { Repository } from 'typeorm';
 import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-
+import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class CompaniesService {
-
-  private readonly logger = new Logger('CompaniesService')
+  private readonly logger = new Logger('CompaniesService');
 
   constructor(
     @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>
-  ) { }
+    private readonly companyRepository: Repository<Company>,
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
+  ) {}
 
-  async create(createCompanyInput: CreateCompanyInput, createBy: User): Promise<Company> {
+  async create(
+    createCompanyInput: CreateCompanyInput,
+    idTalachero: string,
+  ): Promise<Company> {
     try {
-      const newCompany = await this.companyRepository.create(createCompanyInput)
-      newCompany.user = createBy
-      return await this.companyRepository.save(newCompany)
+      const user = await this.usersService.findOneById(idTalachero);
+      const newCompany = this.companyRepository.create(createCompanyInput);
+      newCompany.user = user;
+      await this.mailService.sendNewCompany(newCompany);
+      return await this.companyRepository.save(newCompany);
     } catch (error) {
-      this.handleDBException(error)
+      this.handleDBException(error);
     }
   }
-
-  async findAll(): Promise<Company[]> {
-    return this.companyRepository.find()
-  }
-
-  async findOne(id: number): Promise<Company> {
+  //Filter talacheros companies by id
+  async findAll(userId: User): Promise<Company[]> {
     try {
-      return await this.companyRepository.findOneByOrFail({ id })
+      let query = this.companyRepository
+        .createQueryBuilder('companies')
+        .leftJoinAndSelect('companies.user', 'userId');
+      if (
+        userId.roles[0] === 'Talachero' ||
+        userId.roles[0] === 'Centro Talachero'
+      ) {
+        query = query.where('companies.userId = :userId', {
+          userId: userId.id,
+        });
+      }
+      return await query.getMany();
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `companies not found`,
+      });
     }
   }
 
-  async update(id: number, updateCompanyInput: UpdateCompanyInput, updateBy: User): Promise<Company> {
+  async findOne(id: string): Promise<Company> {
     try {
-      const company = await this.companyRepository.preload({ id, ...updateCompanyInput })
-      company.lastUpdateBy = updateBy
-      return await this.companyRepository.save(company)
+      return await this.companyRepository.findOneByOrFail({ id });
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`
-      })
+        detail: `${id} not found`,
+      });
     }
   }
 
-  async block(id: number, user: User): Promise<Company> {
-    const companyToBlock = await this.findOne(id)
-    companyToBlock.isActive = false
-    companyToBlock.lastUpdateBy = user
-    return await this.companyRepository.remove(companyToBlock)
+  async getWorkerCountByCompany(companyId: string): Promise<number> {
+    try {
+      const conteoTrabajadores = await this.companyRepository
+        .createQueryBuilder('company')
+        .leftJoin('company.userWorker', 'user')
+        .where('company.id = :id', { id: companyId })
+        .andWhere('user.isActive = :isActive', { isActive: 'Activo' })
+        .select('COUNT(DISTINCT user.id)', 'conteo')
+        .getRawOne();
+
+      return conteoTrabajadores.conteo;
+    } catch (error) {
+      this.handleDBException(error);
+    }
+  }
+
+  async update(
+    id: string,
+    updateCompanyInput: UpdateCompanyInput,
+    updateBy: User,
+    idTalachero?: string,
+  ): Promise<Company> {
+    try {
+      const user = await this.usersService.findOneById(idTalachero);
+      const company = await this.companyRepository.preload({
+        id,
+        ...updateCompanyInput,
+      });
+      company.lastUpdateBy = updateBy;
+      company.user = user;
+      return await this.companyRepository.save(company);
+    } catch (error) {
+      this.handleDBException({
+        code: 'error-001',
+        detail: `${id} not found`,
+      });
+    }
+  }
+
+  async block(id: string, user: User): Promise<Company> {
+    const companyToBlock = await this.findOne(id);
+    companyToBlock.isActive = 'Inactivo';
+    companyToBlock.lastUpdateBy = user;
+    return await this.companyRepository.save(companyToBlock);
   }
 
   // Manejo de excepciones
   private handleDBException(error: any): never {
     if (error.code === '23505')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
     if (error.code === 'error-001')
-      throw new BadRequestException(error.detail.replace('Key ', ''))
+      throw new BadRequestException(error.detail.replace('Key ', ''));
 
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 
-  private handleDBNotFound(company: Company, id: number) {
-    if (!company) throw new NotFoundException(`Company with id ${id} not found`)
+  private handleDBNotFound(company: Company, id: string) {
+    if (!company)
+      throw new NotFoundException(`Company with id ${id} not found`);
   }
 }

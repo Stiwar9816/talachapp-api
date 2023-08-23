@@ -1,7 +1,7 @@
 // Nest Common
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 // GraphQL
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 // Services
 import { AuthService } from './auth.service';
 // Types
@@ -13,33 +13,59 @@ import { SignupInput, SigninInput } from './dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 // Guards
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { NoAuthAuthGuard } from './guards';
+// Subcriptions
+import { PubSub } from 'graphql-subscriptions';
+// Common
+import { CompaniesIdArgs } from 'src/common';
 
 @Resolver(() => AuthResponde)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
+    private readonly authService: AuthService,
+  ) {}
 
   @Mutation(() => AuthResponde, {
     name: 'signup',
-    description: 'Create a new user'
+    description: 'Create a new user',
   })
-  async signUp(@Args('signupInput') signupInput: SignupInput): Promise<AuthResponde> {
-    return this.authService.signup(signupInput)
+  async signUp(
+    @Args('signupInput') signupInput: SignupInput,
+    @Args() idCompany: CompaniesIdArgs,
+  ): Promise<AuthResponde> {
+    const createUser = this.authService.signup(signupInput, idCompany);
+    this.pubSub.publish('newUser', { newUser: createUser });
+    return createUser;
   }
 
   @Mutation(() => AuthResponde, {
     name: 'signin',
-    description: 'User login'
+    description: 'User login',
   })
-  async signIn(@Args('signinInput') siginInput: SigninInput): Promise<AuthResponde> {
-    return this.authService.signin(siginInput)
+  async signIn(
+    @Args('signinInput') siginInput: SigninInput,
+  ): Promise<AuthResponde> {
+    return this.authService.signin(siginInput);
   }
 
   @Query(() => AuthResponde, {
     name: 'revalidate',
-    description: 'Validates the token of the logged in user'
+    description: 'Validates the token of the logged in user',
   })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(@CurrentUser(/**[ValidRoles.admin]*/) user: User): AuthResponde {
-    return this.authService.revalidateToken(user)
+  revalidateToken(
+    @CurrentUser(/**[ValidRoles.admin]*/) user: User,
+  ): AuthResponde {
+    return this.authService.revalidateToken(user);
+  }
+
+  @Subscription(() => AuthResponde, {
+    name: 'newUser',
+    description: 'Subscribe to new users',
+  })
+  @UseGuards(NoAuthAuthGuard)
+  subscribeNewUser(): AsyncIterator<AuthResponde> {
+    return this.pubSub.asyncIterator('newUser');
   }
 }

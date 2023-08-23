@@ -1,87 +1,110 @@
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 // GraphQL
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 // Entity
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Geofence } from '../interface/geofence.interface';
+import { Price } from 'src/prices/entities/price.entity';
 
 @Entity({ name: 'companies' })
 @ObjectType({
-  description: `scheme of what the companies table looks like where the information of each company or talachero will be stored`
+  description: `scheme of what the companies table looks like where the information of each company or talachero will be stored`,
 })
 export class Company {
-
-  @PrimaryGeneratedColumn('increment')
-  @Field(() => Int, {
-    description: 'Id automatically generated in integer format eg: 1,2,3..'
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => String, {
+    description: 'Id automatically generated in integer format eg: 1,2,3..',
   })
-  id: number
+  id: string;
 
   @Column('text', { unique: true })
   @Field(() => String, {
-    description: 'company name or talachero'
+    description: 'company name or talachero',
   })
-  name_company: string
+  name_company: string;
 
-  @Column('int')
-  @Field(() => Int, {
-    description: 'company phone or talachero'
+  @Column('bigint')
+  @Field(() => Float, {
+    description: 'company phone or talachero',
   })
-  phone: number
+  phone: number;
+
+  @Column('text', { nullable: true, unique: true })
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"',
+  })
+  rfc?: string;
+
+  @Column('text', { unique: true })
+  @Field(() => String, {
+    description: 'business name of the company',
+  })
+  bussiness_name: string;
 
   @Column('text', { nullable: true })
   @Field(() => String, {
     nullable: true,
-    description: 'The Federal Taxpayer Registry (rfc) is an alphanumeric code that the government uses to identify individuals and legal entities that engage in any economic activity, example: "HEGJ820506M10"'
+    description: 'Company address',
   })
-  rfc?: string
-
-  @Column('text', { nullable: true })
-  @Field(() => String, {
-    nullable: true,
-    description: 'The Digital Fiscal Receipt via Internet, or CFDI for its acronym, is how the electronic invoice is normally known.'
-  })
-  cfdi?: string
+  address?: string;
 
   @Column('text')
   @Field(() => String, {
-    description: 'business name of the company'
+    description: 'State where the company is located',
   })
-  bussiness_name: string
-
-  @Column('text', { nullable: true })
-  @Field(() => String, {
-    nullable: true,
-    description: 'Company address'
-  })
-  address?: string
+  department: string;
 
   @Column('text')
   @Field(() => String, {
-    description: 'State where the company is located'
+    description: 'City where the company is located',
   })
-  department: string
-
-  @Column('text')
-  @Field(() => String, {
-    description: 'City where the company is located'
-  })
-  city: string
+  city: string;
 
   @Column('int', { nullable: true })
   @Field(() => Int, {
     nullable: true,
-    description: 'Company Postal Code'
+    description: 'Company Postal Code',
   })
-  postal_code?: number
+  postal_code?: number;
 
-  @Column('bool', {
-    default: true
+  @Column('text', {
+    default: 'Inactivo',
   })
-  @Field(() => Boolean, {
-    description: 'Company status within the system "active (true) || inactive (false)"'
+  @Field(() => String, {
+    description: 'Company status within the system "active || inactive "',
   })
-  isActive: boolean
+  isActive: string;
+
+  @Column('text', { nullable: true })
+  @Field(() => String, { nullable: true })
+  tax_regime?: string;
+
+  @Column('text', {
+    array: true,
+    nullable: true,
+  })
+  @Field(() => [String], { nullable: true })
+  geofence?: Geofence[];
+
+  @Column('float')
+  @Field(() => Float)
+  lat: number;
+
+  @Column('float')
+  @Field(() => Float)
+  lng: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -90,19 +113,40 @@ export class Company {
   updatedAt: Date;
 
   // Relations
+  @OneToMany(() => User, (user) => user.companiesWorker, {
+    lazy: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'companiesWorker' })
+  @Field(() => [User], {
+    nullable: true,
+    description: 'One-to-many relationship with user table',
+  })
+  userWorker?: User[];
+
   @ManyToOne(() => User, (user) => user.companies)
-  @JoinColumn({ name: 'userID' })
-  user: User
+  @JoinColumn({ name: 'userId' })
+  @Field(() => User)
+  user: User;
 
-  @OneToMany(() => Order, (order) => order.companies, { lazy: true })
-  order: Order[]
+  @OneToMany(() => Order, (order) => order.companies)
+  @Field(() => [Order])
+  order: Order[];
 
-  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true, lazy: true })
+  @OneToMany(() => Price, (price) => price.companies)
+  @Field(() => [Price])
+  price: Price[];
+
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, {
+    nullable: true,
+    lazy: true,
+  })
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, {
     nullable: true,
-    description: 'Returns the information of the user who made the last update of the company data'
+    description:
+      'Returns the information of the user who made the last update of the company data',
   })
-  lastUpdateBy?: User
-
+  lastUpdateBy?: User;
 }

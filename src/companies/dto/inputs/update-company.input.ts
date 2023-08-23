@@ -1,22 +1,28 @@
-import { IsBoolean, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsIn, IsOptional, IsUUID } from 'class-validator';
 import { CreateCompanyInput } from './create-company.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 
 @InputType({
-  description: 'Diagram of the fields enabled to be able to be modified by the admin for a specific company'
+  description:
+    'Diagram of the fields enabled to be able to be modified by the admin for a specific company',
 })
 export class UpdateCompanyInput extends PartialType(CreateCompanyInput) {
-  @IsInt()
-  @IsPositive()
-  @Field(() => Int, {
-    description: 'Id automatically generated in integer format eg: 1,2,3..'
+  @IsUUID()
+  @Field(() => String, {
+    description: 'Id automatically generated in integer format eg: 1,2,3..',
   })
-  id: number
+  id: string;
 
-  @IsBoolean()
+  @IsIn(['Activo', 'Inactivo'])
   @IsOptional()
-  @Field(() => Boolean, {
-    description: 'Company status within the system "active (true) || inactive (false)"'
+  @Field(() => String, {
+    description:
+      'Company status within the system "active (true) || inactive (false)"',
   })
-  isActive?: boolean
+  isActive?: string;
+
+  @IsOptional()
+  @IsIn(['Moral', 'Físico'])
+  @Field(() => String, { nullable: true })
+  tax_regime?: string;
 }
