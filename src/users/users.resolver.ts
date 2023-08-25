@@ -105,4 +105,21 @@ export class UsersResolver {
   ): Promise<User> {
     return this.usersService.resetPasswordAuth(password, user);
   }
+
+  @Mutation(() => User, {
+    name: 'updateUserToken',
+    description: 'Updates the data of a user by a unique ID',
+  })
+  @UseGuards(JwtAuthGuard)
+  updateUserToken(
+    @Args('email', { type: () => String }) email: string,
+    @Args('token', { type: () => String }) token: string,
+    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Usuario, UserRoles.Trabajador, UserRoles.Talachero]) user: User,
+  ): Promise<User> {
+    return this.usersService.updateToken(
+      email,
+      token
+    );
+  }
+
 }

@@ -54,4 +54,9 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
   @IsOptional()
   @Field(() => Float, { nullable: true })
   lng?: number;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  token?: string;
 }

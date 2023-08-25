@@ -191,6 +191,22 @@ export class UsersService {
     }
   }
 
+  async updateToken(email: string, token: string): Promise<User> {
+    try {
+      const userFind = await this.findOneByEmail(email);
+
+      if (!userFind)
+        this.handleDBException({
+          code: 'error-001',
+          detail: `${email} not found`,
+        });
+      const user = await this.userRepository.preload({...userFind, token: token});
+      return await this.userRepository.save(user);
+    } catch (error) {
+      this.handleDBException(error);
+    }
+  }
+
   // Manejo de excepciones
   private handleDBException(error: any): never {
     if (error.code === '23505')
