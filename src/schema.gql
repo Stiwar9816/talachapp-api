@@ -207,6 +207,7 @@ type User {
   geofence: [String!]
   lat: Float
   lng: Float
+  token: String
   companiesWorker: Company
 
   """One-to-many relationship with company table"""
@@ -315,11 +316,14 @@ type Mutation {
   """Reset password user authenticed"""
   resetPasswordAuth(newPassword: String!): User!
 
+  """Updates the data of a user by a unique ID"""
+  updateUserToken(email: String!, token: String!): User!
+
   """Create a new companies/talacheros"""
-  createCompany(createCompanyInput: CreateCompanyInput!, idTalachero: String!): Company!
+  createCompany(createCompanyInput: CreateCompanyInput!, idCompany: String): Company!
 
   """Update the data of a specific company"""
-  updateCompany(updateCompanyInput: UpdateCompanyInput!, idTalachero: String): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!, idCompany: String): Company!
 
   """Inactivates a company by passing the company ID as a parameter"""
   blockCompany(id: String!): Company!
@@ -372,7 +376,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "%IplUMH1SxD4*fuIntLt"
+  password: String! = "Ih9/R*flmF02iyV0D6j%"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -423,6 +427,7 @@ input UpdateUserInput {
   geofence: [String!]
   lat: Float
   lng: Float
+  token: String
 
   """Id automatically generated in integer format eg: 1,2,3.."""
   id: String!

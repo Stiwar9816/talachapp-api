@@ -114,12 +114,8 @@ export class UsersResolver {
   updateUserToken(
     @Args('email', { type: () => String }) email: string,
     @Args('token', { type: () => String }) token: string,
-    @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin, UserRoles.Usuario, UserRoles.Trabajador, UserRoles.Talachero]) user: User,
+    @CurrentUser() user: User,
   ): Promise<User> {
-    return this.usersService.updateToken(
-      email,
-      token
-    );
+    return this.usersService.updateToken(email, token);
   }
-
 }

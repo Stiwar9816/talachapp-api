@@ -12,6 +12,7 @@ import { CreateCompanyInput, UpdateCompanyInput } from './dto';
 import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PubSub } from 'graphql-subscriptions';
+import { CompaniesIdArgs } from 'src/common';
 
 @Resolver(() => Company)
 export class CompaniesResolver {
@@ -33,8 +34,7 @@ export class CompaniesResolver {
       UserRoles.Talachero,
     ])
     currentUser: User,
-    @Args('idTalachero', { type: () => String }, ParseUUIDPipe)
-    idTalachero: string,
+    @Args() idTalachero?: CompaniesIdArgs,
   ) {
     const createCompany = await this.companiesService.create(
       createCompanyInput,
@@ -85,8 +85,7 @@ export class CompaniesResolver {
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
     @CurrentUser([UserRoles.Administrador, UserRoles.superAdmin]) user: User,
-    @Args('idTalachero', { type: () => String, nullable: true })
-    idTalachero?: string,
+    @Args() idTalachero?: CompaniesIdArgs,
   ) {
     return this.companiesService.update(
       updateCompanyInput.id,

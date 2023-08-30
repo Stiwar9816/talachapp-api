@@ -15,7 +15,7 @@ export class ImagesController {
       return res.redirect(imageUrl);
     } catch (error) {
       // Manejar el error si la imagen no se puede obtener
-      return res.status(404).json({ message: 'Image not found' });
+      return res.status(404).json({ message: 'Imagen no encontrada' });
     }
   }
 }

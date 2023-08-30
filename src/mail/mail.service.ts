@@ -10,7 +10,7 @@ export class MailService {
   async sendUserConfirmation(user: User, plainPassword: string) {
     await this.mailerService.sendMail({
       to: user.email,
-      subject: '¡Welcome to Talachapp! Here are your credentials',
+      subject: '¡Bienvenido a Talachapp! Aquí están tus credenciales!',
       template: './confirmation',
       context: {
         name: user.fullName,
@@ -22,7 +22,7 @@ export class MailService {
   async sendUpdatePassword(user: User, plainPassword: string) {
     await this.mailerService.sendMail({
       to: user.email,
-      subject: `Hi ${user.fullName}, Here are your credentials updated`,
+      subject: `Hola ${user.fullName}, Aquí están tus credenciales actualizadas.`,
       template: './confirmation',
       context: {
         name: user.fullName,
@@ -34,7 +34,7 @@ export class MailService {
   async sendResetPassword(user: User, plainPassword: string) {
     await this.mailerService.sendMail({
       to: user.email,
-      subject: `Hi ${user.fullName}, Here is your new password`,
+      subject: `Hola ${user.fullName}, Aquí está tu nueva contraseña`,
       template: './resetPassword',
       context: {
         name: user.fullName,

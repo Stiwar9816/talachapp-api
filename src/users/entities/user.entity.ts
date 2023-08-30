@@ -100,28 +100,24 @@ export class User {
   @Field(() => Float, { nullable: true })
   lng?: number;
 
-
   @Column('text', { nullable: true })
   @Field(() => String, { nullable: true })
   token?: string;
-  
 
-  
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
 
-
   // Relations
   @ManyToOne(() => Company, (company) => company.user, {
     nullable: true,
-    lazy: true
+    lazy: true,
   })
   @JoinColumn({ name: 'companyWorker' })
-  @Field(() => Company,{
-    nullable: true
+  @Field(() => Company, {
+    nullable: true,
   })
   companiesWorker?: Company;
 

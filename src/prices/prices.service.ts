@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 // TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
@@ -128,7 +127,7 @@ export class PricesService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
@@ -195,11 +194,7 @@ export class PricesService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Error inesperado, verifique los registros del servidor',
     );
-  }
-
-  private handleDBNotFound(price: Price, id: string) {
-    if (!price) throw new NotFoundException(`Price with id ${id} not found`);
   }
 }

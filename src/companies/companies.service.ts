@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
   forwardRef,
 } from '@nestjs/common';
 // TypeORM
@@ -16,6 +15,8 @@ import { Company } from './entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
+import { CompaniesIdArgs } from 'src/common';
+
 @Injectable()
 export class CompaniesService {
   private readonly logger = new Logger('CompaniesService');
@@ -30,12 +31,14 @@ export class CompaniesService {
 
   async create(
     createCompanyInput: CreateCompanyInput,
-    idTalachero: string,
+    idTalachero: CompaniesIdArgs,
   ): Promise<Company> {
+    const { idCompany } = idTalachero;
     try {
-      const user = await this.usersService.findOneById(idTalachero);
+      const user = await this.usersService.findOneById(idCompany);
       const newCompany = this.companyRepository.create(createCompanyInput);
       newCompany.user = user;
+      this.companyIsActive(newCompany);
       await this.mailService.sendNewCompany(newCompany);
       return await this.companyRepository.save(newCompany);
     } catch (error) {
@@ -60,7 +63,7 @@ export class CompaniesService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `companies not found`,
+        detail: `Empresas no encontradas`,
       });
     }
   }
@@ -71,14 +74,14 @@ export class CompaniesService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
 
   async getWorkerCountByCompany(companyId: string): Promise<number> {
     try {
-      const conteoTrabajadores = await this.companyRepository
+      const workerCount = await this.companyRepository
         .createQueryBuilder('company')
         .leftJoin('company.userWorker', 'user')
         .where('company.id = :id', { id: companyId })
@@ -86,7 +89,7 @@ export class CompaniesService {
         .select('COUNT(DISTINCT user.id)', 'conteo')
         .getRawOne();
 
-      return conteoTrabajadores.conteo;
+      return workerCount.conteo;
     } catch (error) {
       this.handleDBException(error);
     }
@@ -96,22 +99,24 @@ export class CompaniesService {
     id: string,
     updateCompanyInput: UpdateCompanyInput,
     updateBy: User,
-    idTalachero?: string,
+    idTalachero?: CompaniesIdArgs,
   ): Promise<Company> {
+    const { idCompany } = idTalachero;
     try {
-      const user = await this.usersService.findOneById(idTalachero);
       const company = await this.companyRepository.preload({
         id,
         ...updateCompanyInput,
       });
+
+      if (idCompany) {
+        const userFind = await this.usersService.findOneById(idCompany);
+        company.user = userFind;
+      }
       company.lastUpdateBy = updateBy;
-      company.user = user;
+      this.companyIsActive(company);
       return await this.companyRepository.save(company);
     } catch (error) {
-      this.handleDBException({
-        code: 'error-001',
-        detail: `${id} not found`,
-      });
+      this.handleDBException(error);
     }
   }
 
@@ -132,12 +137,14 @@ export class CompaniesService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Error inesperado, verifique los registros del servidor',
     );
   }
 
-  private handleDBNotFound(company: Company, id: string) {
-    if (!company)
-      throw new NotFoundException(`Company with id ${id} not found`);
+  private companyIsActive(entity: Company) {
+    const pattern = /^(\d+\.\d+,-\d+\.\d+,){2,}\d+\.\d+,-\d+\.\d+$/;
+    pattern.test(entity.geofence.toString()) || entity.user === undefined
+      ? (entity.isActive = 'Activo')
+      : (entity.isActive = 'Inactivo');
   }
 }

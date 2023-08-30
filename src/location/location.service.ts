@@ -55,7 +55,7 @@ export class LocationService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
@@ -86,12 +86,12 @@ export class LocationService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Error inesperado, verifique los registros del servidor',
     );
   }
 
   private handleDBNotFound(location: Location, id: string) {
     if (!location)
-      throw new NotFoundException(`Location with id ${id} not found`);
+      throw new NotFoundException(`Locación con ${id} no encontrado`);
   }
 }

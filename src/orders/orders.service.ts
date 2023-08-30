@@ -154,7 +154,7 @@ export class OrdersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
@@ -174,7 +174,7 @@ export class OrdersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
@@ -194,16 +194,12 @@ export class OrdersService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Error inesperado, verifique los registros del servidor',
     );
-  }
-
-  private handleDBNotFound(order: Order, id: string) {
-    if (!order) throw new NotFoundException(`Order with id ${id} not found`);
   }
 
   private handleNotQuantity(price: Price) {
     if (price.stock < 0)
-      throw new NotFoundException('Not enough quantity for your order');
+      throw new NotFoundException('No hay cantidad suficiente para su pedido');
   }
 }

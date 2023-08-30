@@ -14,7 +14,7 @@ export class ImagesService {
       return command;
     } catch (error) {
       // Manejar el error apropiadamente si la imagen no se puede obtener
-      throw new Error('Image not found');
+      throw new Error('Imagen no encontrada');
     }
   }
 }

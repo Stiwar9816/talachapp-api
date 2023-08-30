@@ -1,6 +1,3 @@
 export interface Geofence {
-    position: [
-        lat: number,
-        lng: number
-    ]
+  position: [lat: number, lng: number];
 }

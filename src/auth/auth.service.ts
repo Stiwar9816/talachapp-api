@@ -55,7 +55,9 @@ export class AuthService {
 
     // Compare password
     if (!bcrypt.compareSync(password, user.password)) {
-      throw new BadRequestException('Email or password do not match');
+      throw new BadRequestException(
+        'El correo electrónico o la contraseña no coinciden',
+      );
     }
     const token = this.getjwtToken(user.id, user.roles, user.fullName);
     return { token, user };
@@ -64,7 +66,9 @@ export class AuthService {
   async validateUser(id: string): Promise<User> {
     const user = await this.usersService.findOneById(id);
     if (user.isActive === 'Inactivo')
-      throw new UnauthorizedException(`User is inactive, talk with an admin`);
+      throw new UnauthorizedException(
+        `El usuario(a) está inactivo, habla con un administrador.`,
+      );
     delete user.password;
     return user;
   }

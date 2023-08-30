@@ -15,17 +15,17 @@ export const CurrentUser = createParamDecorator(
     const user: User = ctx.getContext().req.user;
     if (!user)
       throw new InternalServerErrorException(
-        `Not user inside the request - make sure that we used the AuthGuard`,
+        `No hay usuario dentro de la solicitud: asegúrese de que haya utilizado AuthGuard`,
       );
 
     if (roles.length === 0) return user;
 
     for (const role of user.roles) {
-        if (roles.includes(role as UserRoles)) return user;
+      if (roles.includes(role as UserRoles)) return user;
     }
 
     throw new ForbiddenException(
-      `User ${user.fullName} need a valid role [${roles}]`,
+      `Usuario ${user.fullName} necesita un rol válido [${roles}]`,
     );
   },
 );

@@ -48,32 +48,20 @@ export class UsersService {
   ): Promise<User> {
     const { idCompany } = company;
     try {
-      if (signupInput.roles.includes('Trabajador')) {
-        if (!idCompany) {
-          this.handleDBException({
-            code: 'error-002',
-            detail:
-              'Error: A user with the role "Trabajador" must be assigned to a company.',
-          });
-        }
-      } else {
-        if (idCompany) {
-          this.handleDBException({
-            code: 'error-003',
-            detail:
-              'Error: Only users with role "Trabajador" can be assigned to a company.',
-          });
-        }
-      }
       const newUser = this.userRepository.create({
         ...signupInput,
         password: bcrypt.hashSync(signupInput.password, 10),
       });
 
+      this.validRoleTrabajador(newUser, 'Trabajador', idCompany);
+
       if (idCompany) {
         const companiesWorker = await this.companiesService.findOne(idCompany);
         newUser.companiesWorker = companiesWorker;
       }
+
+      this.userIsActive('Trabajador', newUser);
+      this.userIsActive('Talachero', newUser);
 
       return await this.userRepository.save(newUser);
     } catch (error) {
@@ -101,7 +89,7 @@ export class UsersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${email} not found`,
+        detail: `${email} no encontrado`,
       });
     }
   }
@@ -112,7 +100,7 @@ export class UsersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${id} not found`,
+        detail: `${id} no encontrado`,
       });
     }
   }
@@ -130,7 +118,6 @@ export class UsersService {
         id,
         ...updateUserInput,
       });
-
       if (updateUserInput.password) {
         // Guarda una copia sin encriptar de la contraseña
         const plainPassword = updateUserInput.password;
@@ -141,6 +128,9 @@ export class UsersService {
       }
       user.lastUpdateBy = updateBy;
       user.companiesWorker = companiesWorker;
+
+      this.userIsActive('Trabajador', user);
+
       return await this.userRepository.save(user);
     } catch (error) {
       this.handleDBException(error);
@@ -164,7 +154,7 @@ export class UsersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${email} not found`,
+        detail: `${email} no encontrado`,
       });
     }
   }
@@ -186,7 +176,7 @@ export class UsersService {
     } catch (error) {
       this.handleDBException({
         code: 'error-001',
-        detail: `${user} not found`,
+        detail: `${user} no encontrado`,
       });
     }
   }
@@ -198,9 +188,12 @@ export class UsersService {
       if (!userFind)
         this.handleDBException({
           code: 'error-001',
-          detail: `${email} not found`,
+          detail: `${email} no encontrado`,
         });
-      const user = await this.userRepository.preload({...userFind, token: token});
+      const user = await this.userRepository.preload({
+        ...userFind,
+        token: token,
+      });
       return await this.userRepository.save(user);
     } catch (error) {
       this.handleDBException(error);
@@ -220,12 +213,33 @@ export class UsersService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Error inesperado, verifique los registros del servidor',
     );
   }
 
-  private handleDBNotFound(user: User, email: string) {
-    if (!user)
-      throw new NotFoundException(`User with email ${email} not found`);
+  private userIsActive(field: string, entity: User) {
+    if (entity.roles.includes(field)) {
+      entity.geofence.length === 0
+        ? (entity.isActive = 'Inactivo')
+        : (entity.isActive = 'Activo');
+    }
+  }
+
+  private validRoleTrabajador(field: User, role: string, company: string) {
+    if (field.roles.includes(role)) {
+      if (!company)
+        this.handleDBException({
+          code: 'error-002',
+          detail:
+            'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.',
+        });
+    } else {
+      if (company)
+        this.handleDBException({
+          code: 'error-003',
+          detail:
+            'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.',
+        });
+    }
   }
 }
