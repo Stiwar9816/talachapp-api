@@ -341,7 +341,7 @@ type Mutation {
   createPrice(createPriceInput: CreatePriceInput!, idCompany: String, file: Upload): Price!
 
   """Update the price data"""
-  updatePrice(updatePriceInput: UpdatePriceInput!, file: Upload): Price!
+  updatePrice(updatePriceInput: UpdatePriceInput!, idCompany: String, file: Upload): Price!
 
   """Delete a price with a unique ID"""
   removePrice(id: String!): Price!
@@ -376,7 +376,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "Ih9/R*flmF02iyV0D6j%"
+  password: String! = "t_pSeJ5%M/c5_OEV¡3Gq"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role

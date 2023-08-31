@@ -143,9 +143,12 @@ export class PricesService {
     id: string,
     updatePriceInput: UpdatePriceInput,
     updateBy: User,
+    company?: CompaniesIdArgs,
     file?: Promise<FileUpload>,
   ): Promise<Price> {
+    const { idCompany } = company;
     const userId = await this.findOne(id);
+    const companies = await this.companiesService.findOne(idCompany);
     try {
       const price = await this.priceRepository.preload({
         id,
@@ -153,6 +156,7 @@ export class PricesService {
       });
       price.lastUpdateBy = updateBy;
       price.user = userId.user;
+      price.companies = companies
 
       if (file) {
         const { filename, createReadStream } = await file;
