@@ -48,12 +48,28 @@ export class UsersService {
   ): Promise<User> {
     const { idCompany } = company;
     try {
+      if (signupInput.roles.includes('Trabajador')) {
+        if (!idCompany) {
+          this.handleDBException({
+            code: 'error-002',
+            detail:
+              'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.',
+          });
+        }
+      } else {
+        if (idCompany) {
+          this.handleDBException({
+            code: 'error-003',
+            detail:
+              'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.',
+          });
+        }
+      }
+
       const newUser = this.userRepository.create({
         ...signupInput,
         password: bcrypt.hashSync(signupInput.password, 10),
       });
-
-      this.validRoleTrabajador(newUser, 'Trabajador', idCompany);
 
       if (idCompany) {
         const companiesWorker = await this.companiesService.findOne(idCompany);
@@ -61,7 +77,6 @@ export class UsersService {
       }
 
       this.userIsActive('Trabajador', newUser);
-      this.userIsActive('Talachero', newUser);
 
       return await this.userRepository.save(newUser);
     } catch (error) {
@@ -130,6 +145,7 @@ export class UsersService {
       user.companiesWorker = companiesWorker;
 
       this.userIsActive('Trabajador', user);
+      this.userIsActive('Talachero', user);
 
       return await this.userRepository.save(user);
     } catch (error) {
