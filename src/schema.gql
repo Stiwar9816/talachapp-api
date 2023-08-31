@@ -376,7 +376,7 @@ input SignupInput {
   phone: Float!
 
   "\n        User password that must have a minimum length of 6 digits\n        and the password must have an Uppercase, lowercase letter and a number\n        "
-  password: String! = "t_pSeJ5%M/c5_OEV¡3Gq"
+  password: String! = "%%Nxz4SJKUQnE5iM337h"
 
   """
   User roles which can be [ admin, user or talachero ] by default takes the user role
@@ -461,7 +461,7 @@ input CreateCompanyInput {
   """Company Postal Code"""
   postal_code: Int
   isActive: String! = "Inactivo"
-  geofence: [String!]
+  geofence: [String!]!
   lat: Float!
   lng: Float!
   tax_regime: String

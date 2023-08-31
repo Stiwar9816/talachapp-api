@@ -101,22 +101,19 @@ export class CompaniesService {
     idTalachero?: CompaniesIdArgs,
   ): Promise<Company> {
     const { idCompany } = idTalachero;
-    try {
-      const company = await this.companyRepository.preload({
-        id,
-        ...updateCompanyInput,
-      });
 
-      if (idCompany) {
-        const userFind = await this.usersService.findOneById(idCompany);
-        company.user = userFind;
-      }
-      company.lastUpdateBy = updateBy;
-      this.companyIsActive(company);
-      return await this.companyRepository.save(company);
-    } catch (error) {
-      this.handleDBException(error);
+    const company = await this.companyRepository.preload({
+      id,
+      ...updateCompanyInput,
+    });
+
+    if (idCompany) {
+      const userFind = await this.usersService.findOneById(idCompany);
+      company.user = userFind;
     }
+    company.lastUpdateBy = updateBy;
+    this.companyIsActive(company);
+    return await this.companyRepository.save(company);
   }
 
   async block(id: string, user: User): Promise<Company> {
@@ -134,6 +131,9 @@ export class CompaniesService {
     if (error.code === 'error-001')
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
+    if (error.code === 'error-004')
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+
     this.logger.error(error);
     throw new InternalServerErrorException(
       'Error inesperado, verifique los registros del servidor',
@@ -141,9 +141,20 @@ export class CompaniesService {
   }
 
   private companyIsActive(entity: Company) {
-    const pattern = /^(\d+\.\d+,-\d+\.\d+,){2,}\d+\.\d+,-\d+\.\d+$/;
-    pattern.test(entity.geofence.toString()) || entity.user === undefined
-      ? (entity.isActive = 'Activo')
-      : (entity.isActive = 'Inactivo');
+    const pattern =
+      /^(\s*\d+\.\d+\s*,-\s*\d+\.\d+\s*,){2,}\s*\d+\.\d+\s*,-\s*\d+\.\d+\s*$/;
+
+    if (/\s/.test(entity.geofence.toString())) {
+      this.handleDBException({
+        code: 'error-004',
+        detail: 'La geocerca contiene espacios',
+      });
+    }
+
+    if (pattern.test(entity.geofence.toString())) {
+      entity.isActive = 'Activo';
+    } else {
+      entity.isActive = 'Inactivo';
+    }
   }
 }

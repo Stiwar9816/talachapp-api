@@ -48,24 +48,7 @@ export class UsersService {
   ): Promise<User> {
     const { idCompany } = company;
     try {
-      this.validRoleTrabajador(signupInput,'Trabajador',idCompany)
-      if (signupInput.roles.includes('Trabajador')) {
-        if (!idCompany) {
-          this.handleDBException({
-            code: 'error-002',
-            detail:
-              'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.',
-          });
-        }
-      } else {
-        if (idCompany) {
-          this.handleDBException({
-            code: 'error-003',
-            detail:
-              'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.',
-          });
-        }
-      }
+      this.validRoleTrabajador(signupInput, 'Trabajador', idCompany);
 
       const newUser = this.userRepository.create({
         ...signupInput,
@@ -128,29 +111,26 @@ export class UsersService {
     company?: CompaniesIdArgs,
   ): Promise<User> {
     const { idCompany } = company;
-    try {
-      const companiesWorker = await this.companiesService.findOne(idCompany);
-      const user = await this.userRepository.preload({
-        id,
-        ...updateUserInput,
-      });
-      if (updateUserInput.password) {
-        // Guarda una copia sin encriptar de la contraseña
-        const plainPassword = updateUserInput.password;
-        // Envía la contraseña sin encriptar por correo electrónico
-        await this.mailService.sendUpdatePassword(user, plainPassword);
-        // Encrypt password
-        user.password = bcrypt.hashSync(updateUserInput.password, 10);
-      }
-      user.lastUpdateBy = updateBy;
-      user.companiesWorker = companiesWorker;
 
-      this.userIsActive('Trabajador', user);
-
-      return await this.userRepository.save(user);
-    } catch (error) {
-      this.handleDBException(error);
+    const companiesWorker = await this.companiesService.findOne(idCompany);
+    const user = await this.userRepository.preload({
+      id,
+      ...updateUserInput,
+    });
+    if (updateUserInput.password) {
+      // Guarda una copia sin encriptar de la contraseña
+      const plainPassword = updateUserInput.password;
+      // Envía la contraseña sin encriptar por correo electrónico
+      await this.mailService.sendUpdatePassword(user, plainPassword);
+      // Encrypt password
+      user.password = bcrypt.hashSync(updateUserInput.password, 10);
     }
+    user.lastUpdateBy = updateBy;
+    user.companiesWorker = companiesWorker;
+
+    this.userIsActive('Trabajador', user);
+
+    return await this.userRepository.save(user);
   }
 
   async block(id: string, user: User): Promise<User> {
@@ -227,6 +207,12 @@ export class UsersService {
     if (error.code === 'error-002')
       throw new BadRequestException(error.detail.replace('Key ', ''));
 
+    if (error.code === 'error-003')
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+
+    if (error.code === 'error-004')
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+
     this.logger.error(error);
     throw new InternalServerErrorException(
       'Error inesperado, verifique los registros del servidor',
@@ -234,27 +220,42 @@ export class UsersService {
   }
 
   private userIsActive(field: string, entity: User) {
-    if (entity.roles.includes(field)) {
-      entity.geofence.length === 0
-        ? (entity.isActive = 'Inactivo')
-        : (entity.isActive = 'Activo');
+    const pattern =
+      /^(\s*\d+\.\d+\s*,-\s*\d+\.\d+\s*,){2,}\s*\d+\.\d+\s*,-\s*\d+\.\d+\s*$/;
+
+    if (!entity.roles.includes(field)) return;
+
+    if (/\s/.test(entity.geofence.toString()))
+      this.handleDBException({
+        code: 'error-004',
+        detail: 'La geocerca contiene espacios',
+      });
+
+    if (pattern.test(entity.geofence.toString())) {
+      entity.isActive = 'Activo';
+    } else {
+      entity.isActive = 'Inactivo';
     }
   }
 
-  private validRoleTrabajador(field: SignupInput, role: string, company: string) {
+  private validRoleTrabajador(
+    field: SignupInput,
+    role: string,
+    company: string,
+  ) {
     if (field.roles.includes(role)) {
       if (!company)
         this.handleDBException({
           code: 'error-002',
           detail:
-            'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.',
+            'Un usuario con el rol "Trabajador" debe estar asignado a una empresa',
         });
     } else {
       if (company)
         this.handleDBException({
           code: 'error-003',
           detail:
-            'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.',
+            'Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa',
         });
     }
   }

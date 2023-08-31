@@ -47,7 +47,7 @@ export class MailService {
   async sendNewCompany(company: Company) {
     await this.mailerService.sendMail({
       to: 'admin@talachapp.com',
-      subject: 'New company registered',
+      subject: 'Solicitud para crear empresa',
       template: './newCompany',
       context: {
         person: company.user.fullName,
