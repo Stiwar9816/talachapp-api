@@ -226,19 +226,20 @@ export class UsersService {
   }
 
   private validRoleTrabajador(field: User, role: string, company: string) {
-    const roleCondition = field.roles.includes(role);
-    const shouldThrowError =
-      (roleCondition && !company) || (!roleCondition && company);
-
-    if (shouldThrowError) {
-      const errorMessage = roleCondition
-        ? 'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.'
-        : 'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.';
-
-      this.handleDBException({
-        code: roleCondition ? 'error-002' : 'error-003',
-        detail: errorMessage,
-      });
+    if (field.roles.includes(role)) {
+      if (!company)
+        this.handleDBException({
+          code: 'error-002',
+          detail:
+            'Error: Un usuario con el rol "Trabajador" debe estar asignado a una empresa.',
+        });
+    } else {
+      if (company)
+        this.handleDBException({
+          code: 'error-003',
+          detail:
+            'Error: Sólo los usuarios con rol "Trabajador" pueden ser asignados a una empresa.',
+        });
     }
   }
 }

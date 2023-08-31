@@ -39,7 +39,6 @@ export class CompaniesService {
       const newCompany = this.companyRepository.create(createCompanyInput);
       newCompany.user = user;
       this.companyIsActive(newCompany);
-      await this.mailService.sendNewCompany(newCompany);
       return await this.companyRepository.save(newCompany);
     } catch (error) {
       this.handleDBException(error);
