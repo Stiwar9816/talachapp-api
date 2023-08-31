@@ -48,6 +48,7 @@ export class UsersService {
   ): Promise<User> {
     const { idCompany } = company;
     try {
+      this.validRoleTrabajador(signupInput,'Trabajador',idCompany)
       if (signupInput.roles.includes('Trabajador')) {
         if (!idCompany) {
           this.handleDBException({
@@ -145,7 +146,6 @@ export class UsersService {
       user.companiesWorker = companiesWorker;
 
       this.userIsActive('Trabajador', user);
-      this.userIsActive('Talachero', user);
 
       return await this.userRepository.save(user);
     } catch (error) {
@@ -241,7 +241,7 @@ export class UsersService {
     }
   }
 
-  private validRoleTrabajador(field: User, role: string, company: string) {
+  private validRoleTrabajador(field: SignupInput, role: string, company: string) {
     if (field.roles.includes(role)) {
       if (!company)
         this.handleDBException({
